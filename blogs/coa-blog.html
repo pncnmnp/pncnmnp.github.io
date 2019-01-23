@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta name="author" content="parth_parikh">
+	<meta name="description" content="How to port Virtual Labs : Computer Organization simulator 64-bit Linux">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Parth Parikh</title>
+	<link rel="stylesheet" type="text/css" href="../style.css">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+</head>
+
+<body>
+	<div class="blog-text">
+		If you are an Indian university student, which recommends <a href="http://vlabs.iitkgp.ernet.in/coa/#" target="_blank">Virtual Labs</a> for Computer Organization lab and are unable to port the software to 64-bit machine, try the following steps:
+		<br>
+		<strong>( Note: This is specifically for Linux enviornment )</strong> 
+		<ol>
+		<li> <code>sudo apt-get install openjdk-6-jre:i386 </code> </li>
+		<li> <code>sudo update-alternatives --config java</code> ( change it to <strong>i368</strong> version )</li>
+		<li> <code>sudo apt-get install libgtk2.0-0:i386</code></li>
+		</ol>
+		I tried this on ubuntu ( 18.04 LTS ).
+		See if this helps. 
+		</ol>
+	</div>	
+
+<footer>
+<hr>
+	<div>
+		© 2018 Parth Parikh. Code is available under <a href="https://opensource.org/licenses/MIT" target="_blank">MIT License</a>.
+	</div>
+</footer>
+
+</body>
+</html>	
