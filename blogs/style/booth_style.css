@@ -46,7 +46,7 @@ span:after {
     position absolute;
     left: 0;
     bottom: 0;
-    content: "k = 1";
+    content: "k = 0";
     width: 27px;
     text-align: center;
 }
