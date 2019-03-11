@@ -1,0 +1,52 @@
+div {
+    zoom: 90%;
+	font-size: 16px;
+	font-weight: 400;
+	font-family: 'Open Sans', sans-serif;
+	font-style: normal;
+	max-width: 800px;
+}
+
+a {
+	color: tomato;
+}
+
+table {
+	border-collapse: collapse;	
+}
+
+td {
+	padding-right: 10px;
+	border: 1px solid black;
+	text-align: center;
+}
+
+span {
+    position: relative;
+    font-size: 2.5em;
+    display: inline-block;
+    line-height: .7em;
+    vertical-align: middle;
+}
+
+span:before {
+    font-size: 12px;
+    display: block;
+    position absolute;
+    left: 0;
+    top: 0;
+    content: "N";
+    width: 22px;
+    text-align: center;
+}
+
+span:after {
+    font-size: 12px;
+    display: block;
+    position absolute;
+    left: 0;
+    bottom: 0;
+    content: "k = 1";
+    width: 27px;
+    text-align: center;
+}

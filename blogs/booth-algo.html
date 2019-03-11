@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta name="author" content="parth_parikh">
+	<meta name="description" content="Booth's Algorithm Analysis">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Booth's Algorithm Analysis</title>
+	<link rel="stylesheet" type="text/css" href="style/booth_style.css">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+</head>
+
+<body>
+	<div class="blog-text">
+	Booth's algorithm is a non conventional approach to multiplication. Though the implementation is non challenging, I found the underlying concept a bit tricky. Here I would like to share a detailed analysis of it's working.
+	<br><br>
+	Multiplication is all about adding a value 'a', 'b' times.
+	Here 'a' is called a multiplier, and 'b' is multiplicand.
+	Example:
+	<br>Let multiplicand be 3, multiplier be 15, then
+	<br>3*15 = 15 + 15 + 15 = 45
+	<br><br>
+	Binary multiplication can be approached in a similar fashion. We can take multiplicand as a counter and can add multiplier to the accumulator, decrementing the counter at each addition. The process will stop when the counter reaches zero and the accumulator will store the result.
+	<br>If you are not familiar with accumulator, think of it as a data cell initialized to 0.
+	<br><br>
+	Unfortunately, the above approach trades efficiency for simplicity. When we deal with low-level architecture, the no. of additions and subtractions increase the time complexity. For large numbers, the no. of additions increases drastically.
+	<br>Try multiplying 253614*727128 !
+	<br><br>
+	To combat that, we go back to 1<sup>st</sup> grade. The algorithm taught to us to multiply two numbers is surprisingly more efficient than the one stated above. 
+	<br>Let's start with an example:
+	<br>Assume : multiplicand = 42, multiplier = 19
+<pre>
+    [1]	
+     4  2	
+X    1  9
+------------
+  3  7  8
++ 4  2  
+------------
+  7  9  8
+------------
+</pre>
+	The above example as we will observe trades inefficient additions for bitwise operations. First let us understand why this basic method works.
+	The principle used is distributive property:
+	<br>( a + b ) * ( c + d ) = a*b + a*d + b*c + b*d
+	<br>( 40 + 2 ) * ( 10 + 9 ) = 40*10 + 40*9 + 2*10 + 2*9 = 798
+	<br><br>
+	We first divide the multiplicand and multiplier according to their place value, multiply each individual component and finally add them all. By shedding the zeros and replacing them with shift operations, we start seeing a noticeable difference in terms of no. of addition operations. Here is an excellent link to better visualize this process : [ <a href="http://mathforum.org/library/drmath/view/59087.html">lattice multiplication</a> ].
+	<br><br>
+	By now a reader should realize that implementing this in computers will be a performance-boost as we only deal with binary digits ( 0's and 1's ). We can skip an entire row where multiplier's digit is 0. Though we would have to do more shift operations every subsequent digit, this is not a major concern as most modern processors can perform this in O(1) time. See the following SO question for more detail : [ <a href="https://stackoverflow.com/a/9083865/7543474">Is bit shifting O(1) or O(n)?</a> ]. Carry look ahead adders can be used to reduce the propogation delay in addition operations.
+	<br><br>
+	But can we perform better ?
+	<br><br>
+	How ?
+	<br><br>
+	A careful reader would have realized by now that this game is all about minimizing the number of addition operations. In enters the Booth's algorithm. It works on the principle that by simplifying addition operations, we can reduce the no. of 1's and in turn reduce the no. of additions. We start with accumulator initialized to 0, multiplier ( m ) with it's initial value and m<sub>-1</sub> to 0.
+	<br><br>
+	With the goal of multiplying multiplier( m ) * multiplicand( n ), all we do is check m<sub>0</sub> and m<sub>-1</sub> bits at each step, where m<sub>0</sub> is the leftmost bit of multiplier. We then follow a simple check: ( m<sub>-1</sub> - m<sub>0</sub> ).
+	<br><br>
+	We can observe from the above check:
+	<br><br>
+	<table>
+		<tr>
+			<td>m<sub>-1</sub></td>
+			<td>m<sub>0</sub></td>
+			<td>m<sub>-1</sub> - m<sub>0</sub></td>
+		</tr>
+		<tr>
+			<td>1</td>
+			<td>1</td>
+			<td>0</td>
+		</tr>		
+		<tr>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+		</tr>
+		<tr>
+			<td>1</td>
+			<td>0</td>
+			<td>1</td>
+		</tr>
+		<tr>
+			<td>0</td>
+			<td>1</td>
+			<td>-1</td>
+		</tr>
+	</table>
+	<br>
+	All we do now is multiply 'check' value with multiplicand and 2<sup>a</sup>. Where 'a' is counter from 0 to no. of bits in m or n. If multiplicand and multiplier don't have same number of bits, padding is required. Think of padding this way: when m : 11, n : 1010 --> m will become 0011 and no. of bits will be 4. After each step, we perform arithmetic right shift, just like we did in lattice multiplication.
+	<br><br>
+	Ok, so with all in place, let's try and see the final equation : 
+	<span>&sum;</span> ARS [ (m<sub>k-1</sub> - m<sub>k</sub>) * n * 2<sup>k</sup> ]
+	<br>Where ARS is arithmetic right shift, n is multiplicand and m is multiplier. The ARS outside sq. brackets indicates that arithmetic right shift has to be performed at each step.
+	<br><br><b>NOTE:</b> This equation is NOT in accordance with the mathematical convention, and I use it as a remembering technique.
+	<br><br>You would observe that that the above equation will be equal to m*n, our result to be determined.
+	<br><br>
+	Helpful resources: 
+	<br>
+	[1] <a href="https://en.wikipedia.org/wiki/Booth%27s_multiplication_algorithm">https://en.wikipedia.org/wiki/Booth%27s_multiplication_algorithm</a>
+	<br>
+	[2] <a href="https://bit.ly/2TvfUqF">https://bit.ly/2TvfUqF</a>
+	</div>
+	<br>
+	<a href="./blog.html">↵</a>
+<footer>
+<hr>
+	<div>
+		© 2019 Parth Parikh.
+	</div>
+</footer>
+
+</body>
+</html>
