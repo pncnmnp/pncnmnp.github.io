@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta name="author" content="parth_parikh">
+	<meta name="description" content="Mistakes we made in Hackathon-March-2019">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Parth Parikh</title>
+	<link rel="stylesheet" type="text/css" href="../style.css">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+</head>
+
+<body>
+	<div class="blog-text">
+		Recently me and three of my colleagues participated in DBIT's hackathon - <i>Mumbai Hackathon</i>. This was my first hackathon and through this post, I want to share some critical design and leadership mistakes I made while leading my team.
+		<br><br>
+		<b>Project Title:</b> Pizza delivery chat-bot
+		<br>
+		<b>Languages used:</b> Python, HTML and CSS
+		<br><br>
+		<b>Mistake 1:</b> Let's start with the gravest sin one can possibly make in OOP paradigm - <i>hard coding in methods.</i>
+		<br>
+		When we code in OOP paradigm ( or even in Procedural Paradigm ), one thing has to taken great of - <i>methods ( or functions ) should perform a very specific task and should return a value pertaining to that task.</i>
+		<br>
+		By neglecting this one sacred rule, the end result was terrible. Our chat-bot had code which would <i>print chat-bot's output in terminal instead of returning the chat-bot's message.</i> This was disastrous as scaling our code to front-end became nearly impossible. To see what I am talking about refer : <a href="https://github.com/pncnmnp/Pizzy/blob/master/customer.py#L57">this</a> and <a href="https://github.com/pncnmnp/Pizzy/blob/master/customer.py#L51">this</a>.
+		<br><br>
+		<b>Mistake 2:</b> <i>Noise in designing</i>
+		<br>
+		Over-engineering is not just bad, it is terrible. When facing time-constraint ( like in hackathon ), one can waste precious time designing unnecessary features  while neglecting the core. Had we spent more time in our <i>parser</i> instead of supporting features such as referral-bonus and database connectivity, our project would have been better. <i>A project should start with simple, strong and scalable code.</i> Optimizations can be performed later.
+		<br><br>
+		<b>Mistake 3:</b> <i>Not having a front-end</i>
+		<br>
+		The first question judge asked when we should him our demo was: <i>Where's your front-end ?</i>
+		<br>
+		I am unable to comprehend why front-end is given so much importance in such competitions. I will leave this part for <i>future-me</i> to answer. 
+		<br>
+		My initial intention was to make a working chat-bot in terminal. I was so rigid on that idea that on Day-1 all the code I produced was non scalable to front-end. This made it all the more difficult to scale on day 2.
+		<br><br>
+		<b>Mistake 4:</b> <i>Not dividing work flow properly</i>
+		<br>
+		I took an unprecedented work-flow by trying to code a nlp-parser ( from scratch ) and customer class, connect customer with database and link the many methods my group members created. This significantly hampered my productivity and led me to make bad design choices.
+		<br><br>
+		In the end our project turned out to be above-average. Here is the link to our project : <a href="https://github.com/pncnmnp/Pizzy">Pizzy : A pizza delivery chatbot.</a> On the bright side I am glad that I made these mistakes, there is always something more to learn. Hopefully next time will be different. 
+	</div>
+	<br>
+	<a href="blog.html">&crarr;</a>
+<footer>
+<hr>
+	<div>
+		© 2019 Parth Parikh.
+	</div>
+</footer>
+
+</body>
+</html>

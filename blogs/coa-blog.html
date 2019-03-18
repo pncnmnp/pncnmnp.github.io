@@ -15,20 +15,20 @@
 
 <body>
 	<div class="blog-text">
-		If you are an Indian university student, which recommends <a href="http://vlabs.iitkgp.ernet.in/coa/#" target="_blank">Virtual Labs</a> for Computer Organization lab and are unable to port the software to 64-bit machine, try the following steps:
+		If you are an Indian university student, which recommends <a href="http://vlabs.iitkgp.ernet.in/coa/#" target="_blank">Virtual Labs</a> for Computer Organization lab and are unable to port the software to 64-bit machine, try the following steps <u>in sequence</u>:
 		<br>
 		<strong>( Note: This is specifically for Linux enviornment )</strong> 
-		<ol>
-		<li> <code>sudo apt-get install openjdk-6-jre:i386 </code> </li>
-		<li> <code>sudo update-alternatives --config java</code> ( change it to <strong>i368</strong> version )</li>
-		<li> <code>sudo apt-get install libgtk2.0-0:i386</code></li>
-		</ol>
+<pre>
+sudo apt-get install openjdk-6-jre:i386
+sudo update-alternatives --config java ( change it to <strong>i368</strong> version )
+sudo apt-get install libgtk2.0-0:i386
+</pre>		
 		I tried this on ubuntu ( 18.04 LTS ).
 		See if this helps. 
 		</ol>
 	</div>	
 	<br>
-	<a href="blog.html">↵</a>
+	<a href="blog.html">&crarr;</a>
 <footer>
 <hr>
 	<div>
@@ -37,4 +37,4 @@
 </footer>
 
 </body>
-</html>	
+</html>
