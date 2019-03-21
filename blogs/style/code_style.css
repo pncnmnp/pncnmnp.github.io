@@ -1,0 +1,17 @@
+div {
+	zoom: 90%;
+	font-size: 16px;
+	font-weight: 400;
+	font-family: 'Open Sans', sans-serif;
+	font-style: normal;
+	max-width: 800px;
+}
+
+pre {
+	white-space: pre-wrap;
+	background: hsl(9, 100%, 90%);
+}
+
+a {
+	color: tomato;
+}
