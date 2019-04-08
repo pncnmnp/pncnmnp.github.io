@@ -25,7 +25,9 @@ footer {
 
 pre {
 	white-space: pre-wrap;
-	background: hsl(9, 100%, 90%);
+	background: #333;
+	color: tomato;
+	padding: 4px 20px;
 }
 
 a {
