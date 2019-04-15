@@ -25,4 +25,14 @@ footer {
 
 a {
 	color: tomato;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #f90206;
+}
+
+#status {
+	background: #f5f5f5;
+	color: black;
 }

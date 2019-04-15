@@ -25,6 +25,11 @@ footer {
 
 a {
 	color: tomato;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #f90206;
 }
 
 table {
