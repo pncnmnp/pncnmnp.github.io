@@ -17,6 +17,10 @@ div {
 	background-color: tomato;
 }
 
+#back-link:hover {
+	padding: 4px 14px;
+}
+
 footer {
 	max-width: 800px;
 	margin-left: auto;

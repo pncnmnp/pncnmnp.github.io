@@ -29,12 +29,21 @@
 		In case you are wondering why this site is using plaintext, having used Jekyll and Wordpress in the past, I love this minimalistic and clutter free approach for a personal web-site.
 		<br><br>
 
-		<strong>Status</strong>: <i><span id="status"></span></i>
 		<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 		<script type="text/javascript">
-			var url = "https://gist.githubusercontent.com/pncnmnp/4eb116570eceed10c9f6e4f24773d2f2/raw/23bc33d35a829954c72f0fe0ae131fc42fdf752b/status.txt";
-			$("#status").load(url);
+			var status;
+			$.ajax({
+				url: 'https://api.github.com/gists/'+'4eb116570eceed10c9f6e4f24773d2f2',
+				type: 'GET',
+				dataType: 'jsonp'
+			}).done( function(gistdata) {
+				document.getElementById("status").innerHTML = gistdata.data.files['status.txt'].content;
+				console.log(status);
+				}).fail( function(e) {
+					// ajax error
+				});
 		</script>
+		<strong>Status</strong>: <i><span id="status"></span></i>
 		<br><br>
 
 		<strong>Projects</strong>: 
