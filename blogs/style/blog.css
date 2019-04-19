@@ -1,27 +1,9 @@
-div, table {
+table {
 	zoom: 90%;
 	font-size: 16px;
 	font-weight: 400;
 	font-family: 'Open Sans', sans-serif;
 	font-style: normal;
-	max-width: 800px;
-	margin-left: auto;
-	margin-right: auto;
-}
-
-#back-link {
-	text-decoration: none;
-	display: inline-block;
-	padding: 4px 12px;
-	color: black;
-	background-color: tomato;
-}
-
-#back-link:hover {
-	padding: 4px 14px;
-}
-
-footer {
 	max-width: 800px;
 	margin-left: auto;
 	margin-right: auto;
@@ -37,13 +19,4 @@ td {
 
 tr:hover {
 	background-color: #f5f5f5;
-}
-
-a {
-	color: tomato;
-	text-decoration: none;
-}
-
-a:hover {
-	color: #f90206;
 }

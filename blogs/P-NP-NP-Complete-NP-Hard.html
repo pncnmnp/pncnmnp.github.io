@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+<meta name="author" content="parth_parikh">
+<meta name="description" content="P-NP-NP-Complete-NP-Hard">
+<title>P-NP-NP-Complete-NP-Hard</title>
+<link rel="stylesheet" type="text/css" href="./style/common_styles.css">
+<link rel="stylesheet" type="text/css" href="./style/code_style.css">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+
+<body>
+<div class="blog-text">
+<h2>Understanding Computational Complexity</h2>
+<p>What is a problem ?</p>
+<p><i>An inquiry starting from given conditions to investigate or demonstrate a fact, result, or law.</i></p>
+<p>With problems posed as questions, we seek answers. I remember back when I was 5 or so, a camel standing across the street caught my curiosity. I observed that camel for a very long time thinking why the hell won't it sit down and if it did, which side would it sit on ( left or right leaning ). The nature of these problems makes us wonder, <i>how to solve them efficiently ?</i> <i>But can we solve all imaginable problems efficiently ?</i></p>
+<p>In computer science, problems are divided into <b>decidable</b> and <b>undecidable</b> problems. Decidable problems are the ones for which we can always construct some algorithm to answer correctly. Solving Fibonacci sequence is a decidable problem as this algorithm would indicate <i>fib[n] = fib[n-1] + fib[n-2]</i> with predefined values <i>fib[0] = fib[1] = 1</i>. Undecidable problems are ones for which <i>no algorithm exists</i> which can <i>always</i> answer correctly.</p>
+<p>To give some perspective into undecidable problems, let's look at the legendary <i>Halting Problem</i>. The problem states that <i>given an arbitrary computer program and an input, can we determine whether this program would run forever or halt after some time.</i> To understand why this problem is undecidable, try analyzing the following pseudo-code:</p>
+<pre>
+def Deceiver(i):
+  oracle = i[0]
+  in = i[1]
+  if oracle(Deceiver, i):
+    while True:
+      continue
+  else:
+    return i
+</pre>
+<p>If the Oracle says the program will halt, an infinite loop is executed. If it answers negatively, we halt the program. No matter what Oracle says, we perform the opposite action. You can read more about this perspective <a href="https://stackoverflow.com/a/1111200/7543474">here</a>.</p>
+<p>Let's look at two classes of problems before we continue further: <b>decision</b> problems and <b>optimization</b> problems. I like to think of decision problems as ones with a <i>yes/no</i> type answer and optimization problems as ones where <i>MIN or MAX</i> of a state is to be determined.</p>
+<p>With these definitions explained, let's now look at P, NP, NP-Complete and NP-Hard complexity classes. A small terminology before we continue further, polynomial time complexity ( in terms of <a href="https://en.wikipedia.org/wiki/Big_O_notation">big-O</a> notation ) -> n<sup>O(1)</sup>.</p>
+<p><b>P</b> can be explained as <i>the set of all decision problems for which there exists an algorithm which can be solved in polynomial time.</i> An important point to note is that <b>not all problems that can be solved in polynomial time are P</b>. We are specifically dealing with decision problems here.</p>
+<p><b>NP</b> can be explained as <i>the set all decision problems that cannot be solved in polynomial time and for which there exists a polynomial time verification algorithm.</i> Let's now understand <b>verification</b> algorithms by analyzing another problem: <i>Prime Factorization.</i></p>
+<p>The problem states that <i>given a composite number, decompose that number as a product of prime numbers.</i> For example, 161 = 7 * 23. For small integers ( something in order of 10^7 ), a variant of <a href="https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes">Sieve of Eratosthenes</a> can be used to solve prime factorization problem but as integers get bigger, we start facing serious memory issues making it unfeasible to scale. As of today, there is no known algorithm to solve this in Polynomial time complexity ( for all problems ) but <i>verification is still possible.</i> No matter how big factors are we can multiply them to verify whether the product is equal to the original composite number, making this an NP problem. <i>RSA</i>, a  public-key cryptosystem uses this problem to secure data transmission.</p>
+<p>For a decision problem to be <b>NP-Complete</b>, it should satisfy two conditions:</p>
+<ol><li><i>It is in NP.</i></li>
+<li><i>Any problem in NP is reducible to this problem in polynomial time complexity.</i></li></ol>
+<p>Any problem which only satisfies the 2<sup>nd</sup> point can be termed as an <b>NP-Hard</b> problem. To visualize this in a better manner <i>think of NP-Complete being at the boundary of NP and NP-Hard problems.</i> The below image will help visualize these concepts:</p>
+<p><img src="./pics/p-np-np-complete-np-hard.png" alt="p-np-np-complete-np-hard"></p>
+<p>A classic example of a NP-Complete problem would be that of 3-SAT problem. 3-SAT problem is a satisfiability problem which states that <i>given a boolean expression ( supporting AND, OR, NOT, variables and parenthesis ) in <a href="https://en.wikipedia.org/wiki/Conjunctive_normal_form">CNF</a> ( Conjunctive Normal Form ) such that every clause contains exactly 3 literals, does there exist some combination of these literals ( in True or False Form ) such that the expression becomes TRUE ?</i> Check the following equation : ( x1 ∨ x2 ∨ x3 ) ∧ ( x4 ∨ !x5 ∨ x6 ). For this particular equation we can verify that with values like ( T,T,T,T,F,T ), the expression becomes T.</p>
+<p>Before I explain <i>why</i> 3-SAT is NP-Complete, I want to share a secret sauce. It turns out that <b>we do not need to reduce every problem in NP to check for NP-Completeness</b>. If are able to reduce an existing NP-Complete problem to this problem, we will be able to satisfy the 2<sup>nd</sup> condition. Note that by satisfying the 2<sup>nd</sup> condition we can't decisively say that problem is NP-Complete. For that the 1<sup>st</sup> condition must be satisfied. 3-SAT is NP-Complete as it can be verified in Polynomial time for any number of literals and we can reduce the unrestricted SAT problem to this problem. ( See the following <a href="https://www.nitt.edu/home/academics/departments/cse/faculty/kvi/NPC-3SATs.pdf">link</a> for more intuition ).</p>
+<p>Fun Fact: SAT problem was the <i>1<sup>st</sup> problem proved to be NP-Complete</i> in 1971 by Stephen Cook.</p>
+<p>An example of NP-Hard problem would be the Halting Problem described earlier. SAT problem can be reduced to Halting Problem in polynomial time, but being an undecidable problem, it is not in NP class.</p>
+<p>I hope you found this post increase your curiosity and imagination. Computer Science is truly a breathtaking subject!</p>
+<a id="back-link" href="blog.html">&#8249;</a>
+</div>
+<footer>
+<hr>
+<div>
+© 2019 Parth Parikh.
+</div>
+</footer>
+
+</body>
+</html>
