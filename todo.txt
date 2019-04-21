@@ -1,0 +1,6 @@
+TODO:
+--> estimated read time for every blog
+--> dark mode for the blog
+--> titles and headers for every blog 
+--> darker shade for back button instead of changing padding ( optional ) [ done ]
+--> combining "common" styles into one css file [ done ]

@@ -10,6 +10,8 @@
 	<title>How to port Virtual Labs to Linux</title>
 	<link rel="stylesheet" type="text/css" href="./style/common_styles.css">
 	<link rel="stylesheet" type="text/css" href="./style/code_style.css">
+	<link href="./style/prism_okaidia.css" rel="stylesheet" />
+	<script src="./js/prism_okaidia.js"></script>
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 
 </head>
@@ -18,15 +20,13 @@
 	<div class="blog-text">
 		If you are an Indian university student, which recommends <a href="http://vlabs.iitkgp.ernet.in/coa/#" target="_blank">Virtual Labs</a> for Computer Organization lab and are unable to port the software to 64-bit machine, try the following steps <u>in sequence</u>:
 		<br>
-		<strong>( Note: This is specifically for Linux enviornment )</strong> 
-<pre>
-sudo apt-get install openjdk-6-jre:i386
+		<strong>( Note: This is specifically for Linux enviornment )</strong>
+<pre><code class="language-bash">sudo apt-get install openjdk-6-jre:i386
 sudo update-alternatives --config java
-</pre>
+</code></pre>
 		( change the above to <strong>i368</strong> version )
-<pre>
-sudo apt-get install libgtk2.0-0:i386
-</pre>		
+<pre><code class="language-bash">sudo apt-get install libgtk2.0-0:i386
+</code></pre>
 		I tried this on ubuntu ( 18.04 LTS ).
 		See if this helps. 
 		</ol>

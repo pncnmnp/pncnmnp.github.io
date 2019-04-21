@@ -1,6 +1,7 @@
 pre {
-	white-space: pre-wrap;
+/* currently using https://prismjs.com/ */
+/*	white-space: pre-wrap;
 	background: #333;
 	color: tomato;
 	padding: 4px 20px;
-}
+*/}
