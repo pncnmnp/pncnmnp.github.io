@@ -1,5 +1,7 @@
 body {
 	line-height: 1.5;
+	background-color: #111;
+	color: #ddd;
 }
 
 div {
@@ -14,6 +16,7 @@ div {
 }
 
 img {
+	background-color: #fff;
 	display: block;
 	margin: 0 auto;
 }

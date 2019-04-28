@@ -8,7 +8,7 @@
 	<meta name="description" content="personal site">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Parth Parikh</title>
-	<link rel="stylesheet" type="text/css" href="./blogs/style/common_styles.css">
+	<link rel="stylesheet" type="text/css" href="./blogs/style/common_styles.css" id="light">
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
@@ -24,11 +24,7 @@
 		<br><br>
 		What started with poems and short stories, made a halt at computers and I am 19 so there is a long road ahead. Topics such as <i>cryptographic functions, text analysis, discrete mathematics, statistics and artificial intelligence</i> interest me.
 		<br><br>
-		When in the mood for fun, I do the usual read-binge-listen. I am a huge movie buff, mainly interested in crime, thriller and sci-fi genre. Here is my latest pick: <i>Andhadhun</i> ( Bollywood ) and <i>2001-A Space Odyssey</i> ( Hollywood ). The sports I follow are Formula 1 ( motorsport ) and Cricket. Apart from these, Politics and Current Affairs interest me. I am a numismatist as well.
-		<br><br>
-		I love solving problems on Project Euler. My friend key: 1257816_QGLDawLV9eWOcv9e0Tq4lDmxsrdkVP0G.
-		<br><br>
-		In case you are wondering why this site is using plaintext, having used Jekyll and Wordpress in the past, I love this minimalistic and clutter free approach for a personal web-site.
+		When in the mood for fun, I do the usual read-binge-listen. I am a huge movie buff, mainly interested in crime, thriller and sci-fi genre. The sports I follow are Formula 1 ( motor-sport ) and Cricket. Apart from these, Politics and Current Affairs interest me. I am also a numismatist.
 		<br><br>
 
 		<script type="text/javascript">
@@ -39,17 +35,16 @@
 				dataType: 'jsonp'
 			}).done( function(gistdata) {
 				document.getElementById("status").innerHTML = gistdata.data.files['status.txt'].content;
-				console.log(status);
 				}).fail( function(e) {
 					// ajax error
 				});
 		</script>
-		<strong>Status</strong>: <i><span id="status"></span></i>
+		<strong>Status</strong>: <i><span id="status"><noscript>Javascript is the duct tape of the Internet. Now this status won't stick! 😉</noscript></span></i>
 		<br><br>
 
 		<strong>Projects</strong>: 
 		<br>
-		[ <a href="https://github.com/pncnmnp/Pizzy">Pizzy</a> ]: A pizza delivery chatbot with a from scratch parser.
+		[ <a href="https://github.com/pncnmnp/Pizzy">Pizzy</a> ]: A pizza delivery chat-bot with a from scratch parser.
 		<br>
 		[ <a href="https://github.com/pncnmnp/Snipy">URL shortener</a> ]: A URL shortening application, which includes features such as spam detection, auto expiry of URL and duplicate links verification.
 		<br>
@@ -60,7 +55,7 @@
 		[ <a href="https://github.com/pncnmnp/tic-tac-toe">Tic Tac Toe</a> ]: First year project, implemented using minimax algorithm.
 	
 		<br><br>
-		<strong>Contact</strong>: 
+		<strong id="contact">Contact</strong>: 
 		<br>
 		[ <a href="mailto:parthparikh1999p@gmail.com">E-Mail</a> ] : parthparikh1999p[at]gmail[dot]com
 

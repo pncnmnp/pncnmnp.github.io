@@ -1,5 +1,6 @@
 body {
 	line-height: 1.5;
+	background-color: #F5DEB3;
 }
 
 div {
@@ -37,7 +38,7 @@ img {
 
 
 a {
-	color: tomato;
+	color: blue;
 	text-decoration: none;
 }
 

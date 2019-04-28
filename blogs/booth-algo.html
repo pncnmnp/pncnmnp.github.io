@@ -8,14 +8,32 @@
 	<meta name="description" content="Booth's Algorithm Analysis">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Booth's Algorithm Analysis</title>
-	<link rel="stylesheet" type="text/css" href="./style/common_styles.css">
+	<link rel="stylesheet" type="text/css" href="./style/common_styles.css" id="light">
 	<link rel="stylesheet" type="text/css" href="./style/booth_style.css">
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+	<noscript><style> .off { display: none } </style></noscript>
+	<noscript><link rel="stylesheet" type="text/css" href="./style/common_styles_sepia.css"></noscript>
 
 </head>
 
 <body>
 	<div class="blog-text">
+	<script>
+		function setTheme(item) {
+			if (item.className == "on") {
+				var style = document.getElementById("light");
+				style.setAttribute('href', './style/common_styles.css');
+				item.className = "off";
+			}
+			else {
+				var style = document.getElementById("light");
+				style.setAttribute('href', './style/common_styles_dark.css');
+				item.className = "on";
+			}
+		}
+	</script>
+	<a id="on-off" class="off" onclick="setTheme(this)" href="#">Turn on/off lights</a>
+	<br>
 	<h2>Understanding Booth's Algorithm</h2>
 	Booth's algorithm is a non conventional approach to multiplication. Though the implementation is non challenging, I found the underlying concept a bit tricky. Here I would like to share a detailed analysis of it's working.
 	<br><br>
@@ -105,6 +123,8 @@ X    1  9
 	[1] <a href="https://en.wikipedia.org/wiki/Booth%27s_multiplication_algorithm">Wikipedia</a>
 	<br>
 	[2] <a href="https://bit.ly/2TvfUqF">https://bit.ly/2TvfUqF</a>
+	<br><br>
+	<b>Update</b> (28/04/19): The [2] link is dead. Luckily I have a copy of the PDF file with me. If anyone is interested, I can mail it to them.
 	<br><br>
 	<a href="./blog.html" id="back-link">&#8249;</a>
 	</div>
