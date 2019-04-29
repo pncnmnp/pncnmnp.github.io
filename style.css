@@ -2,3 +2,59 @@
 	background: #f5f5f5;
 	color: black;
 }
+
+.topnav {
+	background-color: white;
+	overflow: hidden;
+}
+
+.topnav h1 {
+	display: inline;
+}
+
+.topnav a {
+	float: right;
+	color: tomato;
+	text-align: center;
+	padding: 14px 16px;
+	text-decoration: none;
+	font-size: 17px;
+}
+
+.topnav a:hover {
+	background:  #F5F5F5;
+}
+
+.small-frame {
+	display: none;
+}
+
+@media (max-width: 1000px) {
+	.topnav {
+		display: none;
+	}
+	
+	.small-frame {
+		display: block;
+	}
+
+	.small-frame h1 {
+		text-align: center;
+	}
+
+	.small-frame-content {
+		color: tomato;
+		font-size: 17px;
+		text-align: center;
+		padding: 4px 16px;
+	}
+
+	.frame {
+		padding: 4px 30px;
+		text-decoration: none;		
+	}
+
+	.frame:hover {
+		background: #F5F5F5;
+	}
+}

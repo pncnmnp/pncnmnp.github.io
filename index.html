@@ -11,13 +11,28 @@
 	<link rel="stylesheet" type="text/css" href="./blogs/style/common_styles.css" id="light">
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
-	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 
 </head>
 
 <body>
 	<div class="blog-text">
-		Hi there! This is <strong>Parth Parikh</strong>. [ પાર્થ પરીખ ] [ <a href="me.jpg">my pic</a> ] [ <a href="./blogs/blog.html">blog</a> ] [ <a href="./resume.pdf">resume</a> ]
+		<div class="topnav">
+			<h1>Parth Parikh</h1>
+			<a href="./resume.pdf">CV</a>
+			<a href="./projects.html">Projects</a>
+			<a href="./blogs/blog.html">Blog</a>
+		</div>
+		<div class="small-frame">
+			<h1>Parth Parikh<h1>
+			<div class="small-frame-content">
+				<a class="frame" href="./blogs/blog.html">Blog</a>
+				<a class="frame" href="./projects.html">Projects</a>
+				<a class="frame" href="./resume.pdf">CV</a>
+			</div>
+		</div>
+		<hr>
+		<br>
+		Hi there! This is <strong>Parth Parikh</strong>. [ પાર્થ પરીખ ] [ <a href="me.jpg">my pic</a> ]
 
 		<br><br>
 		I am currently pursuing B.E in Computer Engineering from <strong>Rajiv Gandhi Institute of Technology, Mumbai</strong>. Having lived in Mumbai for more than a decade, I know quite a lot about this city.
@@ -25,21 +40,6 @@
 		What started with poems and short stories, made a halt at computers and I am 19 so there is a long road ahead. Topics such as <i>cryptographic functions, text analysis, discrete mathematics, statistics and artificial intelligence</i> interest me.
 		<br><br>
 		When in the mood for fun, I do the usual read-binge-listen. I am a huge movie buff, mainly interested in crime, thriller and sci-fi genre. The sports I follow are Formula 1 ( motor-sport ) and Cricket. Apart from these, Politics and Current Affairs interest me. I am also a numismatist.
-		<br><br>
-
-		<script type="text/javascript">
-			var status;
-			$.ajax({
-				url: 'https://api.github.com/gists/'+'4eb116570eceed10c9f6e4f24773d2f2',
-				type: 'GET',
-				dataType: 'jsonp'
-			}).done( function(gistdata) {
-				document.getElementById("status").innerHTML = gistdata.data.files['status.txt'].content;
-				}).fail( function(e) {
-					// ajax error
-				});
-		</script>
-		<strong>Status</strong>: <i><span id="status"><noscript>Javascript is the duct tape of the Internet. Now this status won't stick! 😉</noscript></span></i>
 		<br><br>
 
 		<strong>Projects</strong>: 
@@ -65,10 +65,10 @@
 		[ <a href="https://github.com/pncnmnp" target="_blank">Github</a> ]
 		<br>
 		[ <a href="https://stackoverflow.com/users/7543474/mie-ppa" target="_blank">Stack Overflow</a> ]
+		<hr>
 	</div>
 
 <footer>
-<hr>
 	<div>
 		© 2019 Parth Parikh.
 	</div>
