@@ -11,13 +11,15 @@
 	float: right;
 	color: tomato;
 	text-align: center;
-	padding: 14px 16px;
 	text-decoration: none;
+	padding: 14px 16px;
 	font-size: 17px;
 }
 
 .topnav a:hover {
-	background:  #F5F5F5;
+	/*background:  #F5F5F5;*/
+	border-bottom: 3px solid #000;
+	padding-bottom: 3px;
 }
 
 .small-frame {
