@@ -4,6 +4,14 @@
 }
 */
 
+@font-face {
+	font-family: 'open_sansregular';
+	src: url('../fonts/opensans-regular-webfont.woff2') format('woff2'),
+		 url('../fonts/opensans-regular-webfont.woff') format('woff');
+	font-weight: 400;
+	font-style: normal;
+}
+
 ::selection {
 	/* WebKit/Blink Browsers */
 	background: #a8d1ff; 
@@ -22,7 +30,7 @@ div {
     zoom: 90%;
 	font-size: 16px;
 	font-weight: 400;
-	font-family: 'Open Sans', 'Helvetica', sans-serif;
+	font-family: 'open_sansregular', 'Helvetica', sans-serif;
 	font-style: normal;
 	max-width: 800px;
 	margin-left: auto;
