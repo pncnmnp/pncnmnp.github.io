@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+<meta name="author" content="parth_parikh">
+<meta name="description" content="My journey maintaining this static site">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crafting a static site</title>
+<link rel="stylesheet" type="text/css" href="./style/common_styles.css" id="light">
+<link rel="stylesheet" type="text/css" href="../style.css">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+<link rel="shortcut icon" type="image/png" href="../favicon.png"/>
+<noscript><style> .off { display: none } </style></noscript>
+
+</head>
+
+<body>
+<div class="blog-text">
+<script>
+	function setTheme(item) {
+		if (item.className == "on") {
+			var style = document.getElementById("light");
+			style.setAttribute('href', './style/common_styles.css');
+			item.className = "off";
+		}
+		else {
+			var style = document.getElementById("light");
+			style.setAttribute('href', './style/common_styles_dark.css');
+			item.className = "on";
+		}
+	}
+</script>
+<a id="on-off" class="off" onclick="setTheme(this)" href="#">Turn on/off lights</a>
+<br class="off">
+<h1>Crafting a static site</h1>
+<p>Crafting this site has been one of the most fun-filled experience I've had in the past 2 years. Through this blogpost I intend to give you a glimpse of my journey making a static website.</p>
+<p>You might have noticed that this site is hosted on Github pages, but things were different in 2016 when I had no clue what Github was. For a noob who had no experience in [ Git, HTML, CSS, Javascript ], Wordpress came as a saviour. Within two hours or so my first <a href="https://pncnmnp.wordpress.com/">website</a> was up and running. It was later the next day that I realized the speed and ease of use came at a major cost, not only was the site horribly unintuitive but managing it was an ordeal.</p>
+<p>It was in 2018, when I was again determined to create my own site. After a brief stint with Jekyll ( which gave me the old Wordpress vibes ), I decided it was time to start experimenting. I had the following objectives in my mind:</p>
+<ul>
+<li>The site should load extremely fast</li>
+<li>No use of Javascript</li>
+<li>Clutter-free design</li>
+</ul>
+<p>With the above principles, I hosted the site on <a href="https://htmlpreview.github.io/?https://github.com/pncnmnp/pncnmnp.github.io/blob/b74c0541cba7248a94f91031bd551460aa74fb14/index.html">Github pages</a> but it was far from perfect. One of the most important aspects of web-design is accessibility. With <i>monospace</i> as the default font, text inside &lt;pre&gt; tags, and no use of <i>viewport</i> property the site was horribly inaccessible.</p>
+<p>The following months went in creating a blog section and making the site more accessible. I also added a native dark mode and syntax highlighting for my blogs ( both in JS ). From my experience three things have to be taken care of when using JS on web - is the site accessible without it, does it seriously affect performance and lastly does it violate user's privacy. A lot of web developers feel that screen readers, no-JS users and text-based browsers are not worth supporting, while I hold a contradicting opinion, I strongly believe every page should fail gracefully. A brilliant discussion discussing the pros and cons of supporting no-JS has been conducted on <a href="https://softwareengineering.stackexchange.com/questions/25969/should-i-bother-to-develop-for-javascript-disabled">Stack Exchange</a>.</p>
+<p>My priorities for this site have drastically changed since 2019. Today I use a custom <a href="https://github.com/pncnmnp/Markdown-to-HTML">Markdown-to-HTML parser</a> to write these blogposts. Producing quality content, making the site accessible to any and all devices out there and complementing all that with a clean UI are the only objectives I am aiming at.</p>
+<p>Finally I would like to end the blogpost with a collection of web-design and internet architecture related links you might find interesting:</p>
+<ul>
+<li><a href="https://bradleytaunt.com/html-like-1999/">Write HTML Like It's 1999</a></li>
+<li><a href="https://softwareengineering.stackexchange.com/questions/46716/what-technical-details-should-a-programmer-of-a-web-application-consider-before">What technical details should a programmer of a web application consider before making the site public?</a></li>
+<li><a href="https://softwareengineering.stackexchange.com/questions/333487/developing-web-applications-for-long-lifespan-20-years">Developing web applications for long lifespan (20+ years)</a></li>
+<li><a href="https://www.petelambert.com/journal/html-is-the-web">HTML is the Web</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web">Mozilla docs</a> - Clear and regularly updated for web-development</li>
+<li><a href="https://stackoverflow.com/questions/6751105/why-its-not-possible-to-use-regex-to-parse-html-xml-a-formal-explanation-in-la">Why it's not possible to use Regex to parse HTML/XML</a> and <a href="https://drewdevault.com/2017/08/13/When-not-to-use-a-regex.html">When not to use a regex</a> .</li>
+<li><a href="https://web.stanford.edu/class/msande91si/www-spr04/readings/week1/InternetWhitepaper.htm">How Does the Internet Work?</a></li>
+<li><a href="https://drewdevault.com/2018/09/04/Conservative-web-development.html">Conservative web development</a></li>
+</ul>
+<br>
+<a id="back-link" href="../blog.html">&#8249;</a>
+</div>
+<footer>
+<hr>
+<div>
+© 2019 Parth Parikh.
+</div>
+</footer>
+
+</body>
+</html>

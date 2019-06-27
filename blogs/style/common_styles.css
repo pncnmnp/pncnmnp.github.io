@@ -1,3 +1,19 @@
+/*For testing */
+/** {
+	border: 2px dotted black;
+}
+*/
+
+::selection {
+	/* WebKit/Blink Browsers */
+	background: #a8d1ff; 
+}
+
+::-moz-selection {
+	 /* Gecko Browsers */
+	background: #a8d1ff; 
+}
+
 body {
 	line-height: 1.5;
 }
