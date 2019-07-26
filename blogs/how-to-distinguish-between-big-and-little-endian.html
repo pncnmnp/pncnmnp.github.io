@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+<meta name="author" content="parth_parikh">
+<meta name="description" content="How to distinguish between big and little endian">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to distinguish between big and little endian ?</title>
+<link rel="stylesheet" type="text/css" href="./style/common_styles.css" id="light">
+<link rel="stylesheet" type="text/css" href="../style.css">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+<link rel="shortcut icon" type="image/png" href="../favicon.png"/>
+
+</head>
+
+<body>
+<div class="blog-text">
+<h1>How to distinguish between big and little endian ?</h1>
+<p>For any person studying computer science, confusing terminologies are ever-present. It is probably because the field has yet to age gracefully. Nevertheless today we have terminologies like <b>car - cdr</b> (<a href="https://en.wikipedia.org/wiki/CAR<i>and</i>CDR">wikipedia</a>) and <b>little - big</b> endianness. Today we are going to discuss about the latter, i.e. endianness.</p>
+<p>Endianness is a mannerism of ordering <b>bytes</b> in a multi-byte number, i.e do you want to order the bytes MSB first or LSB first.</p>
+<pre style="font-size: 12px;">
+---------------------
+| | | | | | | | | | |
+---------------------
+^                   ^
+MSB               LSB
+</pre>
+<p>Little endian is when first <b>byte</b> is placed in LSB position, continuing towards MSB whereas Big endian is when first <b>byte</b> is placed in MSB position continuing towards LSB.</p>
+<p>Why does the order of bytes matter so much ?<br>
+It matters as different applications have different endianness. For processor architectures (ARM, x86) little-endian is used whereas for networking protocols (UDP, IP, TCP) big-endian is used. To check the byte-order of your PC, type <code>lscpu</code> (LINUX) in the terminal.</p>
+<p>How to remember which is which ?<br>
+The way I remember is by recalling the abbrevation <b>LL</b>, which means Little Endian -> LSB first. The reverse will be true for big endian.</p>
+<br>
+<a id="back-link" href="../blog.html">&#8249;</a>
+</div>
+<footer>
+<hr>
+<div>
+© 2019 Parth Parikh.
+</div>
+</footer>
+
+</body>
+</html>
