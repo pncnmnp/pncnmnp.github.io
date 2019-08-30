@@ -27,7 +27,7 @@ body {
 }
 
 div {
-    zoom: 90%;
+    /*zoom: 90%;*/
 	font-size: 16px;
 	font-weight: 400;
 	font-family: 'open_sansregular', 'Helvetica', sans-serif;
@@ -37,9 +37,14 @@ div {
 	margin-right: auto;
 }
 
+.small-frame {
+	zoom: 90%;
+}
+
 img {
 	display: block;
 	margin: 0 auto;
+	max-width: 100%;
 }
 
 #on-off {
