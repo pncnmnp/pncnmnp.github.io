@@ -70,13 +70,13 @@ X    1  9
 	<br><br>
 	We first divide the multiplicand and multiplier according to their place value, multiply each individual component and finally add them all. By shedding the zeros and replacing them with shift operations, we start seeing a noticeable difference in terms of no. of addition operations. Here is an excellent link to better visualize this process : [ <a href="http://mathforum.org/library/drmath/view/59087.html">lattice multiplication</a> ].
 	<br><br>
-	By now a reader should realize that implementing this in computers will be a performance-boost as we only deal with binary digits ( 0's and 1's ). We can skip an entire row where multiplier's digit is 0. Though we would have to do more shift operations every subsequent digit, this is not a major concern as most modern processors can perform this in O(1) time. See the following SO question for more detail : [ <a href="https://stackoverflow.com/a/9083865/7543474">Is bit shifting O(1) or O(n)?</a> ]. Carry look ahead adders can be used to reduce the propogation delay in addition operations.
+	By now the reader should realize that implementing this in computers will be a performance-boost as we only deal with binary digits ( 0's and 1's ). We can skip an entire row where multiplier's digit is 0. Though we would have to do more shift operations every subsequent digit, this is not a major concern as most modern processors can perform this in O(1) time. See the following SO question for more detail : [ <a href="https://stackoverflow.com/a/9083865/7543474">Is bit shifting O(1) or O(n)?</a> ]. Carry look ahead adders can be used to reduce the propagation delay in addition operations.
 	<br><br>
 	But can we perform better ?
 	<br><br>
 	How ?
 	<br><br>
-	A careful reader would have realized by now that this game is all about minimizing the number of addition operations. In enters the Booth's algorithm. It works on the principle that by simplifying addition operations, we can reduce the no. of 1's and in turn reduce the no. of additions. We start with accumulator initialized to 0, multiplier ( m ) with it's initial value and m<sub>-1</sub> to 0.
+	A careful reader would have realized by now that this game is all about minimizing the number of addition operations. In enters the Booth's algorithm. It works on the principle that by simplifying addition operations, we can reduce the no. of 1's and in turn reduce the no. of additions. We start with accumulator initialized to 0, multiplier ( m ) with its initial value and m<sub>-1</sub> to 0.
 	<br><br>
 	With the goal of multiplying multiplier( m ) * multiplicand( n ), all we do is check m<sub>0</sub> and m<sub>-1</sub> bits at each step, where m<sub>0</sub> is the leftmost bit of multiplier. We then follow a simple check: ( m<sub>-1</sub> - m<sub>0</sub> ).
 	<br><br>
@@ -110,11 +110,11 @@ X    1  9
 		</tr>
 	</table>
 	<br>
-	All we do now is multiply 'check' value with multiplicand and 2<sup>a</sup>. Where 'a' is counter from 0 to no. of bits in m or n. If multiplicand and multiplier don't have same number of bits, padding is required. Think of padding this way: when m : 11, n : 1010 --> m will become 0011 and no. of bits will be 4. After each step, we perform arithmetic right shift, just like we did in lattice multiplication.
+	All we do now is multiply 'check' value with multiplicand and 2<sup>a</sup>. Where 'a' is counter from 0 to no. of bits in m or n. If multiplicand and multiplier doesn't have the same number of bits, padding is required. Think of padding this way: when m : 11, n : 1010 --> m will become 0011 and no. of bits will be 4. After each step, we perform arithmetic right shift, just like we did in lattice multiplication.
 	<br><br>
 	Ok, so with all in place, let's try and see the final equation : 
 	<span>&sum;</span> ARS [ (m<sub>k-1</sub> - m<sub>k</sub>) * n * 2<sup>k</sup> ]
-	<br>Where ARS is arithmetic right shift, n is multiplicand and m is multiplier. The ARS outside sq. brackets indicates that arithmetic right shift has to be performed at each step.
+	<br>Where ARS is arithmetic right shift, n is multiplicand and m is the multiplier. The ARS outside square brackets indicates that arithmetic right shift has to be performed at each step.
 	<br><br><b>NOTE:</b> This equation is NOT in accordance with the mathematical convention, and I use it as a remembering technique.
 	<br><br>You would observe that that the above equation will be equal to m*n, our result to be determined.
 	<br><br>
