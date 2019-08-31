@@ -43,8 +43,14 @@
 		color: tomato;
 		font-size: 17px;
 		text-align: center;
-		padding: 4px 16px;
+		/*padding: 4px 16px;*/
 	}
+
+	@-moz-document url-prefix() {
+		.small-frame-content {
+			font-size: 4vw;
+		}
+	}	
 
 	.frame {
 		padding: 4px 30px;
