@@ -48,6 +48,10 @@ img {
 	max-width: 100%;
 }
 
+.story {
+	background-color: #f3f3f3
+}
+
 #on-off {
 	float: right;
 }
