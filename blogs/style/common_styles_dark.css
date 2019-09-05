@@ -29,8 +29,12 @@ img {
 	max-width: 100%;
 }
 
-#on-off {
+#on-off, #font-on-off {
 	float: right;
+}
+
+#font-on-off {
+	padding-top: 5px;
 }
 
 #back-link {
@@ -46,6 +50,10 @@ img {
 	background-color: #e5593f;
 }
 
+#title {
+	/*For table titles*/
+	color: black;	
+}
 
 a {
 	color: tomato;

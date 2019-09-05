@@ -52,8 +52,12 @@ img {
 	background-color: #f3f3f3
 }
 
-#on-off {
+#on-off, #font-on-off {
 	float: right;
+}
+
+#font-on-off {
+	padding-top: 5px;
 }
 
 #back-link {
