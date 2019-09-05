@@ -18,45 +18,9 @@
 
 <body>
 <div class="blog-text">
-		<script>
-			function setTheme(item) {
-				if (item.className == "on") {
-					var style = document.getElementById("light");
-					style.setAttribute('href', './style/common_styles.css');
-					item.className = "off";
-				}
-				else {
-					var style = document.getElementById("light");
-					style.setAttribute('href', './style/common_styles_dark.css');
-					item.className = "on";
-				}
-			}
-
-			function setFont(item) {
-				if (item.className == "f-on") {
-					 document.getElementsByClassName("blog-text")[0].style.fontFamily = "open_sansregular, sans-serif"; 
-					 item.className = "f-off";
-				}
-				else {
-					 document.getElementsByClassName("blog-text")[0].style.fontFamily = "Georgia, serif"; 
-					 item.className = "f-on";
-				}
-			}
-
-			function zoomPlus(item) {
-				text_size = document.getElementsByClassName("blog-text")[0];
-				size = window.getComputedStyle(text_size, null).getPropertyValue('font-size');
-				size = parseInt(size) + 1;
-				document.getElementsByClassName("blog-text")[0].style.fontSize = String(size) + "px";
-			}
-
-			function zoomMinus(item) {
-				text_size = document.getElementsByClassName("blog-text")[0];
-				size = window.getComputedStyle(text_size, null).getPropertyValue('font-size');
-				size = parseInt(size) - 1;
-				document.getElementsByClassName("blog-text")[0].style.fontSize = String(size) + "px";
-			}
-		</script>
+		<script type="text/javascript" src="./js/dark_light_mode.js"></script>
+		<script type="text/javascript" src="./js/zoom_text.js"></script>
+		<script type="text/javascript" src="./js/change_font.js"></script>
 
 		<div class="options">
 			<button id="on-off" class="off" onclick="setTheme(this)" href="#">Turn on/off lights</button>

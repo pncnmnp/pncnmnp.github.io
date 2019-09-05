@@ -21,20 +21,8 @@
 
 <body>
 <div class="blog-text">
-<script>
-	function setTheme(item) {
-		if (item.className == "on") {
-			var style = document.getElementById("light");
-			style.setAttribute('href', './style/common_styles.css');
-			item.className = "off";
-		}
-		else {
-			var style = document.getElementById("light");
-			style.setAttribute('href', './style/common_styles_dark.css');
-			item.className = "on";
-		}
-	}
-</script>
+<script src="./js/dark_light_mode.js"></script>
+
 <a id="on-off" class="off" onclick="setTheme(this)" href="#">Turn on/off lights</a>
 <br>
 <h1>Understanding Computational Complexity</h1>
