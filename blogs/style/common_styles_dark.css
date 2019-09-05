@@ -22,6 +22,12 @@ div {
 	margin-right: auto;
 }
 
+@media(max-width: 1000px) {
+	div {
+		zoom: 90%;
+	}
+}
+
 img {
 	background-color: #fff;
 	display: block;
