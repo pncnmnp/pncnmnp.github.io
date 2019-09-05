@@ -52,6 +52,12 @@ img {
 	background-color: #f3f3f3
 }
 
+#email {
+	display: inline;
+	margin: auto;
+	max-width: 100%;
+}
+
 #on-off, #font-on-off, #zoom-text {
 	float: right;
 	border: none;
