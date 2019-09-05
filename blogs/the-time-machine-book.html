@@ -5,9 +5,9 @@
 
 <meta charset="utf-8">
 <meta name="author" content="parth_parikh">
-<meta name="description" content="My journey maintaining this static site">
+<meta name="description" content="The Time Machine - H.G. Wells">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Crafting a static site</title>
+<title>The Time Machine - H.G. Wells</title>
 <link rel="stylesheet" type="text/css" href="./style/common_styles.css" id="light">
 <link rel="stylesheet" type="text/css" href="../style.css">
 <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"> -->
@@ -42,13 +42,30 @@
 					 item.className = "f-on";
 				}
 			}
+
+			function zoomPlus(item) {
+				text_size = document.getElementsByClassName("blog-text")[0];
+				size = window.getComputedStyle(text_size, null).getPropertyValue('font-size');
+				size = parseInt(size) + 1;
+				document.getElementsByClassName("blog-text")[0].style.fontSize = String(size) + "px";
+			}
+
+			function zoomMinus(item) {
+				text_size = document.getElementsByClassName("blog-text")[0];
+				size = window.getComputedStyle(text_size, null).getPropertyValue('font-size');
+				size = parseInt(size) - 1;
+				document.getElementsByClassName("blog-text")[0].style.fontSize = String(size) + "px";
+			}
 		</script>
 
-		<a id="on-off" class="off" onclick="setTheme(this)" href="#">Turn on/off lights</a>
-		<br class="off">
-		<a id="font-on-off" class="f-off" onclick="setFont(this)" href="#">Serif/Sans-Serif</a>
-		<br class="off">
+		<div class="options">
+			<button id="on-off" class="off" onclick="setTheme(this)" href="#">Turn on/off lights</button>
+			<button id="font-on-off" class="f-off" onclick="setFont(this)" href="#">Serif/Sans-Serif</button>
+			<button id="zoom-text" class="zoom" onclick="zoomMinus(this)" href="#">Zoom -</button>
+			<button id="zoom-text" class="zoom" onclick="zoomPlus(this)" href="#">Zoom +</button>
+		</div>
 
+<br>
 <p><a name="chap01"></a></p> <h3> I </h3>
 
 <h3> Introduction </h3>
