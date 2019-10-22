@@ -75,3 +75,9 @@ footer {
 	margin-left: auto;
 	margin-right: auto;
 }
+
+pre {
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	text-align: justify;
+}
