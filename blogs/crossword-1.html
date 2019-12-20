@@ -5,7 +5,7 @@
 
 <meta charset="utf-8">
 <meta name="author" content="parth_parikh">
-<meta name="description" content="Solving a crossword in Python">
+<meta name="description" content="Solving a crossword in Python - Part 1">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Crafting a crossword solver (Part 1)</title>
 <link rel="stylesheet" type="text/css" href="./style/common_styles.css" id="light">
@@ -23,6 +23,7 @@
 <a id="on-off" class="off" onclick="setTheme(this)" href="#">Turn on/off lights</a>
 <br class="off">
 <h1>Crafting a crossword solver (Part 1)</h1>
+<p><b>Update: <a href="./crossword-2.html">I have written a part 2 of this blogpost!</a></b></p>
 <p>This December, I was fascinated by the <a href="https://en.wikipedia.org/wiki/Boolean_satisfiability_problem">Boolean satisfiability problem (SAT)</a> and it's applications. I was looking for a problem which had it's roots in text-analysis and SAT. Trying to discover for such problems, this answer on <a href="https://cstheory.stackexchange.com/a/503/49750">CS Theory</a> caught my attention. There have been many crossword solvers which, given a list of solutions, are able to arrange those in the grid. My motive was to add an extra layer of difficulty: <i>predict the probable guesses using the clues provided by the crossword.</i> As I was already familiar with Python's various NLP libraries, it was an obvious choice for this project.</p>
 <p><i>What does a computer need to solve a crossword?</i>
 	<br>
@@ -81,6 +82,7 @@ probable_guesses = [word for word in word_vectors.most_similar(positive=pos_word
 	</ul>	
 </p>
 <p>If you have any suggestions/questions, feel free to drop a <a href="https://pncnmnp.github.io/blogs/pics/email.png">mail</a>!</p>
+<p><b>Update: <a href="./crossword-2.html">I have written a part 2 of this blogpost!</a></b></p>
 <br>
 <a id="back-link" href="../blog.html">&#8249;</a>
 </div>
