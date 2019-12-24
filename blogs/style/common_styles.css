@@ -61,10 +61,10 @@ img {
 
 #on-off, #font-on-off, #zoom-text {
 	float: right;
-	border: none;
+	border: 4px solid black;
 	color: black;
-	background-color: white;
 	text-decoration: none;
+	padding: 2px 2px 2px 2px;
 }
 
 #back-link {
