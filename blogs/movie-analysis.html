@@ -13401,11 +13401,11 @@ As the database is big, we will start by analyzing the primary dataset: <code>./
     </tr>
     <tr>
       <th>top</th>
-      <td>Brahmachari (1968 Hindi film)</td>
-      <td>tt2424988</td>
+      <td>Aan</td>
+      <td>tt0347416</td>
       <td>https://upload.wikimedia.org/wikipedia/en/thum...</td>
-      <td>https://en.wikipedia.org/wiki/Tahkhana</td>
-      <td>Dushman</td>
+      <td>https://en.wikipedia.org/wiki/Aakraman</td>
+      <td>Anari</td>
       <td>Dushman</td>
       <td>NaN</td>
       <td>2014</td>
@@ -13413,10 +13413,10 @@ As the database is big, we will start by analyzing the primary dataset: <code>./
       <td>Drama</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>While driving his car on a rainy night  Anand'...</td>
+      <td>A Royal Indian family consists of the Emperor ...</td>
       <td>Add a Plot »</td>
-      <td>The First Spectacular Musical Drama Ever To Co...</td>
-      <td>Manoj Bajpayee|Richa Chadha|Nawazuddin Siddiqu...</td>
+      <td>A million-dollar fake</td>
+      <td>Mala Sinha|Dharmendra|Kumkum|Sujit Kumar|Mehmo...</td>
       <td>1 nomination</td>
       <td>1977 (India)</td>
     </tr>
@@ -13641,9 +13641,10 @@ As the database is big, we will start by analyzing the primary dataset: <code>./
 <li>As mean is <code>0.0</code> for <code>is_adult</code>, the value is same for all movies. Hence we can drop that attribute</li>
 <li><code>actors</code> and <code>genres</code> are separated by |</li>
 <li>Many movies don't have information about <code>tagline</code> and <code>wins_nominations</code> (Less information pertaining to <code>wins_nominations</code> is obvious as not every film can win awards or get nominated 😄)</li>
-<li><code>runtime</code> is of dtype <code>object</code> as null values are entered in character form ('\N'). We will need to convert it to <code>float64</code> type</li>
+<li><code>runtime</code> is of dtype <code>object</code> as null values are entered in character form ('\N'). We need to convert it to <code>float64</code> type</li>
+<li>The mean IMDB rating is 5.91 and the maximum rating a film has been given is 9.4 </li>
 </ul>
-<p><strong>Note: from documentation (for <code>./1950-2019/bollywood_full.csv</code>)</strong></p>
+<p><strong>A note from documentation (for <code>./1950-2019/bollywood_full.csv</code>)</strong></p>
 <blockquote><p>(This dataset is merged ON "imdb_id", hence if you find a niche-movie missing, see the respective year's directory).</p>
 </blockquote>
 <p><strong>i.e</strong> if a movie released in 1994 is missing from this dataset, check the directory <code>./1990-2009/</code></p>
@@ -13787,7 +13788,7 @@ As the database is big, we will start by analyzing the primary dataset: <code>./
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Let's start playing with the dataset. First we will find statistics about <code>runtime</code> attribute.</p>
+<p>Before we continue, I have got to know <em>which film scored a 9.4 on IMDB</em> 😁</p>
 
 </div>
 </div>
@@ -13795,6 +13796,79 @@ As the database is big, we will start by analyzing the primary dataset: <code>./
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;imdb_rating&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">9.4</span><span class="p">][[</span><span class="s2">&quot;original_title&quot;</span><span class="p">,</span> <span class="s2">&quot;year_of_release&quot;</span><span class="p">,</span> <span class="s2">&quot;imdb_id&quot;</span><span class="p">]]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[8]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>original_title</th>
+      <th>year_of_release</th>
+      <th>imdb_id</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>41</th>
+      <td>Family of Thakurganj</td>
+      <td>2019</td>
+      <td>tt8897986</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>How ? What .... <a href="https://www.imdb.com/title/tt8897986/">Apparently this film does have a rating of 9.4</a>! (as of December 27, 2019)</p>
+<p>Let's start playing with the dataset. First we will find statistics about <code>runtime</code> attribute.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;runtime&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">describe</span><span class="p">(),</span> <span class="s2">&quot;Total hours of content created by Indian cinema: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;runtime&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span><span class="o">/</span><span class="mi">60</span><span class="p">))</span>
@@ -13810,7 +13884,7 @@ As the database is big, we will start by analyzing the primary dataset: <code>./
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[8]:</div>
+    <div class="prompt output_prompt">Out[9]:</div>
 
 
 
@@ -13845,7 +13919,7 @@ As the database is big, we will start by analyzing the primary dataset: <code>./
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">year_mapping</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -13913,7 +13987,7 @@ C = the mean vote across the whole report</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">all_genres</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">genre</span> <span class="k">for</span> <span class="n">genre</span> <span class="ow">in</span> <span class="p">[</span><span class="n">genres</span> <span class="k">for</span> <span class="n">genres</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;genres&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span> <span class="k">for</span> <span class="n">genre</span> <span class="ow">in</span> <span class="n">genre</span><span class="p">])</span>
@@ -13931,7 +14005,7 @@ C = the mean vote across the whole report</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[10]:</div>
+    <div class="prompt output_prompt">Out[11]:</div>
 
 
 
@@ -13969,7 +14043,7 @@ C = the mean vote across the whole report</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">imdb_rating</span><span class="p">(</span><span class="n">film</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
@@ -13986,7 +14060,7 @@ C = the mean vote across the whole report</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">top_movies</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">percentile</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">genre</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -14018,7 +14092,7 @@ C = the mean vote across the whole report</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">top_movies</span><span class="p">(</span><span class="n">df</span><span class="p">)[[</span><span class="s2">&quot;original_title&quot;</span><span class="p">,</span> <span class="s2">&quot;imdb_rating&quot;</span><span class="p">,</span> <span class="s2">&quot;imdb_votes&quot;</span><span class="p">,</span> <span class="s2">&quot;rating&quot;</span><span class="p">,</span> <span class="s2">&quot;year_of_release&quot;</span><span class="p">,</span> <span class="s2">&quot;imdb_id&quot;</span><span class="p">]]</span>
@@ -14034,7 +14108,7 @@ C = the mean vote across the whole report</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[13]:</div>
+    <div class="prompt output_prompt">Out[14]:</div>
 
 
 
@@ -14170,14 +14244,14 @@ C = the mean vote across the whole report</p>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>To get filter top movies (by genre), simply fill the <code>genre</code> attribute</p>
+<p>To find top movies (by genre), simply fill the <code>genre</code> attribute</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">top_movies</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">genre</span><span class="o">=</span><span class="s2">&quot;Mystery&quot;</span><span class="p">)[[</span><span class="s2">&quot;original_title&quot;</span><span class="p">,</span> <span class="s2">&quot;imdb_rating&quot;</span><span class="p">,</span> <span class="s2">&quot;imdb_votes&quot;</span><span class="p">,</span> <span class="s2">&quot;rating&quot;</span><span class="p">,</span> <span class="s2">&quot;year_of_release&quot;</span><span class="p">,</span> <span class="s2">&quot;imdb_id&quot;</span><span class="p">]]</span>
@@ -14193,7 +14267,7 @@ C = the mean vote across the whole report</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[14]:</div>
+    <div class="prompt output_prompt">Out[15]:</div>
 
 
 
@@ -14336,7 +14410,7 @@ C = the mean vote across the whole report</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">top_movies</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">genre</span><span class="o">=</span><span class="s2">&quot;Mystery&quot;</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">10</span><span class="p">)[[</span><span class="s2">&quot;original_title&quot;</span><span class="p">,</span> <span class="s2">&quot;imdb_rating&quot;</span><span class="p">,</span> <span class="s2">&quot;imdb_votes&quot;</span><span class="p">,</span> <span class="s2">&quot;rating&quot;</span><span class="p">,</span> <span class="s2">&quot;year_of_release&quot;</span><span class="p">,</span> <span class="s2">&quot;imdb_id&quot;</span><span class="p">]]</span>
@@ -14352,7 +14426,7 @@ C = the mean vote across the whole report</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[15]:</div>
+    <div class="prompt output_prompt">Out[16]:</div>
 
 
 
@@ -14495,7 +14569,7 @@ C = the mean vote across the whole report</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">crew_movie_path</span> <span class="o">=</span> <span class="s2">&quot;./1950-2019/bollywood_crew.csv&quot;</span>
@@ -14519,7 +14593,7 @@ C = the mean vote across the whole report</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[16]:</div>
+    <div class="prompt output_prompt">Out[17]:</div>
 
 
 
@@ -14591,7 +14665,7 @@ C = the mean vote across the whole report</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">director_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -14607,7 +14681,7 @@ C = the mean vote across the whole report</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[17]:</div>
+    <div class="prompt output_prompt">Out[18]:</div>
 
 
 
@@ -14697,7 +14771,7 @@ C = the mean vote across the whole report</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">writer_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -14713,7 +14787,7 @@ C = the mean vote across the whole report</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[18]:</div>
+    <div class="prompt output_prompt">Out[19]:</div>
 
 
 
@@ -14811,7 +14885,7 @@ C = the mean vote across the whole report</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">split_attribute</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">split_by</span><span class="o">=</span><span class="s2">&quot;|&quot;</span><span class="p">):</span>
@@ -14830,10 +14904,12 @@ C = the mean vote across the whole report</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_crew_freq</span><span class="p">(</span><span class="n">crew_type</span><span class="o">=</span><span class="s2">&quot;directors&quot;</span><span class="p">):</span>
+    <span class="c1"># As we want list of top directors and writers</span>
+    <span class="c1"># We are only considering the top 250 movies generated by method top_movies()  </span>
     <span class="n">top_imdb_ids</span> <span class="o">=</span> <span class="n">top_movies</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">250</span><span class="p">)[</span><span class="s2">&quot;imdb_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
     <span class="n">freq</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
@@ -14863,7 +14939,7 @@ C = the mean vote across the whole report</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">director_freq</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">director_freq</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
@@ -14901,14 +14977,14 @@ C = the mean vote across the whole report</p>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Looks like Anurag Kashyap is critically the most popular director (the views strongly correlate with that of IMDB audience). A similar histogram can be plotted for Writers and Actors. Here is a list of top writers:</p>
+<p>Looks like <em>Anurag Kashyap</em> is critically the most popular director (the views strongly correlate with that of IMDB audience). A similar histogram can be plotted for Writers and Actors. Here is a list of top writers:</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">writer_freq</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">get_crew_freq</span><span class="p">(</span><span class="n">crew_type</span><span class="o">=</span><span class="s2">&quot;writers&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)[:</span><span class="n">LIMIT</span><span class="p">]}</span>
@@ -14947,14 +15023,15 @@ C = the mean vote across the whole report</p>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>It is suprising that Anurag Kashyap has topped this list as well! Let's experiment something else, we will try showing a correlation between top directors and top writers, the perfect recipe for success!</p>
+<p>It is suprising that <em>Anurag Kashyap</em> has topped this list as well! Let's experiment something else, we will try showing a correlation between top directors and top writers, the perfect recipe for success!</p>
+<p>i.e we are finding which top directors and writers have collaborated with each other.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">top_directors</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">director_freq</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
@@ -14989,7 +15066,7 @@ C = the mean vote across the whole report</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">cmap</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">light_palette</span><span class="p">(</span><span class="s2">&quot;Blue&quot;</span><span class="p">,</span> <span class="n">as_cmap</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -15007,13 +15084,13 @@ C = the mean vote across the whole report</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[24]:</div>
+    <div class="prompt output_prompt">Out[25]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x7f0a9a6145f8&gt;</pre>
+<pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x7f0e8bb38240&gt;</pre>
 </div>
 
 </div>
@@ -15047,7 +15124,7 @@ C = the mean vote across the whole report</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">relation_dwa</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span> <span class="c1"># This dictionary will hold the frequency count of {(director, writer, actor): freq, ..}</span>
@@ -15084,7 +15161,7 @@ C = the mean vote across the whole report</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">Xuniques</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">([</span><span class="n">rel</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">rel</span> <span class="ow">in</span> <span class="n">relation_dwa</span><span class="p">],</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -15137,7 +15214,8 @@ C = the mean vote across the whole report</p>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Just like the heatmap, this model appears sparse!</p>
+<p>Just like the heatmap, this model appears sparse!
+In the model above, the color scheme (<code>c</code>) acts as the fourth dimension (showing frequency).</p>
 
 </div>
 </div>
@@ -15145,14 +15223,14 @@ C = the mean vote across the whole report</p>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Content-based-filtering">Content based filtering<a class="anchor-link" href="#Content-based-filtering">&#182;</a></h2><p>We will now perform content based filtering using ctors, director, writer, title, genres, story, summary and tagline (if any). For content based filtering the strategy we will follow is a trivial one. We will perform cosine similarity on the attributes mentioned above (after removing the stopwords and other minor cleaning). Getting director and writer info is being repeated frequently, so we will write a method for it.</p>
+<h2 id="Content-based-filtering">Content based filtering<a class="anchor-link" href="#Content-based-filtering">&#182;</a></h2><p>We will now perform content based filtering using actors, director, writer, title, genres, story, summary and tagline (if any). For content based filtering the strategy we will follow is a trivial one. We will perform cosine similarity on the attributes mentioned above (after removing the stopwords and other minor cleaning). Getting director and writer info is being repeated frequently, so we will write a method for it.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_director_writer</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">person</span><span class="o">=</span><span class="s2">&quot;director&quot;</span><span class="p">):</span>
@@ -15173,7 +15251,7 @@ C = the mean vote across the whole report</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">content_based</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">offset</span><span class="p">):</span>
@@ -15222,7 +15300,7 @@ C = the mean vote across the whole report</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[28]:</div>
+    <div class="prompt output_prompt">Out[29]:</div>
 
 
 
@@ -15347,11 +15425,11 @@ C = the mean vote across the whole report</p>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As you can see, our approach is able to predict cricket based films for MS Dhoni: An Untold Story. We are passing our results to the <code>top_movies</code> method we wrote earlier with a 0.2 percentile to remove the worst reviewed films. Also I have added <code>difflib</code>'s <code>get_close_matches</code> method to predict the movie which is closest to the film entered by the user. This is helpful in situations where one doesn't know the exact movie title!</p>
-<p>Again, this is a very basic approach and many sophisticated approaches exist! You can also use <code>tags.csv</code>, <code>genome_tags.csv</code> and <code>genome_scores.csv</code>. Please note (from <a href="https://github.com/pncnmnp/TIMDB">TIMDB's documentation</a>):</p>
+<p>As you can see, our approach is able to predict cricket based films for <em>MS Dhoni: An Untold Story</em>. We are passing our results to the <code>top_movies</code> method we wrote earlier with a 0.2 percentile to remove the worst reviewed films. Also I have added <code>difflib</code>'s <code>get_close_matches</code> method to predict the movie which is closest to the film entered by the user. This is helpful in situations where one doesn't know the exact movie title!</p>
+<p>Again, this is a very basic approach and many sophisticated approaches exist! You can also use <code>tags.csv</code>, <code>genome_tags.csv</code> and <code>genome_scores.csv</code>. From <a href="https://github.com/pncnmnp/TIMDB">TIMDB's documentation</a>:</p>
 <blockquote><p>The genome-scores were available for very few movies (64 in total) from "Full" MovieLens dataset.</p>
 </blockquote>
-<p><em>Also based on my observation, <code>tags.csv</code> has tags for 504 movies!</em> If the movie is not very popular, your best bet would be to generate tags from summary, story and tagline.</p>
+<p><em>Based on my observation, <code>tags.csv</code> has tags for 504 movies!</em> Therefore, if the movie is not very popular, your best bet would be to generate tags from summary, story and tagline.</p>
 
 </div>
 </div>
@@ -15366,7 +15444,7 @@ C = the mean vote across the whole report</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">collaborative</span><span class="p">(</span><span class="n">m_id</span><span class="p">):</span>
@@ -15417,7 +15495,7 @@ Done computing similarity matrix.
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[29]:</div>
+    <div class="prompt output_prompt">Out[30]:</div>
 
 
 
@@ -15444,7 +15522,7 @@ Done computing similarity matrix.
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>From above you can see, we are being recommended movies with Aamir Khan in them. Also sports based movies and movies with the theme - "struggle" are popular. You can use <code>./collaborative/links.csv</code> to convert a <code>movie_id</code> to it's equivalent <code>imdb_id</code> and get the statistics for the same from <code>./1950-2019/bollywood_full.csv</code>. From the documentation:</p>
+<p>From above you can see, we are being recommended movies with <em>Aamir Khan</em> in them. Also <em>sports</em> based movies and movies with the theme - <em>struggle</em> are popular. You can use <code>./collaborative/links.csv</code> to convert a <code>movie_id</code> to it's equivalent <code>imdb_id</code> and get the statistics for the same from <code>./1950-2019/bollywood_full.csv</code>. From the documentation:</p>
 <blockquote><p>The leading zeros are removed for imdb_id, which are not removed for the rest of the database(i.e for "1950-1989", "1990-2009", "2010-2019" and "1950-2019").<br>
 <strong>Example:</strong> in links.csv if imdb_id is 123456, it can be tt0123456 in imdb_id col in the datasets in "1950-1989", "1990-2009" and "2010-2019".</p>
 </blockquote>
@@ -15455,7 +15533,7 @@ Done computing similarity matrix.
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>So this is it! Hopefully I have given you a good overview of how this dataset looks like and what basic operations you can perform with it. You can try and create a hybrid approach which combines results from content-based and collaborative filtering approaches. If you have any questions, you can <a href="https://pncnmnp.github.io/#contact">contact</a> me.</p>
+<p>So this is it! Hopefully I have given you a good overview of how this dataset looks like and what basic operations you can perform with it. <strong>Try caching the models and dataframes to perform quick recommendations.</strong> You can try and create a hybrid approach which combines results from content-based and collaborative filtering approaches. If you have any questions, you can <a href="https://pncnmnp.github.io/#contact">contact</a> me.</p>
 <p>Keep exploring! 😄</p>
 
 </div>
