@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+<meta name="author" content="parth_parikh">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Opening one of my vaults</title>
+<link href="./style/prism_okaidia.css" rel="stylesheet" />
+<script src="./js/prism_okaidia.js"></script>
+<link rel="stylesheet" type="text/css" href="./style/common_styles.css" id="light">
+<link rel="stylesheet" type="text/css" href="../style.css">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+<link rel="shortcut icon" type="image/png" href="../favicon.png"/>
+
+</head>
+<body>
+<div class="blog-text">
+<h1>Opening one of my vaults</h1>
+This is positively one of my first pieces of code. I remember coding this using my mom's laptop on a Sunday morning. I was so excited when it compiled that I remember bugging my then CS professor to see this masterpiece! There are <i>some golden moments</i> I found in this code: windows-based libraries, no use of <i>loops</i> (<b>except for a single goto statement</b>) and tons of hard-coding.
+<pre><code class="language-clike">#include&lt;iostream.h&gt;
+#include&lt;conio.h&gt;
+void main()
+{
+clrscr();
+int ch0,ch1,ch2,ch3,ch4,ch5,ch6,ch7,ch8,ch9,ch10,ch11,ch12,ch13,ch14,ch15,ch16,ch17,ch18,ch19,ch20,ch21,ch22;
+char nm[30],cn[20],addr[75],nadd[75],pin[15];
+double total; total=0;
+long cuc;
+
+cout&lt;&lt;"WELCOME TO MCDONALD'S"&lt;&lt;endl;
+cout&lt;&lt;"This Program Helps You To Place Your Order"&lt;&lt;endl;
+cout&lt;&lt;"For Any Further Informtion Log On To OurSite www.mcdonalds.co.in"&lt;&lt;endl;
+cout&lt;&lt;""&lt;&lt;endl;cout&lt;&lt;""&lt;&lt;endl;
+cout&lt;&lt;"Enter Your Region Code To Track Your Location And Place The Order - ";
+cin.getline(pin,15);endl;cout&lt;&lt;""&lt;&lt;endl;
+cout&lt;&lt;"Enter Your Name - ";
+cin.getline(nm,30);endl;cout&lt;&lt;""&lt;&lt;endl;
+cout&lt;&lt;"Enter Your Contact Number - ";
+cin.getline(cn,20);endl;cout&lt;&lt;""&lt;&lt;endl;
+cout&lt;&lt;"Enter Your Home Address - ";
+cin.getline(addr,75);endl;cout&lt;&lt;""&lt;&lt;endl;
+cout&lt;&lt;"Do You Want Us To Not Add Any Specific Item In Your Food?"&lt;&lt;endl;
+cout&lt;&lt;"If Yes Mention It Below, Else Press Enter Key To Continue."&lt;&lt;endl;
+cout&lt;&lt;"- ";cin.getline(nadd,75);endl;
+cout&lt;&lt;""&lt;&lt;endl;
+cout&lt;&lt;"Do You Want To Cash In Your McDonald's Vouchers (If Any) - ";
+cout&lt;&lt;"1. Yes   2. No"&lt;&lt;endl;
+cin&gt;&gt;ch1;cout&lt;&lt;""&lt;&lt;endl;
+if(ch1==1)
+{ cout&lt;&lt;"Enter Your Cupon Code - ";
+cin&gt;&gt;cuc;cout&lt;&lt;""&lt;&lt;endl;
+if(cuc&gt;=1000 &amp;&amp; cuc&lt;=3000)
+total=total-25;
+else if(cuc&gt;3000 &amp;&amp; cuc&lt;=6500)
+total=total-35;
+else if(cuc&gt;6500 &amp;&amp; cuc&lt;=9999)
+total=total-50;
+else if(cuc&lt;1000 &amp;&amp; cuc&gt;10000)
+cout&lt;&lt;"Invalid Cupon Code"&lt;&lt;endl;
+}
+
+{  abc:
+cout&lt;&lt;"Enter The Category Of Food You Wish To Order"&lt;&lt;endl;
+cout&lt;&lt;"1.Vegetarian   2.Non Vegetarian"&lt;&lt;endl;
+cout&lt;&lt;"3.Happy Meals  4.Desserts"&lt;&lt;endl;
+cout&lt;&lt;"5.Value Meals  6.Extras And Dips"&lt;&lt;endl;
+cin&gt;&gt;ch2;cout&lt;&lt;""&lt;&lt;endl;
+
+{
+if(ch2==1)
+{cout&lt;&lt;"The Categories Available Are:"&lt;&lt;endl;
+cout&lt;&lt;"1.Burgers   2.Rolls"&lt;&lt;endl;
+cout&lt;&lt;"3.Sides     4.Smoothies"&lt;&lt;endl;
+cin&gt;&gt;ch3;cout&lt;&lt;""&lt;&lt;endl;
+if(ch3==1)
+{cout&lt;&lt;"The Menu Is As Follows"&lt;&lt;endl;
+cout&lt;&lt;"1.Mc Aloo Tikka   - Rs.33.21"&lt;&lt;endl;
+cout&lt;&lt;"2.Mc Veggie       - Rs.79.01"&lt;&lt;endl;
+cout&lt;&lt;"3.Mc Spicy Paneer - Rs.129.21"&lt;&lt;endl;
+cout&lt;&lt;"4.Indy Mc Paneer  - Rs.159.29"&lt;&lt;endl;
+cin&gt;&gt;ch4;cout&lt;&lt;""&lt;&lt;endl;
+{if(ch4==1)
+total=total+33.21;
+else if(ch4==2)
+total=total+79.01;
+else if(ch4==3)
+total=total+129.21;
+else if(ch4==4)
+total=total+159.29;
+}}
+
+if(ch3==2)
+{cout&lt;&lt;"The Menu Is As Follows"&lt;&lt;endl;
+cout&lt;&lt;"1.Big Spicy Paneer Wrap - Rs.170.61  "&lt;&lt;endl;
+cout&lt;&lt;"2.Salad Wrap            - Rs.92.75"&lt;&lt;endl;
+cout&lt;&lt;"3.Saucy Wraps           - Rs.57.25"&lt;&lt;endl;
+cin&gt;&gt;ch5;cout&lt;&lt;""&lt;&lt;endl;
+{if(ch5==1)
+total=total+170.61;
+else if(ch5==2)
+total=total+92.75;
+else if(ch5==3)
+total=total+57.25;
+}}
+
+if(ch3==3)
+{cout&lt;&lt;"The Menu Is As Follows"&lt;&lt;endl;
+cout&lt;&lt;"1.French Fries           - Rs.58.40"&lt;&lt;endl;
+cout&lt;&lt;"2.Pizza McPuff           - Rs.28.63"&lt;&lt;endl;
+cout&lt;&lt;"3.Chilli Paneer Pockets  - Rs.40.08"&lt;&lt;endl;
+cin&gt;&gt;ch6;cout&lt;&lt;""&lt;&lt;endl;
+{if(ch6==1)
+total=total+58.40;
+else if(ch6==2)
+total=total+28.63;
+else if(ch6==3)
+total=total+40.08;
+}}
+
+if(ch3==4)
+{cout&lt;&lt;"The Menu Is As Follows"&lt;&lt;endl;
+cout&lt;&lt;"1.Smoothie                - Rs.194.65"&lt;&lt;endl;
+cout&lt;&lt;"2.Double Choclate Frappe  - Rs.188.93"&lt;&lt;endl;
+cout&lt;&lt;"3.McCafe Frappe           - Rs.160.30"&lt;&lt;endl;
+cout&lt;&lt;"4.McCafe Classic Coffe    - Rs.148.85"&lt;&lt;endl;
+cout&lt;&lt;"5.McCafe Ice Tea          - Rs.114.50"&lt;&lt;endl;
+cin&gt;&gt;ch7;cout&lt;&lt;""&lt;&lt;endl;
+{if(ch7==1)
+total=total+194.65;
+else if(ch7==2)
+total=total+188.93;
+else if(ch7==3)
+total=total+160.30;
+else if(ch7==4)
+total=total+148.85;
+else if(ch7==5)
+total=total+114.50;
+}}
+}
+else if(ch2==2)
+{cout&lt;&lt;"The Categories Are As Follows:"&lt;&lt;endl;
+cout&lt;&lt;"1.Burgers   2.Rolls"&lt;&lt;endl;
+cout&lt;&lt;"3.Fries     4.Smoothies"&lt;&lt;endl;
+cin&gt;&gt;ch8;cout&lt;&lt;""&lt;&lt;endl;
+if(ch8==1)
+{cout&lt;&lt;"The Menu Is As Follows"&lt;&lt;endl;
+cout&lt;&lt;"1.Chicken McGrill  - Rs.50.38"&lt;&lt;endl;
+cout&lt;&lt;"2.McChicken        - Rs.91.60"&lt;&lt;endl;
+cout&lt;&lt;"3.Filet-O-Fish     - Rs.113.36"&lt;&lt;endl;
+cout&lt;&lt;"4.McSpicy Chicken  - Rs.133.97"&lt;&lt;endl;
+cin&gt;&gt;ch9;cout&lt;&lt;""&lt;&lt;endl;
+{if(ch9==1)
+total=total+50.38;
+else if(ch9==2)
+total=total+91.60;
+else if(ch9==3)
+total=total+113.36;
+else if(ch9==4)
+total=total+133.97;
+}}
+
+if(ch8==2)
+{cout&lt;&lt;"The Menu Is As Follows"&lt;&lt;endl;
+cout&lt;&lt;"1.Big Spicy Chicken Wrap - Rs.170.61"&lt;&lt;endl;
+cout&lt;&lt;"2.Saucy Wraps            - Rs.57.25"&lt;&lt;endl;
+cin&gt;&gt;ch10;cout&lt;&lt;""&lt;&lt;endl;
+{if(ch10==1)
+total=total+170.61;
+else if(ch10==2)
+total=total+57.25;
+}}
+
+if(ch8==3)
+{cout&lt;&lt;"The Menu Is As Follows"&lt;&lt;endl;
+cout&lt;&lt;"1.McWings        - Rs.67.27"&lt;&lt;endl;
+cout&lt;&lt;"1.Non Veg Dip    - Rs.22.90"&lt;&lt;endl;
+cin&gt;&gt;ch11;cout&lt;&lt;""&lt;&lt;endl;
+{if(ch11==1)
+total=total+67.27;
+else if(ch11==2)
+total=total+22.90;
+}}
+
+if(ch8==4)
+{cout&lt;&lt;"The Menu Is As Follows"&lt;&lt;endl;
+cout&lt;&lt;"1.Smoothie                - Rs.194.65"&lt;&lt;endl;
+cout&lt;&lt;"2.Double Choclate Frappe  - Rs.188.93"&lt;&lt;endl;
+cout&lt;&lt;"3.McCafe Frappe           - Rs.160.30"&lt;&lt;endl;
+cout&lt;&lt;"4.McCafe Classic Coffe    - Rs.148.85"&lt;&lt;endl;
+cout&lt;&lt;"5.McCafe Ice Tea          - Rs.114.50"&lt;&lt;endl;
+cin&gt;&gt;ch12;cout&lt;&lt;""&lt;&lt;endl;
+{if(ch12==1)
+total=total+194.65;
+else if(ch12==2)
+total=total+188.93;
+else if(ch12==3)
+total=total+160.30;
+else if(ch12==4)
+total=total+148.85;
+else if(ch12==5)
+total=total+114.50;
+}}
+}
+else if(ch2==3)
+{cout&lt;&lt;"1.Veg Happy Meal  2.Non Veg Happy Meal"&lt;&lt;endl;
+cin&gt;&gt;ch15;cout&lt;&lt;""&lt;&lt;endl;
+if(ch15==1)
+{cout&lt;&lt;"Each Happy Meal Is Provided With Fanta And A Toy"&lt;&lt;endl;
+cout&lt;&lt;"The Toy Of The Day Is - BUZZ LIGHTYEAR'S ACTION FIGURE"&lt;&lt;endl;
+cout&lt;&lt;"The Menu Is As Follows"&lt;&lt;endl;
+cout&lt;&lt;"1.McVeggie        - Rs.135.67"&lt;&lt;endl;
+cout&lt;&lt;"2.Pizza McPuff    - Rs.119.64"&lt;&lt;endl;
+cout&lt;&lt;"3.McAloo Tikka    - Rs.119.64"&lt;&lt;endl;
+cin&gt;&gt;ch16;cout&lt;&lt;""&lt;&lt;endl;
+{if(ch16==1)
+total=total+135.67;
+else if(ch16==2)
+total=total+119.64;
+else if(ch16==3)
+total=total+119.64;
+}}
+else if(ch15==2)
+{cout&lt;&lt;"Each Happy Meal Is Provided With Fanta And A Toy"&lt;&lt;endl;
+cout&lt;&lt;"The Toy Of The Day Is - BUZZ LIGHTYEAR'S ACTION FIGURE"&lt;&lt;endl;
+cout&lt;&lt;"The Menu Is As Follows"&lt;&lt;endl;
+cout&lt;&lt;"1.Chicken McNuggets      - Rs.135.67"&lt;&lt;endl;
+cout&lt;&lt;"2.Mc Chicken             - Rs.135.67"&lt;&lt;endl;
+cout&lt;&lt;"3.Chicken McGrill        - Rs.119.64"&lt;&lt;endl;
+cin&gt;&gt;ch18;cout&lt;&lt;""&lt;&lt;endl;
+{if(ch18==1)
+total=total+135.67;
+else if(ch18==2)
+total=total+135.67;
+else if(ch18==3)
+total=total+119.64;
+}}
+}
+else if(ch2==4)
+{
+cout&lt;&lt;"The Dessert Menu Is As Follows"&lt;&lt;endl;
+cout&lt;&lt;"1.Brownie With Hot Fudge    - Rs.80.15"&lt;&lt;endl;
+cout&lt;&lt;"2.McFlurry Brownie          - Rs.76.72"&lt;&lt;endl;
+cout&lt;&lt;"3.Soft Serve Hot Fudge      - Rs.61.83"&lt;&lt;endl;
+cout&lt;&lt;"4.Soft Serve Strawberry     - Rs.61.83"&lt;&lt;endl;
+cout&lt;&lt;"5.McFlurry Oreo             - Rs.56.11"&lt;&lt;endl;
+cin&gt;&gt;ch17;cout&lt;&lt;""&lt;&lt;endl;
+{if(ch17==1)
+total=total+80.15;
+else if(ch17==2)
+total=total+76.72;
+else if(ch17==3)
+total=total+61.83;
+else if(ch17==4)
+total=total+61.83;
+else if(ch17==5)
+total=total+56.11;
+}}
+else if(ch2==5)
+{cout&lt;&lt;"1.Veg Value Meal  2.Non Veg Value Meal"&lt;&lt;endl;
+cin&gt;&gt;ch19;cout&lt;&lt;""&lt;&lt;endl;
+if(ch19==1)
+{cout&lt;&lt;"Each Value Meal Is Provided With Coke and Large Fries"&lt;&lt;endl;
+cout&lt;&lt;"The Menu Is As Follows"&lt;&lt;endl;
+cout&lt;&lt;"1.Big Spicy Paneer       - Rs.238.16"&lt;&lt;endl;
+cout&lt;&lt;"2.Indy McSpicy Paneer    - Rs.222.13"&lt;&lt;endl;
+cout&lt;&lt;"3.McSpicy Paneer         - Rs.217.55"&lt;&lt;endl;
+cout&lt;&lt;"4.Salad Wrap             - Rs.194.65"&lt;&lt;endl;
+cout&lt;&lt;"5.McAloo Wrap            - Rs.123.66"&lt;&lt;endl;
+cin&gt;&gt;ch20;cout&lt;&lt;""&lt;&lt;endl;
+{if(ch20==1)
+total=total+238.16;
+else if(ch20==2)
+total=total+222.13;
+else if(ch20==3)
+total=total+217.55;
+else if(ch20==4)
+total=total+194.65;
+else if(ch20==5)
+total=total+123.66;
+}}
+else if(ch19==2)
+{cout&lt;&lt;"Each Value Meal Is Provided With Coke and Large Fries"&lt;&lt;endl;
+cout&lt;&lt;"The Menu Is As Follows"&lt;&lt;endl;
+cout&lt;&lt;"1.Big Spicy Chicken      - Rs.240.45"&lt;&lt;endl;
+cout&lt;&lt;"2.Indy McSpicy Chicken   - Rs.223.28"&lt;&lt;endl;
+cout&lt;&lt;"3.McSpicy Chicken        - Rs.222.13"&lt;&lt;endl;
+cout&lt;&lt;"4.Chicken Grill Wrap     - Rs.135.11"&lt;&lt;endl;
+cout&lt;&lt;"5.Egg Wrap               - Rs.123.66"&lt;&lt;endl;
+cin&gt;&gt;ch21;cout&lt;&lt;""&lt;&lt;endl;
+{if(ch21==1)
+total=total+240.45;
+else if(ch21==2)
+total=total+223.28;
+else if(ch21==3)
+total=total+222.13;
+else if(ch21==4)
+total=total+135.11;
+else if(ch21==5)
+total=total+123.66;
+}}
+}
+else if(ch2==6)
+{
+cout&lt;&lt;"The Menu Is As Follows"&lt;&lt;endl;
+cout&lt;&lt;"1.Veg Dips                          - Rs.15.00"&lt;&lt;endl;
+cout&lt;&lt;"2.Piri Piri                         - Rs.15.00"&lt;&lt;endl;
+cout&lt;&lt;"3.Extra Cheese  (only on 1 item)    - Rs.25.00"&lt;&lt;endl;
+cout&lt;&lt;"4.Extra Paneer  (only on 1 item)    - Rs.25.00"&lt;&lt;endl;
+cout&lt;&lt;"5.Extra Chicken (only on 1 item)    - Rs.40.00"&lt;&lt;endl;
+cin&gt;&gt;ch22;cout&lt;&lt;""&lt;&lt;endl;
+{if(ch22==1)
+total=total+15.00;
+else if(ch22==2)
+total=total+15.00;
+else if(ch22==3)
+total=total+25.00;
+else if(ch22==4)
+total=total+25.00;
+else if(ch22==5)
+total=total+40.00;
+}}
+
+}
+cout&lt;&lt;"Do You Wish To Order Something More:";
+cout&lt;&lt;" 1.Yes   2.No"&lt;&lt;endl;
+cin&gt;&gt;ch13;cout&lt;&lt;""&lt;&lt;endl;
+{if(ch13==1)
+goto abc; }
+}
+
+clrscr();
+cout&lt;&lt;"Name Of The User - "&lt;&lt;nm&lt;&lt;endl;
+cout&lt;&lt;"Contact No. - "&lt;&lt;cn&lt;&lt;endl;
+cout&lt;&lt;"Delivery Address - "&lt;&lt;addr&lt;&lt;endl;
+cout&lt;&lt;"Region Code - "&lt;&lt;pin&lt;&lt;endl;
+{
+if(ch1==1)
+cout&lt;&lt;"Cupon Code: - "&lt;&lt;cuc&lt;&lt;endl;
+}
+cout&lt;&lt;"Total Bill - Rs."&lt;&lt;total&lt;&lt;endl;cout&lt;&lt;""&lt;&lt;endl;cout&lt;&lt;""&lt;&lt;endl;
+
+{
+if(total&lt;150)
+{cout&lt;&lt;"Sorry But A Minimum Bill Of Rs.150 Is Required To Provide You A Home Service"&lt;&lt;endl; }
+else if(total&gt;=150)
+{cout&lt;&lt;"As Per Our Red Hot Delivery System You Will Receive Your Food Within An Hour"&lt;&lt;endl;}
+}
+cout&lt;&lt;""&lt;&lt;endl;
+if(total&gt;=200)
+{
+cout&lt;&lt;"For Purchasing Food Above Rs.200 We Give You Free Voucher Worth Rs.35"&lt;&lt;endl;
+cout&lt;&lt;"You Can Redeem These Voucher The Next Time You Visit Our Site"&lt;&lt;endl;
+cout&lt;&lt;"Your Voucher Code Is : 3113"&lt;&lt;endl;
+}
+cout&lt;&lt;""&lt;&lt;endl;cout&lt;&lt;""&lt;&lt;endl;
+cout&lt;&lt;"Was This Site helpful:-"&lt;&lt;endl;
+cout&lt;&lt;"1.Very Helpful"&lt;&lt;endl;
+cout&lt;&lt;"2.Unsatisfactory"&lt;&lt;endl;
+cin&gt;&gt;ch14;cout&lt;&lt;""&lt;&lt;endl;
+
+{
+if(ch14==1)
+{cout&lt;&lt;"Thank You For Your Review"&lt;&lt;endl;}
+else if(ch14==2)
+{cout&lt;&lt;"Kindly Mention Your Problem, if any:"&lt;&lt;endl;
+cout&lt;&lt;"On Our Toll Free No. 0220222202"&lt;&lt;endl;
+}
+else
+{clrscr();}
+}
+if(ch14==2)
+{cout&lt;&lt;"Thank You For Your Review"&lt;&lt;endl;}
+
+cout&lt;&lt;""&lt;&lt;endl;
+cout&lt;&lt;"Thank You For Choosing McDonalds"&lt;&lt;endl;
+cout&lt;&lt;"We Hope You Enjoy Your Meal"&lt;&lt;endl;
+cout&lt;&lt;"For Any Further Complaints/Inquiries Log On To www.mcdonalds.co.in"&lt;&lt;endl;
+cout&lt;&lt;"MCDONALD'S - I'M LOVIN IT!!!"&lt;&lt;endl;
+getch();
+}
+</code></pre>
+<br>
+<a id="back-link" href="../blog.html">&#x2190;</a>
+</div>
+<footer>
+<hr>
+<div>
+© 2019 Parth Parikh.
+</div>
+</footer>
+
+</body>
+</html>
