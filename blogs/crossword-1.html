@@ -24,7 +24,7 @@
 <br class="off">
 <h1>Crafting a crossword solver (Part 1)</h1>
 <p><b>Update: <a href="./crossword-2.html">I have written a part 2 of this blogpost!</a></b></p>
-<p>This December, I was fascinated by the <a href="https://en.wikipedia.org/wiki/Boolean_satisfiability_problem">Boolean satisfiability problem (SAT)</a> and it's applications. I was looking for a problem which had it's roots in text-analysis and SAT. Trying to discover for such problems, this answer on <a href="https://cstheory.stackexchange.com/a/503/49750">CS Theory</a> caught my attention. There have been many crossword solvers which, given a list of solutions, are able to arrange those in the grid. My motive was to add an extra layer of difficulty: <i>predict the probable guesses using the clues provided by the crossword.</i> As I was already familiar with Python's various NLP libraries, it was an obvious choice for this project.</p>
+<p>This December, I was fascinated by the <a href="https://en.wikipedia.org/wiki/Boolean_satisfiability_problem">Boolean satisfiability problem (SAT)</a> and it's applications. I was looking for a problem that had its roots in text-analysis and SAT. Trying to discover for such problems, this answer on <a href="https://cstheory.stackexchange.com/a/503/49750">CS Theory</a> caught my attention. There have been many crossword solvers which, given a list of solutions, can arrange those in the grid. My motive was to add an extra layer of difficulty: <i>predict the probable guesses using the clues provided by the crossword.</i> As I was already familiar with Python's various NLP libraries, it was an obvious choice for this project.</p>
 <p><i>What does a computer need to solve a crossword?</i>
 	<br>
 	<a href="https://github.com/words/moby">Moby's Thesaurus</a>, 
@@ -40,7 +40,7 @@
 The above results are shown by my code, with the answer being <i>remote</i> and <i>anand</i>.
 </p>
 
-<p>For finding <i>probable guesses pertaining to a clue</i>, two methods are used. If it is a <b>one-word clue</b>, the single word is searched for in either Moby's Thesaurus or using <a href="https://radimrehurek.com/gensim/models/keyedvectors.html#what-can-i-do-with-word-vectors">Gensim's <i>most_similar()</i></a> method. The Gensim implementation can be done as follows: </p>
+<p>For finding <i>probable guesses of a clue</i>, two methods are used. If it is a <b>one-word clue</b>, the single word is searched for in either Moby's Thesaurus or using <a href="https://radimrehurek.com/gensim/models/keyedvectors.html#what-can-i-do-with-word-vectors">Gensim's <i>most_similar()</i></a> method. The Gensim implementation can be done as follows: </p>
 
 <pre><code class="language-python">import gensim.downloader as api
 from nltk.tokenize import word_tokenize
@@ -58,21 +58,21 @@ pos_words = [word for word in word_tokenize(clue.lower()) if word not in stop]
 probable_guesses = [word for word in word_vectors.most_similar(positive=pos_words, topn=topn) if len(word[0]) == guess_length]
 </code></pre>
 
-<p>To find <b>sentence-solutions</b>, like <i>Director of Raging Bull (8 letters)</i> and <i>Curtain fabric (5 letters)</i>, two implementations work well. <u>First</u> is to call the exact implementation mentioned above and use guesses obtained in <span style="font-family: monospace; font-size: 14px;">probable_guesses</span> variable as an upper bound for the words to be queried into <i>NLTK's wordnet.synsets()</i> method. <b>Cosine similarity</b> is then measured between <i>definitions obtained from wordnet</i> and <i>the original clue</i>, which is checked against a threshold to determine the words' final outcome (i.e whether it is accepted or not). Cosine similarity can be implemented using Gensim's <a href="https://radimrehurek.com/gensim/models/keyedvectors.html#gensim.models.keyedvectors.Doc2VecKeyedVectors.n_similarity">n_similarity()</a> method.</p>
-<p>The reason for using <i>most_similar()</i> followed by <i>n_similarity()</i> is purely based my observation, which is that the <i>Wordnet</i> implementation helps filter out some false positives.</p>
-<p><u>Second</u> method is to use <a href="https://www.mediawiki.org/wiki/API:Main_page">Wikipedia's MediaWiki API</a>, with the query as the clue and look for solutions in the title and description.</p>
-<p>Once probable guesses for each clue have been collected, a SMT solver like Z3 can be used to construct a solution. Having already dealt with the <i>length constraint</i> above, two constraints have to be taken care of: </p>
+<p>To find <b>sentence-solutions</b>, like <i>Director of Raging Bull (8 letters)</i> and <i>Curtain fabric (5 letters)</i>, two implementations work well. The <u>first</u> is to call the exact implementation mentioned above and use guesses obtained in <span style="font-family: monospace; font-size: 14px;">probable_guesses</span> variable as an upper bound for the words to be queried into <i>NLTK's wordnet.synsets()</i> method. <b>Cosine similarity</b> is then measured between <i>definitions obtained from wordnet</i> and <i>the original clue</i>, which is checked against a threshold to determine the words' outcome (i.e whether it is accepted or not). Cosine similarity can be implemented using Gensim's <a href="https://radimrehurek.com/gensim/models/keyedvectors.html#gensim.models.keyedvectors.Doc2VecKeyedVectors.n_similarity">n_similarity()</a> method.</p>
+<p>The reason for using <i>most_similar()</i> followed by <i>n_similarity()</i> is based on my observation, which is that the <i>Wordnet</i> implementation helps filter out some false positives.</p>
+<p>The <u>second</u> method is to use <a href="https://www.mediawiki.org/wiki/API:Main_page">Wikipedia's MediaWiki API</a>, with the query as the clue and look for solutions in the title and description.</p>
+<p>Once probable guesses for each clue have been collected, an SMT solver like Z3 can be used to construct a solution. Having already dealt with the <i>length constraint</i> above, two constraints have to be taken care of: </p>
 <ul>
 	<li>For each clue, the guess be should picked from the clue's <i>guess list</i></li>
-	<li>At every intersection point in the grid, the two guesses to be chosen should be such that the character being intersected is of same value</li>
+	<li>At every intersection point in the grid, the two guesses to be chosen should be such that the character being intersected is of the same value</li>
 </ul>
 <p>I found that performing string operations on Z3 can be daunting 😄. By providing <i>a list of ASCII character set encoded in decimal (for each guess)</i> constraints can be simplified. Example: "delhi" becomes [100, 101, 108, 104, 105]. A blog-post following a <a href="https://blukat29.github.io/2016/01/regex-crossword-solver/">similar implementation for <i>regex crossword</i> solver can be found here.</a></p>
 <p><b>The complete code for the project can be found on <a href="https://github.com/pncnmnp/Crossword-Solver">Github</a>.</b></p>
 <p><i>What kind of accuracy does the above model provide?</i>
-<br>For simple to moderate level clues, the clue-hunting accuracy is about 80%. As of 16<sup>th</sup> December 2019, the crossword on certain occasion outputs a solution with one or two words being different from the required solution. This happens because the search bound is not tight enough. I am in the process of resolving this issue.
+<br>For simple to moderate level clues, the clue-hunting accuracy is about 80%. As of 16<sup>th</sup> December 2019, the crossword on certain occasions outputs a solution with one or two words being different from the required solution. This happens because the search bound is not tight enough. I am in the process of resolving this issue.
 </p>
 <p><i>Can this method solve crosswords like the NY Times crossword?</i>
-<br>Unfortunately, the answer is <i>No</i>. I have observed that sophisticated crosswords like the NY Times crossword require properties like <i>tense detection and correction</i>. They also require detection of whether the <i>clue is in singular or plural form</i> and to apply the guesses accordingly (I have implemented singular/plural detection in my project, check the Github page). For some crosswords, the clue requires finding an anagram of the clue itself. These type of constraints blow up the required search space and complicate the guess finding process. I am currently reading <a href="https://arxiv.org/pdf/1401.4597.pdf">Dr.Fill: Crosswords and an Implemented Solver for Singly Weighted CSPs</a> and will add a part 2 to this blog later.</p>
+<br>Unfortunately, the answer is <i>No</i>. I have observed that sophisticated crosswords like the NY Times crossword require properties like <i>tense detection and correction</i>. They also require detection of whether the <i>clue is in singular or plural form</i> and to apply the guesses accordingly (I have implemented singular/plural detection in my project, check the Github page). For some crosswords, the clue requires finding an anagram of the clue itself. These types of constraints blow up the required search space and complicate the guess finding process. I am currently reading <a href="https://arxiv.org/pdf/1401.4597.pdf">Dr.Fill: Crosswords and an Implemented Solver for Singly Weighted CSPs</a> and will add a part 2 to this blog later.</p>
 <p><i>I am reluctant to use any newspapers' past crossword data as they are proprietary. Nevertheless, I will try experimenting with those as well!</i></p>
 </p>
 <p>Here are some related links:
@@ -81,7 +81,7 @@ probable_guesses = [word for word in word_vectors.most_similar(positive=pos_word
 		<li><a href="http://simplydailypuzzles.com/daily-quick-crossword/">Daily Quick Crossword</a>: A good site to test the crossword solver.</li>
 	</ul>	
 </p>
-<p>If you have any suggestions/questions, feel free to drop a <a href="https://pncnmnp.github.io/blogs/pics/email.png">mail</a>!</p>
+<p>If you have any suggestions/questions, feel free to drop an <a href="https://pncnmnp.github.io/blogs/pics/email.png">email</a>!</p>
 <p><b>Update: <a href="./crossword-2.html">I have written a part 2 of this blogpost!</a></b></p>
 <br>
 <a id="back-link" href="../blog.html">&#x2190;</a>

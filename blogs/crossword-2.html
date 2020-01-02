@@ -22,18 +22,18 @@
 <br class="off">
 <h1>Crafting a crossword solver (Part 2)</h1>
 <p><b>Note: <a href="./crossword-1.html">Part 1 is available here!</a></b></p>
-<p><i>It is surprising how a simple implementation with humongous amount of data can outsmart it's complex and seemingly efficient counterparts!</i> After writing the last blog-post, I started reading <a href="https://arxiv.org/pdf/1401.4597.pdf">Dr.Fill: Crosswords and an Implemented Solver for Singly Weighted CSPs</a>, a paper explaining a competitive crossword solver. While reading, a dataset on <i>page 15</i> caught my attention. The dataset was <a href="http://www.otsys.com/clue">http://www.otsys.com/clue</a>.</p>
+<p><i>It is surprising how a simple implementation with a humongous amount of data can outsmart it's complex and seemingly efficient counterparts!</i> After writing the last blog-post, I started reading <a href="https://arxiv.org/pdf/1401.4597.pdf">Dr.Fill: Crosswords and an Implemented Solver for Singly Weighted CSPs</a>, a paper explaining a competitive crossword solver. While reading, a dataset on <i>page 15</i> caught my attention. The dataset was <a href="http://www.otsys.com/clue">http://www.otsys.com/clue</a>.</p>
 <p>Now, as of 20<sup>th</sup> December 2019, if you visit the above link there are three files provided. The problem with these files is that they are targeted towards people who want to create crosswords rather than those who want to solve them! A quick web search brought me <a href="https://github.com/mattginsberg/cluer">here</a>. This page provides the source code of the project hosted by Otsys. It appeared to me that the <span style="font-family: monospace; font-size: 14px;">cluedata</span> file contained their project's dataset. Unfortunately, I could not cleanly decode the file (<i>latin-1</i> was the closest working solution) in Python.</p>
 <p>The <i>eureka moment</i> for this project came when I found out that Otsys had previously uploaded another file apart from those three files, called <span style="font-family: monospace; font-size: 14px;">clues.bz2</span>. This file contained all the clues they were using for their crossword generator in a non-encoded fashion. Thankfully <a href="https://web.archive.org/https://www.otsys.com/clue/">Internet Archive</a> had a copy of that file!</p>
 <p>After that, <i>cosine similarity</i> and <i>sentence tokenization</i> on this data gave me a never-imagined accuracy. For newspaper crosswords, the accuracy was nearly 100%!</p>
-<p><i>Can this work against a customized crossword ?</i><br>
-A customized crossword heavily inspired by newspapers like LA Times and NY Times should work well with the dataset mentioned above. From what I have learned, many crossword enthusiasts use Otsys' crossword-generator to create crosswords. However for clues which appear to break the tradition, the method mentioned in <a href="./crossword-1.html">Part-1</a> should work reasonably well (compared to the above method). I have yet to implement a hybrid implementation, nevertheless, in theory I believe it can give a much better accuracy for unique crosswords.
+<p><i>Can this work against a customized crossword?</i><br>
+A customized crossword heavily inspired by newspapers like LA Times and NY Times should work well with the dataset mentioned above. From what I have learned, many crossword enthusiasts use Otsys' crossword-generator to create crosswords. However, for clues that appear to break the tradition, the method mentioned in <a href="./crossword-1.html">Part-1</a> should work reasonably well (compared to the above method). I have yet to implement a hybrid implementation, nevertheless, in theory, I believe it can give much better accuracy for unique crosswords.
 </p>
-<p><i>How is the runtime performance of the above described method ?</i><br>
+<p><i>How is the runtime performance of the above-described method?</i><br>
 Based on my observation, using <a href="https://pypy.org/">PyPy</a> can drastically reduce the runtime (compared to CPython). In my case, the difference was <b>5x!</b> Presently using PyPy, the solver can fetch clues for a 10-clue crossword and solve them in under a minute. Interestingly the SMT implementation using Z3 (as mentioned in the previous blog-post) takes about <i>2 milliseconds</i> 😄.
 </p>
 <p>I do have plans to rewrite the entire code in <a href="https://golang.org/">Golang</a>. This has been a fun project!</p>
-<p>If you have any suggestions/questions, feel free to drop a <a href="https://pncnmnp.github.io/blogs/pics/email.png">mail</a>!</p>
+<p>If you have any suggestions/questions, feel free to drop an <a href="https://pncnmnp.github.io/blogs/pics/email.png">email</a>!</p>
 <br>
 <a id="back-link" href="../blog.html">&#x2190;</a>
 </div>
