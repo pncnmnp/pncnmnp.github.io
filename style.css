@@ -21,35 +21,40 @@
 	padding-bottom: 3px;
 }
 
-.small-frame {
-	display: none;
-}
-
 @media (max-width: 1000px) {
 	.topnav {
-		display: none;
-	}
-	
-	.small-frame {
-		display: block;
+		font-size: 17px;
+		text-align: center;
 	}
 
-	.small-frame h1 {
-		text-align: center;
+	.topnav a {
+		font-size: 15px;
+		float: none;
+		padding: 6px 16px;
 	}
 
 	.small-frame-content {
 		color: tomato;
 		font-size: 17px;
 		text-align: center;
-		/*padding: 4px 16px;*/
+		padding: 4px 16px;
+		display: flex;
+		flex-direction: row-reverse;
+		justify-content: center;
 	}
 
 	@-moz-document url-prefix() {
-		.small-frame-content {
-			font-size: 4vw;
+		.topnav {
+			font-size: 17px;
+			text-align: center;
 		}
-	}	
+
+		.topnav a {
+			font-size: 15px;
+			float: none;
+			padding: 6px 16px;
+		}
+	}
 
 	.frame {
 		padding: 4px 30px;
