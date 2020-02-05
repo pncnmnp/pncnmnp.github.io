@@ -58,6 +58,11 @@ img {
 	background-color: #e5593f;
 }
 
+.like-pre {
+	font-family: monospace; 
+	font-size: 14px;
+}
+
 #title {
 	/*For table titles*/
 	color: black;	

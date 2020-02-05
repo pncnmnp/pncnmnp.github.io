@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+<meta name="author" content="parth_parikh">
+<meta name="description" content="Method to enable dark mode for Firefox's built-in PDF viewer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dark mode for Firefox's built-in PDF viewer</title>
+<link rel="stylesheet" type="text/css" href="./style/common_styles.css" id="light">
+<link href="./style/prism_okaidia.css" rel="stylesheet" />
+<script src="./js/prism_okaidia.js"></script>
+<link rel="stylesheet" type="text/css" href="../style.css">
+<link rel="shortcut icon" type="image/png" href="../favicon.png"/>
+<noscript><style> .off { display: none } </style></noscript>
+
+</head>
+
+<body>
+<div class="blog-text">
+<script type="text/javascript" src="./js/dark_light_mode.js"></script>
+<a id="on-off" class="off" onclick="setTheme(this)" href="#">Turn on/off lights</a>
+<br class="off">
+<h1>Dark mode for Firefox's built-in PDF viewer</h1>
+<p>Surprisingly, Firefox's PDF viewer does not have a native option to invert colors in PDF. Presently no extension exists which can do this job. Dark Reader does not work with PDF's. At around 8'O clock today, I decided to fix the problem once and for all with a simple Firefox extension.</p>
+<p>After hunting on the web for about 30 minutes, I found <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1454760">this thread on Bugzilla</a>. It turns out <b>starting with Firefox 60, extensions are no longer allowed to interact with the native pdf viewer.</b> Determined, I decided to locally modify the CSS rendered by Firefox's PDF viewer. The steps for the same are:</p>
+<p>(Following is a fix I created by mixing <a href="https://superuser.com/questions/318912/how-can-i-override-the-css-of-a-site-in-firefox-with-usercontent-css">Superuser - How can I override the CSS of a site in Firefox with userContent.css?</a> with <a href="https://old.reddit.com/r/firefox/comments/cqjtsp/dark_pdf_preview/">Reddit - Dark PDF Preview</a>)</p>
+<p>
+<ol type="I">
+	<li>Open Firefox and press <span class="like-pre">Alt</span> to show the top menu, then click on <span class="like-pre">Help → Troubleshooting Information</span></li>
+	<li>Click the <span class="like-pre">Open Directory</span> button beside the <span class="like-pre">Profile Directory</span> entry</li>
+	<li>Create a folder named <span class="like-pre">chrome</span> in the directory that opens</li>
+	<li>In the <span class="like-pre">chrome</span> folder, create a CSS file with the name <span class="like-pre">userContent.css</span></li>
+	<li>Open the <span class="like-pre">userContent.css</span> file and insert - </li>
+<pre>#viewerContainer > #viewer > .page > .canvasWrapper > canvas {
+    filter: grayscale(100%);
+    filter: invert(100%);
+}</pre>
+	<li>On Firefox's URL bar, type <span class="like-pre">about:config</span>.</li>
+	<li>Search for <span class="like-pre">toolkit.legacyUserProfileCustomizations.stylesheets</span> and set it to <span class="like-pre">true</span>.</li>
+	<li>Restart Firefox and fire up a PDF file to see the change!</li>
+</ol>
+</p>
+
+<img src="./pics/dark-mode-changes.png" alt="screenshot of Firefox rendering a PDF with dark background">
+<p style="text-align: center;"><i>Screenshot of Firefox rendering a PDF with dark background<i></p>
+
+<br>
+<a id="back-link" href="../blog.html">&#x2190;</a>
+</div>
+<footer>
+<hr>
+<div>
+© 2020 Parth Parikh.
+</div>
+</footer>
+
+</body>
+</html>
