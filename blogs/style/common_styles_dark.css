@@ -61,6 +61,8 @@ img {
 .like-pre {
 	font-family: monospace; 
 	font-size: 14px;
+	word-wrap: break-word;
+	white-space: pre-wrap;
 }
 
 #title {
