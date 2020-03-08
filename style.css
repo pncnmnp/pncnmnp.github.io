@@ -8,7 +8,7 @@
 
 .topnav a {
 	float: right;
-	color: tomato;
+	color: #1965c8;
 	text-align: center;
 	text-decoration: none;
 	padding: 14px 16px;
@@ -35,7 +35,7 @@
 	}
 
 	.small-frame-content {
-		color: tomato;
+		color: #1965c8;
 		font-size: 17px;
 		text-align: center;
 		padding: 4px 16px;

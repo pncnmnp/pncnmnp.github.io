@@ -90,12 +90,13 @@ img {
 }
 
 a {
-	color: tomato;
+	color: #1965c8;
 	text-decoration: none;
 }
 
 a:hover {
-	color: #f90206;
+	/*color: #f90206;*/
+    border-bottom: 2px dotted #000;
 }
 
 footer {
