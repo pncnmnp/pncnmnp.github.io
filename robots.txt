@@ -1,2 +1,3 @@
 User-agent: * 
 Disallow: /resume.pdf
+Disallow: /blogs/pics/email.png
