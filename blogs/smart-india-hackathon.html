@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta name="author" content="parth_parikh">
+	<meta name="description" content="My experience participating in Smart India Hackathon 2020">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>My Smart India Hackathon Experience</title>
+	<link rel="stylesheet" type="text/css" href="./style/common_styles.css" id="light">
+	<link href="./style/prism_okaidia.css" rel="stylesheet" />
+	<script src="./js/prism_okaidia.js"></script>
+	<link rel="stylesheet" type="text/css" href="../style.css">
+	<link rel="shortcut icon" type="image/png" href="../favicon.png"/>
+	<noscript><style> .off { display: none } </style></noscript>
+
+</head>
+
+<body>
+	<div class="blog-text">
+		<script type="text/javascript" src="./js/dark_light_mode.js"></script>
+		<a id="on-off" class="off" onclick="setTheme(this)" href="#">Turn on/off lights</a>
+		<br class="off">
+		<h1>My Smart India Hackathon Experience</h1>
+		<p>Smart India Hackathon is a national level event yearly organized by the Government of India. Calling this event a <i>hackathon</i> is misleading as the problem statements are declared well in advance (four months prior). Reputed government and private organizations such as the Indian Space Research Organization (ISRO), Defence Research and Development Organisation (DRDO), Ministry of Railways, Amazon Web Services, and Cisco participate and furnish students with research-based problems pertaining to their domain.</p>
+
+		<p>For students to qualify for the grand finale, they have to win an institute level hackathon. The selected teams from each institute (usually 4-5) submit their proposal to the respective organization, which then scrutinizes and nominates <b>at most</b> four teams for each problem statement.</p>
+
+		<p>It is a grueling albeit highly rewarding experience. I was leading a team of six and after <a href="./sih-problem-statements-2020.html">a week of hunting</a>, we picked a perfect problem statement that complemented our interests - <i>Air pollution hot spots detection and identifying the source trajectories using ML/AI techniques (submitted by ISRO).</i> Through this blog post, I intend to detail you about my team's experience pursuing this problem and mine as their leader.</p>
+
+		<p>Three months back, I was oblivious to the implications of air pollution. To be candid, like every diligent student in India, I studied environmental science for grades and nothing more. After spending the last two months investigating this problem, my views have radically changed. Air pollution is truly insidious and if not controlled (especially by the developing nations) can irrevocably change mankind's future.</p>
+
+		<p>As a prerequisite, each member of my team had to undergo the following NASA organized seminars - 
+		<ul>
+			<li>Fundamentals of Remote Sensing (NASA-ARSET) [<a href="./docs/notes-fundamentals-of-remote-sensing.pdf">notes</a>]</li>
+			<li>Data Analysis Tools for High-Resolution Air Quality Satellite Datasets (NASA-ARSET) [<a href="./docs/notes-introduction-to-remote-sensing-air-quality.pdf">notes</a>]</li>
+		</ul>
+		These seminars introduced us to the concept of remote sensing and briefed us on the two popular satellites used to measure air pollution - <a href="https://en.wikipedia.org/wiki/Moderate_Resolution_Imaging_Spectroradiometer">MODIS</a> and <a href="https://en.wikipedia.org/wiki/Ozone_monitoring_instrument">OMI</a>. They further described various satellite attributes such as spatial, spectral, and temporal resolution; optical depth, solar zenith angle and other pollutant parameters (column concentration, scanline, etc). While we eventually used <a href="https://en.wikipedia.org/wiki/Sentinel-5_Precursor">Sentinel 5P</a> for our research, these seminars provided a solid foundation for our later work.</p>
+
+		<p>The steps we aimed for concretely championing this problem can be molded into three parts - extensive research, clear framing of thoughts, and a rigorous build.</p>
+
+		<h2>Extensive research</h2>
+		<p>Our research did not end with the seminars, in actuality we spend a whole month perusing papers and journals. At last, some of the research-papers/reports/articles that highly influenced us were - 
+		<ul>
+			<li><a href="https://thewire.in/environment/how-satellites-are-changing-the-way-we-track-pollution-on-the-ground">How Satellites Are Changing the Way We Track Pollution on the Ground</a> (<a href="https://web.archive.org/web/20190731150103/http://thewire.in/environment/how-satellites-are-changing-the-way-we-track-pollution-on-the-ground">Internet Archive</a>)</li>
+			<li>Report by <a href="http://www.indiaenvironmentportal.org.in/files/file/Air%20Quality%20Index.pdf">National Air Quality Index (Central Pollution Control Board, India)</a> explaining Air Quality Index, Eclipsing, and Ambiguity.</li>
+			<li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6407116/">Estimating Ground-Level Concentrations of Multiple Air Pollutants and Their Health Impacts in the Huaihe River Basin in China</a></li>
+			<li><a href="https://www.researchgate.net/publication/265252720_A_satellite-based_geographically_weighted_regression_model_for_regional_PM25_estimation_over_the_Pearl_River_Delta_region_in_China">A satellite-based geographically weighted regression model for regional PM2.5 estimation over the Pearl River Delta region in China</a></li>
+			<li><a href="https://www.mdpi.com/2504-3900/18/1/4">Spaceborne Nitrogen Dioxide Observations from the Sentinel-5P TROPOMI over Turkey</a></li>
+			<li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3237057/">An empirical relationship between PM2.5 and aerosol optical depth in Delhi Metropolitan</a></li>
+		</ul>
+
+		<h2>Clear framing of thoughts</h2>
+		Early on we realized that converting satellite concentrations to ground-level data can be highly beneficial. Concretely, such a conversion can enable us to find the <a href="https://en.wikipedia.org/wiki/Air_quality_index">Air Quality Index</a> of the pollutants (for each location) and can help to validate our findings. To make this a possibility, we decided to design a <a href="https://en.wikipedia.org/wiki/Spatial_analysis#Spatial_regression">Geographically Weighted Regression Model</a>. Finally, to detect locations with high air-pollution concentration, we used the clustering technique - <a href="https://en.wikipedia.org/wiki/DBSCAN">DBSCAN</a>. From <a href="https://scikit-learn.org/stable/modules/clustering.html#clustering">Scikit-Learn's documentation</a>, DBSCAN is particularly useful for <i>non-flat geometry and uneven cluster sizes</i>.</p>
+
+		<p>Our final proposal was (as submitted to ISRO):<br> 
+		<p style="text-indent: 2em;">We are going to aggregate data from satellites - Sentinel 5P and ERA5. The aggregated data is then used for identifying hotspots, predicting forward/backward air pollution source trajectories, and identifying locations where long term occurrences of such hotspots are seen.</p>
+		<p style="text-indent: 2em;">To measure the level of pollution of a hotspot, an AQI (Air Quality Index) value is calculated based on the guidelines provided by the C.P.C.B, India. Various satellite-obtained pollutant concentrations(SO2, NO2, CO, PM2.5) and geographic parameters (such as Boundary Layer Height, Wind speed, etc.) will be an input to our geographically weighted regression model which will help estimate ground-level AQI concentrations.</p>
+		<p style="text-indent: 2em;">A clustering algorithm (DBSCAN) will be applied to the AQI concentrations to detect hotspots. HYSPLIT model will be used for predicting source trajectories. For validation, predicted ground-level concentrations are compared against ground station data. Hotspots and source trajectories are being visualized over a given timeline. Exact locations of hotspots are detected using geo-decoding techniques.</p>
+
+		The charts we designed for our proposal were - <br><br>
+		<img src="./pics/gwt.png">
+		<img src="./pics/aqi_and_dbscan.png">
+		</p>
+
+		<h2>Rigorous build</h2>
+		<p>We created a prototype based on the above architecture and were selected by our institute for the next round. <a href="https://github.com/pncnmnp/satellite-temp">The code for our prototype is available on Github</a>. Although we were confident in securing a bench in the grand finale, by mid-Feb, we decided to halt our build till the results were announced. Alas, life had different plans for us. <b>Our proposal was rejected by ISRO on February 29, 2020.</b> Dejected, all I could think of at that moment was - </p>
+
+		<p style="text-align: center;"><b>Luck favors the prepared mind.</b> -- Louis Pasteur</p>
+
+		<p>Were we underprepared, was there an <i>error of judgment</i> on ISRO's part, thoughts... blames..... excuses.......</p>
+
+		<p>I am optimistic that the experience I have gained in the past 3 months, will prove to be beneficial. Presently, we are planning to write a research paper delineating our findings.</p><br>
+		<a id="back-link" href="../blog.html">&#x2190;</a>
+	</div>
+<footer>
+<hr>
+	<div>
+		© 2020 Parth Parikh.
+	</div>
+</footer>
+
+</body>
+</html>
