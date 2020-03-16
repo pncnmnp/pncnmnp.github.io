@@ -5,9 +5,9 @@
 
 	<meta charset="utf-8">
 	<meta name="author" content="parth_parikh">
-	<meta name="description" content="My experience participating in Smart India Hackathon 2020">
+	<meta name="description" content="My experience participating in Smart India Hackathon 2020. This is the lite version of my original blog post.">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>My Smart India Hackathon Experience</title>
+	<title>My Smart India Hackathon Experience - Lite</title>
 	<link rel="stylesheet" type="text/css" href="./style/common_styles.css" id="light">
 	<link href="./style/prism_okaidia.css" rel="stylesheet" />
 	<script src="./js/prism_okaidia.js"></script>
@@ -23,7 +23,7 @@
 		<a id="on-off" class="off" onclick="setTheme(this)" href="#">Turn on/off lights</a>
 		<br class="off">
 		<h1>My Smart India Hackathon Experience</h1>
-		<h2>If you are facing issues rendering this page, <a href="./smart-india-hackathon-lite.html">here is a lite version of this blog post</a>.</h2>
+		<h2>This is a lite version of my <a href="./smart-india-hackathon.html">original blog post</a></h2>
 		<p>Smart India Hackathon is a national level event yearly organized by the Government of India. Calling this event a <i>hackathon</i> is misleading as the problem statements are declared well in advance (four months prior). Reputed government and private organizations such as the Indian Space Research Organization (ISRO), Defence Research and Development Organisation (DRDO), Ministry of Railways, Amazon Web Services, and Cisco participate and furnish students with research-based problems pertaining to their domain.</p>
 
 		<p>For students to qualify for the grand finale, they have to win an institute level hackathon. The selected teams from each institute (usually 4-5) submit their proposal to the respective organization, which then scrutinizes and nominates <b>at most</b> four teams for each problem statement.</p>
@@ -60,15 +60,15 @@
 		<p style="text-indent: 2em;">To measure the level of pollution of a hotspot, an AQI (Air Quality Index) value is calculated based on the guidelines provided by the C.P.C.B, India. Various satellite-obtained pollutant concentrations(SO2, NO2, CO, PM2.5) and geographic parameters (such as Boundary Layer Height, Wind speed, etc.) will be an input to our geographically weighted regression model which will help estimate ground-level AQI concentrations.</p>
 		<p style="text-indent: 2em;">A clustering algorithm (DBSCAN) will be applied to the AQI concentrations to detect hotspots. HYSPLIT model will be used for predicting source trajectories. For validation, predicted ground-level concentrations are compared against ground station data. Hotspots and source trajectories are being visualized over a given timeline. Exact locations of hotspots are detected using geo-decoding techniques.</p>
 
-		The charts we designed for our proposal were - <br><br>
-		<img src="./pics/gwt.png" alt="schema of our geographically weighted regression model">
-		<img src="./pics/aqi_and_dbscan.png" alt="schema of finding AQI and applying DBSCAN and HYSPLIT">
+		The charts we designed for our proposal were - <br>
+		<a href="./pics/gwt.png" alt="schema of our geographically weighted regression model">Schema of our geographically weighted regression model</a> [<b>~ 540 kB</b>]<br>
+		<a href="./pics/aqi_and_dbscan.png" alt="schema of finding AQI and applying DBSCAN and HYSPLIT">Schema of finding AQI and applying DBSCAN and HYSPLIT</a> [<b>~ 950 kB</b>]
 		</p>
 
 		<h2>Rigorous build</h2>
 		<p>We created a prototype based on the above architecture and were selected by our institute for the next round. <a href="https://github.com/pncnmnp/satellite-temp">The code for our prototype is available on Github</a>. One of the prototypes we designed (<b>for hotspot detection</b>) was - 
-			<img src="./pics/compressed-hotspot.gif" alt="prototype for hotspot detection">
 			<p style="text-align: center;">
+				<a href="./pics/compressed-hotspot.gif" alt="prototype for hotspot detection">Compressed GIF</a> [<b>1.4 MB</b>]<br>
 				<i>The above GIF shows the pathetic state of the Delhi-NCR region during December 2019. The map is formed after selecting the most polluted regions in India (top 1 percentile). Geodecoding is used to find the exact locations where satellite had made such observations. Sentinel 5P was used as our primary data source. The numbers in the boxes indicate <u>the number of observations made by the satellite in that region.</u> The blue hover helps visualize the clusters.<br>
 				<a href="./pics/uncompressed-hotspot.gif">Here is the uncompressed GIF</a> [<b>4 MB</b>]<br>
 				</i></p>
