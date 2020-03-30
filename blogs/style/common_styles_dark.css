@@ -1,7 +1,8 @@
 @font-face {
-	font-family: 'open_sansregular';
-	src: url('../fonts/opensans-regular-webfont.woff2') format('woff2'),
-		 url('../fonts/opensans-regular-webfont.woff') format('woff');
+	font-family: 'miller_text';
+	src: /*url('../fonts/opensans-regular-webfont.woff2') format('woff2'),
+		 url('../fonts/opensans-regular-webfont.woff') format('woff'),*/
+		 url('../fonts/Miller Text Roman.otf') format('opentype');
 	font-weight: 400;
 	font-style: normal;
 }
@@ -15,7 +16,7 @@ body {
 div {
 	font-size: 16px;
 	font-weight: 400;
-	font-family: 'open_sansregular', 'Helvetica', sans-serif;
+	font-family: 'miller_text', 'Helvetica', sans-serif;
 	font-style: normal;
 	max-width: 800px;
 	margin-left: auto;
