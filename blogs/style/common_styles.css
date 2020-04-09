@@ -49,6 +49,11 @@ img {
 	max-width: 100%;
 }
 
+figcaption {
+	text-align: center;
+	font-style: italic;
+}
+
 .story {
 	background-color: #f3f3f3
 }
