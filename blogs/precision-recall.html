@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+<meta name="author" content="parth_parikh">
+<meta name="description" content="Describes the meaning of two machine learning terms - precision and recall.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Understanding Precision and Recall</title>
+<link rel="stylesheet" type="text/css" href="./style/common_styles.css" id="light">
+<link rel="stylesheet" type="text/css" href="../style.css">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+<link rel="shortcut icon" type="image/png" href="../favicon.png"/>
+
+</head>
+
+<body>
+<div class="blog-text">
+<h1>Understanding Precision and Recall</h1>
+<p>One of the ways to help our brain resolve confusing terminologies is by blogging about them. In the past, I have observed <a href="./how-to-distinguish-between-big-and-little-endian.html">some promising results</a> with this approach. This blog-post is intended to resolve my confusion between <i>precision</i> and <i>recall</i>.</p>
+<p>Prof. Andrew Ng explains skewed classes with a great example - 
+	<blockquote>In predicting a cancer diagnosis where 0.5% of the examples have cancer, we find our learning algorithm has a 1% error. However, if we were to simply classify every single example as DOES NOT HAVE CANCER, then our error would reduce to 0.5% even though we did not improve the algorithm.</blockquote>
+The above example clearly describes the want of a better error metric. Ideally, we need a leap from <sup>(examples_correctly_classified)</sup>/<sub>(total_examples)</sub> to something more immune to skewed classes.
+</p>
+<p>In enters the idea of positives and negatives. Concerning our classes, a positive is when our model tells YES to our example. Is this a cat? Yes! Is she eligible for a loan? Yes! Will it rain? Yes! In contrast, a negative is when our model tells NO to an example. Does he have cancer? No! Is this a Van Gogh? No! Does this name sound Indian? No!</p>
+<p>After our model classifies examples as positives and negatives, we can neatly arrange all our model's predictions into 4 classes: </p>
+<figure>
+	<img src="./pics/precision-recall-basic.png" alt="The four classes are true positives, true negatives, false positives, and false negatives.">
+	<figcaption>Figure 1</figcaption>
+</figure>	
+<p>Observing the above classes, we can draw a concrete conclusion for our cancer example. As we are predicting every example as a negative, we would perform horribly in <b>model predicted NO -> In actuality it was a YES</b> condition (i.e. we have a large number of false negatives).</p>
+<p>With the above accuracy model, the classification game has shifted from increasing the number of correctly classified examples to reducing the number of false positives and false negatives. To make things more precise, we stress on two important questions - 
+	<ul>
+		<li><b>Precision</b> - Out of all the examples model predicted as positive, how many were in fact positive?</li>
+		<li><b>Recall</b> - Out of all the examples which in reality were positive, how many were predicted as positive?</li>
+	</ul>
+	The above diagram can then be modified as follows: 
+</p>
+<figure>
+	<img src="./pics/precision-recall-highlighted.png" alt="Shows how precision differs from recall.">
+	<figcaption>Figure 2</figcaption>
+</figure>
+<p>Going back to our cancer example, we realize that <b>our model has no recall</b>. This is because of all the positive examples, none of them were predicted as positive. Wikipedia concisely sums up the two definitions as - 
+	<blockquote cite="https://en.wikipedia.org/wiki/Precision_and_recall">In simple terms, high precision means that an algorithm returned substantially more relevant results than irrelevant ones, while high recall means that an algorithm returned most of the relevant results.</blockquote>
+</p>
+<p>An important distinction here is that while Precision specifically makes comments about our model's predictions, Recall sees things from a global perspective. This can be easily visualized from Figure 2 wherein Recall and Precision are correlated with <i>Reality</i> and <i>Prediction</i> respectively.</p>
+<p>Lastly, if the terminologies still looks a bit murky (especially the last paragraph), this diagram sums up the entire discussion of this blog-post - </p>
+<figure>
+	<img src="./pics/precision-recall-wikipedia.png">
+	<figcaption>Figure 3: By <a href="https://en.wikipedia.org/wiki/File:Precisionrecall.svg">Walber</a>. Licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</figcaption>
+</figure>
+<br>
+<a id="back-link" href="../blog.html">&#x2190;</a>
+</div>
+<footer>
+<hr>
+<div>
+© 2019 Parth Parikh.
+</div>
+</footer>
+
+</body>
+</html>
