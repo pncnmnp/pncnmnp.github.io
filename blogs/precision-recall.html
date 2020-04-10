@@ -27,9 +27,12 @@ The above example clearly describes the want of a better error metric. Ideally, 
 <p>After our model classifies examples as positives and negatives, we can neatly arrange all our model's predictions into 4 classes: </p>
 <figure>
 	<img src="./pics/precision-recall-basic.png" alt="The four classes are true positives, true negatives, false positives, and false negatives.">
-	<figcaption>Figure 1</figcaption>
+	<figcaption>Figure 1:<br>
+				False positives: Examples our model predicted as positive, it turned out to be False.<br>
+				False negatives: Examples our model predicted as negative, it turned out to be False. 
+	</figcaption>
 </figure>	
-<p>Observing the above classes, we can draw a concrete conclusion for our cancer example. As we are predicting every example as a negative, we would perform horribly in <b>model predicted NO -> In actuality it was a YES</b> condition (i.e. we have a large number of false negatives).</p>
+<p>Observing the above classes, we can draw a concrete conclusion for our cancer example. As we are predicting every example as a negative, we would perform horribly in <b>model predicted NO → In actuality it was a YES</b> condition (i.e. we have many false negatives).</p>
 <p>With the above accuracy model, the classification game has shifted from increasing the number of correctly classified examples to reducing the number of false positives and false negatives. To make things more precise, we stress on two important questions - 
 	<ul>
 		<li><b>Precision</b> - Out of all the examples model predicted as positive, how many were in fact positive?</li>
@@ -56,7 +59,7 @@ The above example clearly describes the want of a better error metric. Ideally, 
 <footer>
 <hr>
 <div>
-© 2019 Parth Parikh.
+© 2020 Parth Parikh.
 </div>
 </footer>
 
