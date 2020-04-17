@@ -39,7 +39,7 @@ div {
 
 @media(max-width: 1000px) {
 	div {
-		zoom: 90%;
+		zoom: 100%;
 	}
 }
 
