@@ -113,4 +113,7 @@ footer {
 pre {
 	white-space: pre-wrap;
 	word-wrap: break-word;
+
+	/* Helpful if JS is disabled*/
+	color: #000;
 }
