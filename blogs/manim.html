@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="author" content="parth_parikh">
+    <meta name="description" content="How to make a video using Manim? In this video I share some helpful links for the same.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Software worth exploring - Manim</title>
+    <link href="./style/prism_okaidia.css" rel="stylesheet" />
+    <script src="./js/prism_okaidia.js"></script>
+    <link rel="stylesheet" type="text/css" href="./style/common_styles.css" id="light">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <link rel="shortcut icon" type="image/png" href="../favicon.png" />
+    <noscript>
+        <style>
+            .off {
+                display: none
+            }
+        </style>
+    </noscript>
+
+</head>
+
+<body>
+    <div class="blog-text">
+        <script type="text/javascript" src="./js/dark_light_mode.js"></script>
+        <a id="on-off" class="off" onclick="setTheme(this)" href="#">Turn on/off lights</a>
+        <br class="off">
+        <h1>Software worth exploring - Manim</h1>
+        <p>When I started this blog, I wanted my blog-posts to be about ideas and experiences. The motive was to write content that never sinks and is somehow able to float through time. This is why I usually shy away from writing blog-posts about frameworks, libraries, or even languages and why I am paranoid about archiving thought-provoking web-pages. However, when I stumbled upon <a href="https://github.com/3b1b/manim">Manim (Mathematical Animation Engine)</a> and explored it for a while, I knew this warranted a blog-post.</p>
+
+        <p>Although Grant Sanderson (the author of Manim) likes to call it an <i>animation engine</i>, after playing around for a while, I found it akin to an <i>imagination engine</i>. The ability to craft beautiful animations and text so effortlessly has amazed me the most. Here is a video I made using Manim: </p>
+
+        <video controls>
+            <source src="./videos/coreference_resolution.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+
+        <p style="text-align: center;">An introduction on Coreference Resolution (the topic of our bachelor thesis)</p>
+
+        <p>From what I have observed, Manim renders each animation separately and then combines it to produce the entire video. As I have not explored much of the mathematical side of Manim, I will primarily share links for the text-rendering part.</p>
+
+        <h2>Links</h2>
+        <p>If some of the Github links are missing, I suggest going to commit aff2d21.</p>
+        <p>
+            <ul>
+                <li><a href="https://talkingphysics.wordpress.com/2019/01/08/getting-started-animating-with-manim-and-python-3-7/">Introduction</a>: Though not comprehensive, it is an excellent place to start learning Manim. (<a href="https://web.archive.org/web/20200415041722/https://talkingphysics.wordpress.com/2019/01/08/getting-started-animating-with-manim-and-python-3-7/">archive</a>)</li>
+                <li><a href="https://web.archive.org/web/20200122125849/https://manim-tb-manual.000webhostapp.com/tree/animation.html">Animations</a>: Comprehensive list of all the animations - Creation, Indication, and Transformation.</li>
+                <li><a href="https://web.archive.org/web/20200122130046/https://manim-tb-manual.000webhostapp.com/tree/animations/creation.html">Creation</a>: For creating and destroying objects (with various animations).</li>
+                <li><a href="https://web.archive.org/web/20200122130357/https://manim-tb-manual.000webhostapp.com/tree/animations/indication.html#show-creation-then-destruction">Indication</a>: For focussing on a particular object.</li>
+                <li><a href="https://web.archive.org/web/20200122130531/https://manim-tb-manual.000webhostapp.com/tree/animations/transform.html">Transformation</a>: Contains transforming an object to new objects, transforming objects to new locations, styling objects, etc.</li>
+                <li><a href="https://github.com/3b1b/manim/blob/master/manimlib/constants.py">Constants</a>: Up-to-date info on location constants (like UP, DOWN, LEFT_SIDE, etc), video resolution constants (high, med, low), pre-built color maps, etc.</li>
+                <li><a href="https://web.archive.org/web/20200122130716/https://manim-tb-manual.000webhostapp.com/tree/animations/movement.html">Movements and Rotations</a>: For rotating, squishing, and moving objects.</li>
+                <li><a href="https://github.com/3b1b/manim/tree/master/docs/source">Official documentation</a>: Contains many more examples.</li>
+            </ul>
+        If you want some amazing code examples, I highly suggest you skim the repositories <a href="https://github.com/3b1b/manim/blob/master/manimlib/for_3b1b_videos/">for_3b1b_videos</a> and <a href="https://github.com/3b1b/manim/tree/master/from_3b1b">from_3b1b</a>. It contains the code Grant Sanderson has used for his youtube channel <a href="https://en.wikipedia.org/wiki/3Blue1Brown">3blue1brown</a>. For example, when I wanted to underline a text, I found the relevant code in <a href="https://github.com/3b1b/manim/blob/master/manimlib/for_3b1b_videos/common_scenes.py#L209">common_scenes.py</a>.
+        </p>
+
+        <p>That's it for now!</p>
+
+        <br>
+        <a id="back-link" href="../blog.html">&#x2190;</a>
+    </div>
+
+    <footer>
+        <hr>
+        <div>
+            © 2020 Parth Parikh.
+        </div>
+    </footer>
+</body>
+
+</html>

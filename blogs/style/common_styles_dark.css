@@ -28,7 +28,7 @@ div {
 	}
 }
 
-img {
+img, video {
 	background-color: #fff;
 	display: block;
 	margin: 0 auto;
