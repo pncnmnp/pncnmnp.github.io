@@ -44,7 +44,9 @@
 </p>
 
 <img src="./pics/dark-mode-changes.jpg" alt="screenshot of Firefox rendering a PDF with dark background">
-<p style="text-align: center;"><i>Screenshot of Firefox rendering a PDF with dark background<i></p>
+<p style="text-align: center;"><i>Screenshot of Firefox rendering a PDF with dark background</i></p>
+
+<p><b>Update (26/05/2020):</b> As of Firefox 77.0b9, if you enable spreads (for side-by-side viewing), the style is not being rendered. However, changing the above selector path to <span class="like-pre">#viewerContainer > #viewer .page > .canvasWrapper > canvas {</span> fixes the issue. Specifically for spreads, the selector path has changed to <span class="like-pre">#viewerContainer > #viewer > div.spread > .page > .canvasWrapper > canvas {</span>. Thanks to the reddit user <u>/u/BotOfWar</u> for pointing out this change and it's fix. If you find any further issues/updates here is <a href="https://old.reddit.com/r/firefox/comments/eztxrw/dark_mode_for_firefoxs_builtin_pdf_viewer/">the reddit thread of this blogpost</a> (<a href="https://web.archive.org/web/20200526083407/https://old.reddit.com/r/firefox/comments/eztxrw/dark_mode_for_firefoxs_builtin_pdf_viewer/">archive.org</a>).</p>
 
 <br>
 <a id="back-link" href="../blog.html">&#x2190;</a>

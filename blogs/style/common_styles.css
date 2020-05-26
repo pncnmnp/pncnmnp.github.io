@@ -92,6 +92,7 @@ figcaption {
 	font-size: 14px;
 	word-wrap: break-word;
 	white-space: pre-wrap;
+	background-color: bisque;
 }
 
 a {
