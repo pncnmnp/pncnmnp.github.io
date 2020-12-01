@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta name="author" content="parth_parikh">
+	<meta name="description" content="Pseudocode to Code using Natural Language Processing">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Pseudocode to Code Generation</title>
+	<link rel="stylesheet" type="text/css" href="./style/common_styles.css" id="light">
+	<link rel="stylesheet" type="text/css" href="../style.css">
+	<link rel="shortcut icon" type="image/png" href="../favicon.png"/>
+
+</head>
+
+<body>
+	<div class="blog-text">
+        <h1>Pseudocode to Code Generation</h1>
+        <p>Integrating code analysis and synthesis with Natural Language Processing can open doors for many interesting applications like generating code comments, pseudocode from source code and UML diagrams, helping search code snippets, creating rudimentary test cases, improving code completion, and finally synthesizing code from pseudocode. Based on [1], the techniques to perform the above applications ranges from NLP tools such as POS tagging, language parsers, and word embeddings to sophisticated deep learning models.</p>
+
+        <p>Fascinated with the above use-cases, I decided to explore the research cultivated in this domain. To narrow down my focus, I started with <i>pseudocode to code generation</i>. Earlier this year, a demo of an OpenAI language model applied to code generation was published on <a href="https://twitter.com/i/broadcasts/1OyKAYWPRrWKb">Twitter</a> (starts around 28:00) - 
+            <blockquote>We've talked about how these massive language models trained on supercomputers can do all these different kinds of natural language tasks, but the models actually go much further. When we fine-tune them on specific data, we find that they can do things that we didn't expect. And one thing we were curious about was what we could do with code-generation. Could we help developers write code? And so, we used the Microsoft supercomputer, our generative text models, and we fine-tuned it on thousands of open source Github repositories. - <i>Sam Altman</i></blockquote>
+        The examples provided in the above demo were astounding, to say the least. As mentioned, their goal seems to be about improving the creative aspects of coding by automating mundane tasks.</p>
+
+        <p>To dive deeper, I read two recent papers which throw more light into the implementation aspect, albeit on a smaller scale as compared to OpenAI. <i>SPoC: Search-based Pseudocode to Code</i> (2019) [2] presents a new dataset for this task. This dataset contains around ~18,000 C++ programs collected from competitive programming sites such as <a href="https://codeforces.com/">Codeforces</a>. The paper mentions that there are on average 14.7 lines per program, which are all human-annotated by crowdsourcing it on <a href="https://www.mturk.com/">Amazon Mechanical Turk</a>. As the dataset presents test-cases, the synthesized program is said to be accepted if it passes all the public and hidden test cases. Here is how the training data looks like - </p>
+        <figure>
+            <img src="./pics/spoc-dataset-visualization.png" alt="SPOC dataset visualization">
+            <figcaption>Figure 1: SPoC dataset visualization</figcaption>
+        </figure>
+
+        <p>Apart from the annotations and code lines, there is information about the line numbers, indentation levels, and the <i>probid</i>, which appears to be a unique id for the test cases. We can also use the above <i>probid</i> to query the relevant Codeforces question - <a href="https://codeforces.com/problemset/problem/13/A">https://codeforces.com/problemset/problem/13/A</a>.
+
+        <p>
+        The main task as concisely defined in their paper is the following - 
+        <blockquote>
+            Given (a) a sequence x of L pseudocode lines x<sub>1</sub>, x<sub>2</sub>, ..., x<sub>L</sub> and (b) k public test cases in the form of input-output string pairs (T<sub>1</sub><sup>in</sup>, T<sub>1</sub><sup>out</sup>), ..., (T<sub>k</sub><sup>in</sup>, T<sub>k</sub><sup>out</sup>), the task is to synthesize a program y consisting of L code lines y<sub>1</sub>, y<sub>2</sub>, ..., y<sub>L</sub>. Each code line y<sub>i</sub> is a fragment of code whose semantics is described by the pseudocode line x<sub>i</sub>.
+        </blockquote>
+        In simple terms, we use each pseudocode line to generate its corresponding code line and continue to do this for all lines. After the program is generated, we verify it using the public and hidden test cases. For training, the authors have provided the data in the above table along with its corresponding public and hidden test cases. However, the testing is primarily performed using the pseudocode lines and the public test cases. In both the papers (the other being [3]), the authors have further provided a computational budget, with one unit equivalent to the execution and validation of a single compiled program. As mentioned in the <i>Introduction</i> section of [2]:
+        <blockquote>Using the top-one translation of the pseudocode yields a success rate of 24.6% on the test set. Under a limited budget of 100 synthesis trials (i.e., 100 code compilations and executions), our best method achieves a success rate of 44.7%.</blockquote>
+        </p>
+        <p>So what is this best method? And how is it nearly doubling the success rate?</p>
+        <p>To start, let me first explain the meaning of a <i>top-one translation</i>. Observe the table shown below - </p>
+
+        <figure>
+        <img src="./pics/code-generation-example.png" alt="Table showing a pseudocode to its corresponding generated code lines">
+        <figcaption>Figure 2: Table showing pseudocode to its corresponding generated code lines</figcaption>
+        </figure>
+
+        <p>In the above table, for simplicity, three probable candidates of each pseudocode line are shown. These are ordered as per their probability, so candidate 1's are predicted to be more probable than 2 and 3. Top-one translation is when all the candidate 1's are combined into a single program, to be compiled and executed. If an error is seen during the compilation or execution phase after top-one translation, we move on to the next combination of candidates. The authors propose a <b>best-first search</b> approach for this. But what is this best-first search?</p>
+
+        <p>From Artificial Intelligence: A Modern Approach (3rd edition, page 92) - 
+            <blockquote><b>Best-first search</b> is an instance of the general TREE-SEARCH or GRAPH-SEARCH algorithm in which a node is selected for expansion based on an evaluation function, <i>f(n)</i>. The evaluation function is construed as a cost estimate, so the node with the lowest evaluation is expanded first.<br>
+            The choice of <i>f</i> determines the search strategy. Most best-first algorithms
+            include as a component of <i>f</i> a heuristic function, denoted <i>h(n)</i>: <br>
+            <i>h(n)</i> = estimated cost of the cheapest path from the state at node n to a goal state.
+            </blockquote>
+        Dijkstra's algorithm can be considered a more general idea of best-first search as it does not use any heuristic function. By using a heuristic function, although we are not guaranteed to find the shortest path, the time taken to find the goal will be much quicker when compared with Dijkstra's algorithm. A<sup>*</sup> is a variant of the best-first search with the following heuristic function - <br>
+        <i>f(n) = g(n) + h(n);</i> <br>
+        where g(n) is the cost to reach the node and h(n) is the cost to reach from that node to the goal node. We usually implement the best-first search using a priority queue. For our implementation, the authors suggest using a heap. This heap will initially contain the top-one translated program. For each iteration, a pop() operation is performed and the program obtained is compiled and executed. If an error is found (or test mismatches have occurred), modified programs (using the next candidate combinations) are then pushed into this heap. The process stops when we find a solution or exhaust the search space. As rightly mentioned in paper [3], if we use a priority queue, to find the top <i>B</i> highest-scoring candidates, we would require <i>O(L*log(BL))</i> per candidate, where <i>L</i> is the number of lines in the synthesized program.
+        </p>
+            
+        <p>However, can we improve the heuristic function? Well, our basic instinct suggests that when we find an error, we fetch its line error, and move to the next candidate for that line. This pruning can significantly reduce the search space. However, as paper [2] mentions - 
+            <blockquote>Unfortunately, the reported line numbers do not always correspond to the actual location of the mistake (e.g., the error <i>'n was not declared in this scope'</i> can occur long after the line where n should be declared according to the pseudocode). Empirically, the reported line number does not match the actual incorrect line 21.7% of the time.</blockquote>
+        To solve the above problem, the authors propose multiclass classification and prefix-based pruning. The multiclass classification uses pseudocode lines, synthesized code lines, and error messages as an input to an error correction model [4] which then predicts the offending line. However, the authors state that the multiclass classification method does not guarantee that the predicted line is causing the error. To combat this, they use additional compiler calls to find a group of concurrent lines that fails the program's compilation. They maintain a maximum offset of 2 lines to limit the search space. The susceptible lines can then be blacklisted altogether or their candidate probability can be reduced. Here are the results observed by the  paper [2] - 
+        </p>
+
+        <figure>
+        <img src="./pics/code-generation-paper-2-results.png" alt="Paper 2 Results">
+        <figcaption>Figure 3: Paper [2] results</figcaption>
+        </figure>
+        
+        <p>The authors have divided their work into two test sets - TestP and TestW. TestP was obtained by holding out 23% of their problems (total was 677), and the TestW was formulated by holding out the work of 7 Mechanical Turk workers (out of a total of 59). I believe <b>there is an error</b> either in paper [2]'s abstract or introduction. In the abstract, they mention the top-one success rate to be 25.6%, however, in their introduction, (paragraph 7 line 1) they mention the error to be 24.6%. Nevertheless, an interesting observation they found was - 
+        <blockquote>Prefix-based pruning slightly increases the number of compilations for easier problems, but is more effective on harder programs, making it outperform the multiclass classifier under larger budgets.</blockquote></p>
+
+        <p>How is the machine translation system to generate candidate code lines working?
+            <blockquote>To generate candidate code lines, we use the standard seq2seq implementation from OpenNMT with an LSTM encoder and decoder, attention-based copying mechanism, and coverage vector.</blockquote> 
+            As I have yet to explore the relevant papers for machine translation, I am unable to provide more insight into this working. Another recent paper <i>Semantic Scaffolds for Pseudocode-to-Code Generation</i> [3] made an interesting observation, i.e. to generate programs that can be executed correctly, we need to consider both the syntactic (grammatical specifications) and semantic (such as the scope of the variables) nature of the candidates. For example, in figure 2 above, <i>line 5's</i> candidate 1 misses the curly braces (<i>{</i>), moreover, (line 4 - candidate 1) reinitializes the <i>i<sup>th</sup></i> variable (it was first initialized on line 2). While the latter prevents a logical bug due to the absence of tampering of variable <i>i</i> between lines 2-5, the former can cause a compile-time error. Therefore, the best-first search's heuristic must understand the syntactic and semantic nature of the candidates.</p>
+        <p>The authors of paper [3] made three important observations. First, to enforce syntactic constraints, we can extract the grammar symbols from the candidate code and use an incremental parser to check if the grammar symbol combination is a derivation of an abstract syntax tree. Incremental Parsing is thoroughly explained in [5] and in the book Recent Advances in Parsing Technology [6] (chapter 2). Second, a variable table can be used to keep a log of the scope of each variable, minimizing the <i>undeclared/redeclared variables'</i> semantic errors. To find a working combination of candidates given the above constraints, the authors propose a beam search implementation. As succinctly mentioned on <a href="https://en.wikipedia.org/wiki/Beam_search">Wikipedia</a> - 
+            <blockquote>Beam search is an optimization of best-first search that reduces its memory requirements. Best-first search is a graph search which orders all partial solutions (states) according to some heuristic. But in beam search, only a predetermined number of best partial solutions are kept as candidates.</blockquote>
+            <blockquote>Beam search uses <u>breadth-first search</u> to build its search tree. At each level of the tree, it generates all successors of the states at the current level, sorting them in increasing order of heuristic cost. However, it only stores a predetermined number, β, of best states at each level (called the beam width). Only those states are expanded next. The greater the beam width, the fewer states are pruned. With an infinite beam width, no states are pruned and beam search is identical to breadth-first search. </blockquote>
+            
+        By enforcing the above constraints, the authors observed that while it improves the program accuracy, for large beam width (>=1000), the time complexity of the beam search grows considerably. In order to further reduce this time complexity, the authors presented their third important observation - scaffolds. The authors have defined a scaffold as an abstraction of syntactic and semantic information. For example, <span class="like-pre">val+=2 and val=val+2</span> mean the same (both syntactically and semantically). Therefore such candidates if proposed can be abstracted into a single candidate. This reduces redundant computations. Therefore, we can then apply beam search on these abstractions first, and then expand the chosen candidates before compilation. The probability of abstraction can then be the total of the individual candidates' probability.</p>
+
+        <p>Code generation is truly a breathtaking subject. I am planning to explore a different tangent in a few days - <i>Inductive Program Synthesis</i>, starting with the famous <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/12/oopsla15-pbe.pdf"><b>FlashMeta</b></a> paper which explains the FlashFill algorithm (Ctrl + E) used by Microsoft Excel. Will update the blog soon! Happy Exploring!</p>
+        <h2>References</h2>
+        <p>
+            [1] Natural Language Processing Techniques for Code Generation, Hendrig Sellik, URL: <a href="https://repository.tudelft.nl/islandora/object/uuid:3a6625b0-21da-4746-bab3-f409eed93f30/datastream/OBJ/download">https://repository.tudelft.nl/islandora/object/uuid:3a6625b0-21da-4746-bab3-f409eed93f30/datastream/OBJ/download</a>
+            <br>
+            [2] Kulal, Sumith, et al. "Spoc: Search-based pseudocode to code." Advances in Neural Information Processing Systems. 2019. URL: <a href="https://arxiv.org/abs/1906.04908">https://arxiv.org/abs/1906.04908</a>
+            <br>
+            [3] Zhong, Ruiqi, Mitchell Stern, and Dan Klein. "Semantic Scaffolds for Pseudocode-to-Code Generation." arXiv preprint arXiv:2005.05927 (2020). URL: <a href="https://arxiv.org/abs/2005.05927">https://arxiv.org/abs/2005.05927</a>
+            <br>
+            [4] Gupta, Rahul, et al. "Deepfix: Fixing common c language errors by deep learning." Proceedings of the Thirty-First AAAI Conference on Artificial Intelligence. 2017. URL: <a href="https://www.aaai.org/ocs/index.php/AAAI/AAAI17/paper/viewFile/14603/13921">https://www.aaai.org/ocs/index.php/AAAI/AAAI17/paper/viewFile/14603/13921</a> (This paper by IISc graduates looks interesting, will update this post when I finish exploring it)
+            <br>
+            [5] Ghezzi, Carlo, and Dino Mandrioli. "Incremental parsing." ACM Transactions on Programming Languages and Systems (TOPLAS) 1.1 (1979): 58-70.
+            <br>
+            [6] Bunt, Harry, and Masaru Tomita, eds. Recent advances in parsing technology. Vol. 1. Springer Science & Business Media, 1996.
+        </p>
+    	<a id="back-link" href="../blog.html">&#x2190;</a>
+	</div>
+<footer>
+<hr>
+	<div>
+		© 2020 Parth Parikh.
+	</div>
+</footer>
+
+</body>
+</html>
