@@ -1,7 +1,7 @@
 @font-face {
-	font-family: 'open_sans';
-	src: url('../fonts/opensans/opensans-regular-webfont.woff2') format('woff2'),
-		 url('../fonts/opensans/opensans-regular-webfont.woff') format('woff');
+	font-family: 'lusitana';
+	src: url('../fonts/lusitana/Lusitana-Regular.ttf') format('truetype');
+		 /* url('../fonts/opensans/opensans-regular-webfont.woff') format('woff'); */
 	font-weight: 400;
 	font-style: normal;
 }
@@ -15,7 +15,7 @@ body {
 div {
 	font-size: 14px;
 	font-weight: 400;
-	font-family: 'open_sans', 'Helvetica', sans-serif;
+	font-family: 'lusitana', 'Helvetica', sans-serif;
 	font-style: normal;
 	max-width: 800px;
 	margin-left: auto;
