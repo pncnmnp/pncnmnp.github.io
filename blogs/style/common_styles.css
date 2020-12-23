@@ -87,7 +87,7 @@ figcaption {
 	background-color: #C20000;
 }
 
-.like-pre {
+.like-pre, code {
 	font-family: monospace; 
 	font-size: 14px;
 	word-wrap: break-word;
