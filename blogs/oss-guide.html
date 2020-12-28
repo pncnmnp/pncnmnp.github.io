@@ -113,10 +113,10 @@ git log --pretty=format: --name-only | sort | uniq -c | sort -rg | head -50 | gr
 # r - recursively search through directories
 # n - print line number
 # i - case insensitive search
-grep -rni $<pattern> *
+grep -rni $"PATTERN" *
 
 # To search in specific extensions -
-grep -rni . --include \*.<extension>
+grep -rni . --include \*.EXTENSION
 </code></pre>
 <p>Examples - <img src="./pics/grep.png" alt="Example of using grep" /></p>
 <p>Using <code>ctags</code> and integrating it with vim is another powerful way to search a large codebase - 
