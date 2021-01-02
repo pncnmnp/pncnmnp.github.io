@@ -6,9 +6,9 @@
   <link rel="stylesheet" type="text/css" href="./style/common_styles.css" id="light">
   <link rel="stylesheet" type="text/css" href="./style/code_style.css">
   <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"> -->
-  <link href="./style/prism_okaidia.css" rel="stylesheet" />
+  <link href="./style/prism.css" rel="stylesheet" />
   <link rel="shortcut icon" type="image/png" href="../favicon.png"/>
-  <script src="./js/prism_okaidia.js"></script>
+  <script src="./js/prism.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -26,10 +26,32 @@
 <h2>Table of Contents</h2>
 <ul>
   <li><a href="#choosing-a-project">Choosing a Project</a></li>
-  <li><a href="#getting-started-with-a-repository">Getting Started with a Repository</a></li>
+  <li><a href="#getting-started-with-a-repository">Getting Started with a Repository</a>
+    <ul>
+      <li><a href="#use-it">Use it</a></li>
+      <li><a href="#check-out-the-earliest-commits">Check out the earliest commits</a></li>
+      <li><a href="#test-cases-specifications-and-building-from-source">Test Cases, Specifications, and Building from Source</a></li>
+      <li><a href="#use-tools-to-aid-in-understanding">Use tools to aid in understanding</a></li>
+      <li><a href="#git-log-trick">Git Log trick</a></li>
+      <li><a href="#searching">Searching</a></li>
+    </ul>
+  </li>
   <li><a href="#discovering-issues">Discovering Issues</a></li>
-  <li><a href="#planning">Planning</a></li>
-  <li><a href="#coding-and-guidance">Coding and Guidance</a></li>
+  <li><a href="#planning">Planning</a>
+    <ul>
+      <li><a href="#use-the-issue-description-to-its-fullest">Use the issue description to its fullest</a></li>
+      <li><a href="#dont-try-to-go-through-the-whole-codebase">Don’t try to go through the whole codebase</a></li>
+      <li><a href="#figure-out-how-your-part-fits-in">Figure out how your part fits in</a></li>
+      <li><a href="#reproduce-the-issue">Reproduce the issue</a></li>
+      <li><a href="#structured-theorizing">Structured Theorizing</a></li>
+    </ul>
+  </li>
+  <li><a href="#coding-and-guidance">Coding and Guidance</a>
+    <ul>
+      <li><a href="#feedback-from-mentors-and-maintainers">Feedback from mentors and maintainers</a></li>
+      <li><a href="#debugging-logging-and-profilers">Debugging, Logging, and Profilers</a></li>
+    </ul>
+  </li>
   <li><a href="#claiming-an-issue">Claiming an Issue</a></li>
 </ul>
 <hr>
@@ -46,7 +68,7 @@
 <p>Exploring a new repository can certainly be a daunting task. Many angles come at play - familiarity with the languages, understanding of the tools or frameworks used, how components integrate with each other, what paradigm is used by the developers, etc. The points mentioned in this section will present you with approaches to make this journey smooth.</p>
 <h3 id="use-it">Use it</h3>
 <p>As mentioned across various <a href="https://news.ycombinator.com/item?id=16299125">discussion threads</a>, the best way to get familiar with any open-source project is to use it. Begin with a very simple idea relevant to the project you are going to contribute to. Then, turn that idea into reality primarily using that open-source project. Throughout the process make sure to learn about the project’s dependencies, features, and important components/classes. Try integrating as many features as you can - remember - your first goal is to explore the breadth of this project.</p>
-<p>If the above process takes you on a back-foot, analyze <em>why?</em> Is it because of some tool, language, framework, or something else? Once the <em>why</em> part is inspected, observe how the project is using that technology and read the documentation for the same. If documentation gets dense, jump to the tutorial or watch relevant video presentations by the authors/maintainers. If confusion persists, approach the contributors on the project’s discussion platform (Github discussion, Slack, Discord, etc).</p>
+<p>If the above process takes you on a back-foot, analyze <em>why?</em> Is it because of some tool, language, framework, or something else? Once the <em>why</em> part is inspected, observe how the project is using that technology, and read the documentation for the same. If documentation gets dense, jump to the tutorial, or watch relevant video presentations by the authors/maintainers. If confusion persists, approach the contributors on the project’s discussion platform (Github discussion, Slack, Discord, etc).</p>
 <p>Lastly, the primary purpose of MLH-Fellowship’s <em>kickoff hackathon</em> is to make the fellows extensively use the open-source project they are going to contribute to throughout their fellowship. So make good use of this opportunity.</p>
 <h3 id="check-out-the-earliest-commits">Check out the earliest commits</h3>
 <blockquote>
@@ -130,35 +152,35 @@ grep -rni . --include \*.EXTENSION
 <p>Please only look for issues within your assigned Project. MLH mentors recommend starting by searching for issues with the <code>help wanted</code>, <code>good first issue</code>, <code>MLH</code>, or <code>hacktoberfest</code> labels. The mentors also recommend that you start with smaller easier issues at the beginning of the fellowship and work your way up to complex and more difficult issues throughout the program.</p>
 <p>In conclusion, select 3 to 5 issues that meet the criteria above. Write them down in a place where you can take notes and expand upon them.</p>
 <h2 id="planning">Planning</h2>
-<p>Henry Ford’s factory has been the source of a curious story floating around the interwebz. The premise always involves a colossal factory machine that is malfunctioning, befuddled engineers and a supreme genius who comes in to save the day. The story goes like this: One of the huge steam machines in Ford’s factory starts malfunctioning, and none of Ford’s engineers could figure out what’s going on. But when this genius, usually Nikola Tesla or Charles Proteus Steinmitz, steps in, he’s able to isolate the problem to one small insignificant part that needs a minor correction. The final bill is $10,000.</p>
-<p>Ford was of course incredulous, since all the man did was to make a cross on the affected area, so the genius gave his breakup:</p>
+<p>Henry Ford’s factory has been the source of a curious story floating around the interwebz. The premise always involves a colossal factory machine that is malfunctioning, befuddled engineers, and a supreme genius who comes in to save the day. The story goes like this: One of the huge steam machines in Ford’s factory starts malfunctioning, and none of Ford’s engineers could figure out what’s going on. But when this genius, usually Nikola Tesla or Charles Proteus Steinmetz, steps in, he’s able to isolate the problem to one small insignificant part that needs a minor correction. The final bill is $10,000.</p>
+<p>Ford was, of course, incredulous, since all the man did was to make a cross on the affected area, so the genius gave his breakup:</p>
 <p>$1 for pointing out the part</p>
 <p>$9999 for the engineering knowhow to isolate the issue to one section of the system</p>
-<p>Such goes the story and you may find yourself in Nikola Tesla’s shoes when you look at a colossal codebase looking to add one small fix. Fear not, for you do not need to be a genius, you just need some basic principles that’ll have you narrowing down the issue to a small, manageable section of the codebase.</p>
+<p>Such goes the story and you may find yourself in Nikola Tesla’s shoes when you look at a colossal codebase looking to add one small fix. Fear not, for you do not need to be a genius, you just need some basic principles that’ll have you narrow down the issue to a small, manageable section of the codebase.</p>
 <h3 id="use-the-issue-description-to-its-fullest">Use the issue description to its fullest</h3>
 <p>In many cases, you can save yourself the detective work since the maintainers of the project often have already identified which areas of the codebase the fix will touch and would have this information available in the issue description itself.</p>
 <p>It is pointless to restart from scratch, so make sure you have reviewed all the information that is already available in the issue description.</p>
 <h3 id="dont-try-to-go-through-the-whole-codebase">Don’t try to go through the whole codebase</h3>
-<p>When you’re getting started, you may be tempted to try to understand everything. Not only is this not necessary, it is going to be actively detrimental to your contribution ability, since 9 times out of 10 you’ll just be more confused.</p>
+<p>When you’re getting started, you may be tempted to try to understand everything. Not only is this not necessary, but it is also going to be actively detrimental to your contribution ability since 9 times out of 10 you’ll just be more confused.</p>
 <p>Most repositories have been around for a substantial amount of time, with several people contributing and extending the codebase, making it grow into what it is now. In most cases, it simply would not be possible to understand every single line of code that’s there and you should try to approach the problem strategically.</p>
-<p>Most good open source projects are structured very well, with the folder hierarchy and file names being mostly self explanatory. Usually these hierarchies follow the top down approach: Where the bigger subsystem folders contain their sub parts. You need to gradually zero down on the subsystem you are going to be tackling, as you go down the folder hierarchy, eventually you’ll narrow down your scope of work to a few files in the project, and this is the space you should be confined to while working on the issue.</p>
+<p>Most good open-source projects are structured very well, with the folder hierarchy and file names being mostly self-explanatory. Usually, these hierarchies follow the top-down approach: Where the bigger subsystem folders contain their subparts. You need to gradually zero down on the subsystem you are going to be tackling, as you go down the folder hierarchy, eventually, you’ll narrow down your scope of work to a few files in the project, and this is the space you should be confined to while working on the issue.</p>
 <p>If you’re fixing a bug, it might be the case that the issue originated somewhere else in the system, but the files you select are a good starting point from which you can try to track down the source of the issue. It certainly is less overwhelming to explore small parts of the codebase than trying to grasp everything that is going on.</p>
 <h4 id="aside---paper-cut-principle">Aside - Paper Cut Principle</h4>
 <p>If you create a project, you know the ins and outs of it. How do you attain the same mastery over someone else’s project?</p>
-<p>As discussed, it would not be possible to gain mastery over a non trivial codebase in a small amount of time. However, you should be aware of the “Paper Cut Principle”, which is basically the idea that as you work on several small issues across the codebase, the underlying understanding of the codebase improves till you have some idea about how everything works in the codebase. That’s how an “outsider” gets familiar with the code, consuming small parts of it over time.</p>
+<p>As discussed, it would not be possible to gain mastery over a non-trivial codebase in a small amount of time. However, you should be aware of the “Paper Cut Principle”, which is the idea that as you work on several small issues across the codebase, the underlying understanding of the codebase improves till you have some idea about how everything works in the codebase. That’s how an “outsider” gets familiar with the code, consuming small parts of it over time.</p>
 <h3 id="figure-out-how-your-part-fits-in">Figure out how your part fits in</h3>
-<p>Now that you have identified the scope of your fix, you should consider everything else to be a black box. Identify what sort of inputs your part of the code is getting, how it is being used and what’s being expected out of it.</p>
+<p>Now that you have identified the scope of your fix, you should consider everything else to be a black box. Identify what sort of inputs your part of the code is getting, how it is being used, and what’s being expected out of it.</p>
 <p>All of this seems very abstract, but the basic idea is that you don’t need to know everything about how everything else is implemented in order to add anything new. You assume everything else to conform to their specifications and then try to explore the tiny part of the codebase you are focusing on.</p>
 <p>Of course, it could be the case that for every change, you need to look at multiple different sections of the codebase and that there are lots of buggy parts. That’s just bad software, however, and you would usually have a clearly defined area you can focus on in mature codebases.</p>
 <h3 id="reproduce-the-issue">Reproduce the issue</h3>
 <p>If you are working on squashing a bug, then the absolute first step you should take before planning for a fix is to actually reproduce the issue. The very act of reproducing the issue has you going through the motions of setting up the project, making sure it runs and that everything is configured correctly and finally reproducing the issue.</p>
-<p>Having an easy way to reproduce the issue helps in many ways. It helps speed up development and you can (and should) take it one notch further and try to write a test capturing this behavior. With this, not only do you have a way to quickly run tests, it also ensures that future versions of the project would not accidentally cause the issue to pop up again.</p>
+<p>Having an easy way to reproduce the issue helps in many ways. It helps speed up development and you can (and should) take it one notch further and try to write a test capturing this behavior. With this, not only do you have a way to quickly run tests, but it also ensures that future versions of the project would not accidentally cause the issue to pop up again.</p>
 <h3 id="structured-theorizing">Structured Theorizing</h3>
-<p>You have explored the issue, have narrowed down the scope of interest and now are ready to tackle your issue. If you have figured out the root cause for the bug, then you can proceed to making a solution, but if you’re stuck, one thing that might help you break out of it is to creatively think of potential causes for the problem you’re solving and try to verify whether any of the causes exist.</p>
-<p>When you’re trying to think of a solution, then too it helps to brainstorm about multiple ways to solve the problem, since you would be able to compare and contrast a few approaches and zero in on the optimal one.</p>
+<p>You have explored the issue, have narrowed down the scope of interest, and now are ready to tackle your issue. If you have figured out the root cause for the bug, then you can proceed to make a solution, but if you’re stuck, one thing that might help you break out of it is to creatively think of potential causes for the problem you’re solving and try to verify whether any of the causes exist.</p>
+<p>When you’re trying to think of a solution, then it helps to brainstorm about multiple ways to solve the problem, since you would be able to compare and contrast a few approaches and zero in on the optimal one.</p>
 <p>Hack it, then get it right!</p>
 <p>You might get into a state of analysis paralysis when editing files in huge codebases. Many thoughts may cross your head and more often than not, you just remain stuck instead of moving forward because of apprehension about code quality.</p>
-<p>This is why it is important to proceed in two phases. The first one where you get it working, till which point it remains on your machine. Some things may be hard coded, a few parts could be optimized upon, but the important thing is that you have something working. To improve it from a working state to a robust state is easier than trying to get everything right the first time.</p>
+<p>This is why it is important to proceed in two phases. The first one where you get it working, till which point it remains on your machine. Some things may be hardcoded, a few parts could be optimized upon, but the important thing is that you have something working. To improve it from a working state to a robust state is easier than trying to get everything right the first time.</p>
 <p>Get into the spirit of iteration and don’t be afraid to make changes to the code. Once you’re done with your proof of concept, you can proceed towards making it proper.</p>
 <h2 id="coding-and-guidance">Coding and Guidance</h2>
 <h3 id="feedback-from-mentors-and-maintainers">Feedback from mentors and maintainers</h3>
@@ -166,8 +188,8 @@ grep -rni . --include \*.EXTENSION
 <p>Another effective (debugging) technique is to explain your code to someone else. This will often cause you to explain the bug to yourself. Sometimes it takes no more than a few sentences, followed by an embarrassed &quot;Never mind, I see what's wrong. Sorry to bother you.&quot; This works remarkably well; you can even use non-programmers as listeners. One university computer center kept a teddy bear near the help desk. Students with mysterious bugs were required to explain them to the bear before they could speak to a human counselor.<br />
 <em>B. Kernighan &amp; D. Pike (in &quot;The Practice of Programming&quot; pp. 123)</em></p>
 </blockquote>
-<p>As rightly mentioned by <a href="https://arandr.github.io/2015/01/17/how-i-learned-to-stop-worrying-and-debug-other-peoples-code.html">Arandr</a>, it is a positive habit to talk with experienced maintainers and explain your understanding to the new contributors. Both of them involve active thinking of the codebase, and are usually faster than trying the trial-and-error strategy.</p>
-<p>Schedule a meeting with your MLH mentor/code-maintainer to go over your plan. Come prepared to your meeting with the most detailed plans you can. A plan can ideally be a breakdown of changes, wherein a breakdown is - what are the major steps that will be needed to make this change? A good rule of thumb here is that every verb that you use should be in it’s own step.</p>
+<p>As rightly mentioned by <a href="https://arandr.github.io/2015/01/17/how-i-learned-to-stop-worrying-and-debug-other-peoples-code.html">Arandr</a>, it is a positive habit to talk with experienced maintainers and explain your understanding to the new contributors. Both of them involve active thinking of the codebase and are usually faster than trying the trial-and-error strategy.</p>
+<p>Schedule a meeting with your MLH mentor/code-maintainer to go over your plan. Come prepared for your meeting with the most detailed plans you can. A plan can ideally be a breakdown of changes, wherein a breakdown is - what are the major steps that will be needed to make this change? A good rule of thumb here is that every verb that you use should be in its own step.</p>
 <p>Examples of good step breakdowns:</p>
 <ul>
 <li>Create a new class called <code>myApiService.js</code></li>
@@ -193,7 +215,7 @@ D. Knuth (The Art of Computer Programming, Volume 1)</p>
 <p>In some situations using a <em>data breakpoint</em> can be advantageous. Data breakpoints allow you to break execution when the value stored at a specified memory location changes. For example - watching for the change of a variable <code>X</code> to <code>NULL</code>, finding out who's releasing the memory too early and leaving back dangling pointers, observing flow when global data is accessed everywhere are some of its use cases. A more comprehensive use-case is mentioned by <a href="https://stackoverflow.com/questions/621535/what-are-data-breakpoints">Shog9 on StackOverflow</a>.</p>
 <p>At this point, a frequently asked question is - <strong>won’t a print statement suffice?</strong> It depends! The following answer by <a href="https://softwareengineering.stackexchange.com/a/183903">Glen K. Peterson</a> excellently describes this argument - 
 <blockquote>
-  For purely software problems, I find that thinking about the problem and testing the system to learn more about the problem is much more useful than stepping through code line by line. With print statements, I have a list of everything that happened at the command line or log file that I can look at and reconstruct what happened, going backwards and forwards more easily than I ever could with a debugger.<br />
+  For purely software problems, I find that thinking about the problem and testing the system to learn more about the problem is much more useful than stepping through the code line by line. With print statements, I have a list of everything that happened at the command line or log file that I can look at and reconstruct what happened, going backwards and forwards more easily than I ever could with a debugger.<br />
   The hardest bugs are usually solved by understanding the problem away from the computer. Sometimes with a piece of paper or whiteboard, and sometimes the answer reveals itself while I'm doing something else. The trickiest bugs are solved by looking carefully at the code like playing Where's Waldo. All the rest seem easiest with print statements, or logging statements.<br />
   Different people have different styles, and different styles are better for different tasks. Print statements are not necessarily a step down from a debugger. Depending on what you are doing, they can even be better. Especially in a language that doesn't have a native debugger (does Go?).
 </blockquote></p>
@@ -215,7 +237,7 @@ D. Knuth (The Art of Computer Programming, Volume 1)</p>
 <footer>
 <hr>
 <div>
-© 2020 Parth Parikh.
+© 2021 Parth Parikh.
 </div>
 </footer>
 
