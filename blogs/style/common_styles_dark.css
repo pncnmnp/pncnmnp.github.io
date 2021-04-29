@@ -6,6 +6,13 @@
 	font-style: normal;
 }
 
+@font-face {
+	font-family: 'lusitana';
+	src: url('../fonts/lusitana/Lusitana-Bold.ttf') format('truetype');
+		 /* url('../fonts/opensans/opensans-regular-webfont.woff') format('woff'); */
+	font-weight: bold;
+}
+
 body {
 	line-height: 1.5;
 	background-color: #181a1e;
