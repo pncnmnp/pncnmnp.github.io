@@ -21,6 +21,16 @@
 	padding-bottom: 3px;
 }
 
+.my-img-frontpage{
+	height: 200px;
+	width: 200px;
+	display: block;
+	float: left;
+	margin: 0 20px 20px 0;
+	border: 6px solid #fff;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);	
+}
+
 @media (max-width: 1000px) {
 	.topnav {
 		font-size: 17px;
