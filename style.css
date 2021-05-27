@@ -37,6 +37,11 @@
 		text-align: center;
 	}
 
+	.my-img-frontpage {
+		height: 150px;
+		width: 150px;	
+	}
+
 	.topnav a {
 		font-size: 14px;
 		float: none;
