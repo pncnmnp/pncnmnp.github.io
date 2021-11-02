@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="Parth Parikh">
+  <meta name="description" content="Discussion on exploring large codebases">
+  <link rel="stylesheet" type="text/css" href="./style/common_styles.css" id="light">
+  <link rel="stylesheet" type="text/css" href="./style/code_style.css">
+  <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"> -->
+  <link href="./style/prism.css" rel="stylesheet" />
+  <link rel="shortcut icon" type="image/png" href="../favicon.png"/>
+  <script src="./js/prism.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Discussion on exploring large codebases</title>
+</head>
+<body>
+<div id="header">
+<h1 class="title">Discussion on exploring large codebases</h1>
+</div>
+<div class="blog-text">
+    <h2>First Published: 2<sup>nd</sup> November 2021</h2>
+    <p><i>Some conversations are too good to be lost in time.</i> The following is <a href="https://old.reddit.com/r/coding/comments/ncs4yi/general_guide_for_exploring_large_open_source/">one such conversation I had with an anonymous redditor</a> after I published my blog on <a href="https://pncnmnp.github.io/blogs/oss-guide.html">General Guide For Exploring Large Open Source Codebases</a>. There are some valuable software engineering lessons to be learned from this discussion, especially for a young programmer.</p>
+
+    <h2>The discussion</h2>
+
+    <h3>Experienced programmer</h3>
+    <p>Every time I read one of these hoping to see something useful I'm left with the feeling that the author has never actually worked on a large code base.</p>
+    <p>My last 3 jobs have been massive code bases developed over 40 years and none of this would apply. Hell, keeping this in the headline's context and I'm not sure this would be a good way to really dig into the linux kernel.</p>
+
+    <h3>Another redditor</h3>
+    <p>Base on your experience, could you share some hints? Thanks</p>
+
+    <h3>Experienced programmer</h3>
+    <p>Only trick I ever found was just to start fixing bugs. Hopefully the bug points you to the right are to start, or gives you a string to search on, or a mentor can give you a pointer (the article touches on that angle).</p>
+    <p>The documentation is generally out of date if you can find it. The test cases may not be in your department at all (Corporate point of view). In fact, from a corporate development point of view, test/QA and support are your best friends and a new developer should make nice with them. They are going to be the best resource to learn how the code works and how it's used in the real world; Development tends to be in a bubble and doesn't know that nearly as well. Dev will know the code, but QA will be able to explain what the code actually does. The jobs that I've known the product the best are generally the jobs that I spent the most time having lunch with QA people on the regular. (This is not the same as "read the test cases". I'm not going to dig up the nightly regression and build sanity tests to figure anything meaningful out. The QA guys will be able to explain how to set the product up and actually use it so that you can poke at things. My current job has a handful of VM's with various configurations of the product installed so I can try things and see what happens mostly because I don't have a good relationship with QA right now.)</p>
+    <p>The only thing I've found to actually learn the code base is to run it and to start changing it. After that I'm just guessing at what keywords might be used and what strings i see in logs until I can find my way around.</p>
+    <p>Just for illustration.</p>
+    <p>My current job is a 30 year old enterprise product. I don't have a good releationship with QA because I have no QA local to interact with. But I've got a few old guard developers I can sometimes lean on. As such I have a half dozen VM's with various configurations of the product and spend a lot of time searching log messages to find what code I care about and then tweaking that code and and adding more logging to confirm. I don't have access to test cases that I don't write myself, the code is in it's second or third repository and finding stuff from 1993 is a pain anyhow. The documentation is there kind of. A lot is missing. A lot isn't accurate and/or is lacking. And it's all scattered so finding what is there is difficult.</p>
+    <p>My previous job was a 40year old embedded project that was so convoluted people would retire and get jobs with third parties making prettier UI's to make sense of it. Had a solid relationship with QA and the entirety of the team was old guard development that had been there for decades. So finding my way around consisted of a conversation and reading through code. They were on their second or third repo and digging too far back wasn't a help any how (At this point it was an 16bit project ported to 32 and now 64bit. There was still 16 bit code actively being run and it had changed base OS's along the way). Documentation was OK. Test cases were really non-existent though since it wasn't really a project that worked too well with automation.</p>
+    <p>Before that was a 40 year old telecom project that was ported from FORTRAN and they weren't sure that C was going to be the language to go with (this was in the 80's or early 90's... it stuck with C in the end). Basically same scenario as the following job otherwise.</p>
+    <p>but you see why I might find advice consisting of "read the earliest commits" and "check the test cases" to be lacking.</p>
+
+    <h3>Me</h3>
+    <p>Author here. Thank you for writing this.
+        <blockquote>I'm left with the feeling that the author has never actually worked on a large code base.</blockquote>
+        This is true. Me and my colleague are fourth-year undergraduates who wrote the above article while working on a relatively large open-source repository during our MLH Fellowship.
+        
+        <blockquote>you see why I might find advice consisting of "read the earliest commits" and "check the test cases" to be lacking.</blockquote>
+        I do. It certainly seems that our points are not practical in many scenarios. Your advice on maintaining a great rapport with quality assistance/testing is really helpful.
+        
+        <blockquote>The documentation is there kind of. A lot is missing. A lot isn't accurate and/or is lacking. And it's all scattered so finding what is there is difficult.</blockquote>
+        I have always found this interesting. A while back, I had the following conversation with a fellow programmer:
+    </p>
+
+    <p>
+        <blockquote>
+        <p>Recently, a really insightful blog-post appeared on HN - <a href="https://blog.royalsloth.eu/posts/on-navigating-a-large-codebase/">On navigating a large codebase</a> and <a href="https://news.ycombinator.com/item?id=26129190">Hacker News link for the same</a>.</p>
+        
+        <p>This blog-post highlights one of the biggest challenges which documentations for large-scale projects face - "being out of sync". It certainly seems like an interesting problem to think about. Another relevant discussion - <a href="https://stackoverflow.com/questions/913303/how-to-keep-code-and-specs-in-sync-are-there-good-tools">How to keep code and specs in sync? - are there good tools</a>.</p>
+        
+        <p>Furthermore, there is a very fascinating comment made by nexthash (in the above HN thread) which aims at solving the above challenge -</p>
+        
+        <blockquote>Interesting way to approach the documentation issue discussed in this article is 'wiki bankruptcy': when a wiki goes stale, simply tell all devs to save what they think is important before deleting the whole thing outright. Then, they can recreate those pages into a new wiki. Read more about it here: <a href="https://critter.blog/2020/08/10/wiki-bankruptcy/">Wiki bankruptcy</a>.</blockquote>
+        
+        <p>He also talks about using this 'bankruptcy' philosophy in other aspects of life, which I thought was intriguing: <a href="https://critter.blog/2020/09/24/declare-bankruptcy-and-dont-be-ashamed-of-it/">Declare bankruptcy and don’t be ashamed of it</a>.</p>
+        </blockquote>
+
+        <p>Given your experience, I was wondering what are your thoughts on the above 'bankruptcy' policy?</p>
+    </p>
+
+    <h3>Experienced programmer</h3>
+    <p>Keeping this separate from the other comment just to keep it one discussion.</p>
+        
+        <p>If you have a manger that you can convince to let you reset everything to clean up tech debt, you have an amazing manager who you should never leave and a company that apparently doesn't think they need to release anything anytime soon.</p>
+        
+        <p>The only job I've had where we had a "Stop... we need to write all of the documentation now" was a start up that by 2 years in simply had no documentation and decided they needed a month or two just focusing on that. Every other job would complain about tech debt, but there was never the time or resources to do much about it. And, the universal truth is that writing documentation is hard. Updating documentation is almost as hard. And once the documentation gets out of sync you're going to have a rough time convincing people to fix it. The jobs that avoided it the most were the ones that had a set procedure that required reviewed documentation as part of the measure of complete (often reviewed both before code is start and after it's finished).</p>
+        
+        <p>Plus, as the articles say, the churn in employment these days doesn't help. So now you can't just throw the documentation out and rewrite it because you don't know if the current developer knows the module fully enough for that. Questions of intent pop up that can only really be explained if you understand the environment 5, 10, 20, 30, etc years ago when that module was first written and looking at the code now you have to figure out if it's an artifact that no longer applies, still an issue but less common, or if there is some nuance that you are missing. (this came up at my job recently... someone asked why something was done in a delayed manner. I pointed out that it's likely because it was originally written to tape. someone else agreed that that was the best guess and that it maybe doesn't need to be done anymore, but no one was 100% sure)</p>
+        
+        <p>I'm kind of rambling stream of consciousness here, but my point is, dumping the documentation and rewriting is effectively a rewriting of the code base at the same time. The sentiment makes sense, but it shouldn't be thought of as a "eliminate tech debt sprint" but a "Freeze the code base/doc and make version 2".</p>
+        
+        <p>which brings us to the best advise that will never be allowed to follow which I picked up when I was interning at IBM back in the day. One of the engineers who worked on the original IBM PC motherboards back in the day was giving a talk and put up a picture of the first motherboard they made in all of it's wire wrapped glory. He said roughly:</p>
+        
+        <blockquote>And we powered it up and it posted. So we all cheered, powered it down, and threw it away so we could start over and do it correctly; that was how you did things back then</blockquote>
+        
+        <p>The approach makes sense; do it once, get it working, figure out the pit falls and hacks, and then do it cleanly. Still looking for the job that lets me do that :D</p>
+        
+        <p>edit:</p>
+        
+        <blockquote>Your advice on maintaining a great rapport with quality assistance/testing is really helpful.</blockquote>
+        
+        <p>In addition to explaining how the system works all together. befriending QA/Test is also helpful because:</p>
+        
+        <ol>
+            <li>They may already have an environment set up for the exact thing that you are doing already</li>
+            <li>They might be able to test it for you (something we abuse at work because test has more hardware variety than we have in dev)</li>
+        </ol>
+        <p>My first job out of school was a Software Test position. I ended up demoing the product to a customer one day because we needed a customer prototype spun up to demonstrate their use case. Between the scripts that I already had in place for doing my testing and some grown work my office mate already did (he was supposed to do this originally) I was able to knock out the demo and impress the customer. Dev wouldn't have had enough in place to do that quickly because they all silo'd in individual components and couldn't pull a full system together like that. And sales frankly wasn't understanding what the customer wanted.</p>
+        <p>QA is an invaluable resource in understanding how everything comes together and getting things up and running. They set up environments and tear them down all day long. I need to check my cheat sheet for set up steps because I spin up a new environment once every couple of months (maybe... my current test bed is a year or so old)</p>
+    
+        <h3>Me</h3>
+        <p>Thank you for such a detailed perspective :) This post will be very helpful in my future.</p>
+
+        <h3>Experienced programmer</h3>
+        <p>But remember... I'm probably full of shit 😃</p>
+        <p>Ultimately, it's to each their own. What works for some doesn't work for others. And every project is different. In the end there is no replacement for changing the code and running it to see what happens. Everything else exists to make that easier.</p>
+<br>
+<a id="back-link" href="../blog.html">&#x2190;</a>
+</div>
+<footer>
+<hr>
+<div>
+© 2021 Parth Parikh.
+</div>
+</footer>
+
+</body>
+</html>
