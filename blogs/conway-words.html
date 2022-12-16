@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="author" content="parth_parikh" />
+    <meta
+      name="description"
+      content="Words of Life: Modifying Conway's Game of Life with alphabets in place of live cells."
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Words of Life</title>
+    <link href="./style/prism.css" rel="stylesheet" />
+    <script src="./js/prism.js"></script>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="./style/common_styles.css"
+      id="light"
+    />
+    <link rel="stylesheet" type="text/css" href="../style.css" />
+    <link rel="shortcut icon" type="image/png" href="../favicon.png" />
+  </head>
+
+  <body>
+    <div class="blog-text">
+      <h1>Words of Life</h1>
+      <h2>A variant of Conway's Game of Life</h2>
+      <h3>First Published: 15/12/22</h3>
+      <blockquote>
+        <i
+          >“I've actually written about it, he [Wittgenstein] talks about how
+          language developed … couple of people are together. One of them points
+          to a rock and says “rock”, and the other one says a “rock”. It's just
+          not even remotely like that. That's just off the spectrum of
+          discussion. None of these things happen. That's not the way language
+          develops at all. In fact, the concepts of our mind, you can easily
+          show, are much richer than anything that's presented.”</i
+        >
+        - Noam Chomsky
+      </blockquote>
+      This morning, I was browsing Hacker News, when I came across this link
+      from
+      <i>Saharan</i>, where they created a
+      <a href="https://news.ycombinator.com/item?id=33978978"
+        >recursive Game of Life</a
+      >. Mesmerized by its wonderful patterns, I started thinking -
+      <i>what would happen if we replace a live cell with an alphabet</i>? More
+      specifically, I am proposing the following changes to
+      <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life#Rules"
+        >Conway's Game of Life</a
+      >:
+      <ul>
+        <li>Every live cell is represented by a set of alphabets.</li>
+        <li>
+          Any live cell with two or three live neighbors survives, takes the set
+          of alphabets from its neighbors, and combines it with its own set.
+        </li>
+        <li>
+          Any dead cell with three live neighbors becomes a live cell. This cell
+          would be represented by a set with a single element containing a
+          randomly chosen alphabet.
+        </li>
+        <li>
+          All other live cells die in the next generation. Similarly, all other
+          dead cells stay dead.
+        </li>
+      </ul>
+
+      Things get fascinating when you ask yourself -
+      <blockquote>
+        Assuming a certain probability distribution over the alphabet, what kind
+        of words can we construct from these sets?
+        <b>Is there a word of life</b>?
+      </blockquote>
+
+      So like every curious programmer, I wrote some code to explore this
+      problem. I started with a simple script that generates an 8 x 8 grid and
+      performs the classic Game of Life with it. I choose to use
+      <a href="https://en.wikipedia.org/wiki/Glider_(Conway%27s_Life)"
+        >the glider pattern</a
+      >
+      for this experiment.
+
+      <br /><br />
+      Next, I replaced the starting live cells with alphabets. For the first
+      experiment, my probability distribution was based on
+      <a href="https://en.wikipedia.org/wiki/Letter_frequency"
+        >the relative frequency in the English language</a
+      >. I also modified the rules to accommodate the changes mentioned above.
+      All that was left now was to see it in action!
+
+      <br /><br />
+      I ran each Game of Life for four iterations and repeated this with a
+      thousand different starting grids. Here's what I found -
+      <pre class="language-python" style="height: 200px; overflow-y: scroll">
+<code class="language-python">[
+    ("tea", 178),
+    ("eta", 178),
+    ("eat", 178),
+    ("ate", 178),
+    ("toe", 176),
+    ("tie", 174),
+    ("rte", 160),
+    ("ten", 159),
+    ("net", 159),
+    ("est", 152),
+    ("set", 152),
+    ("the", 144),
+    ("one", 144),
+    ("eon", 144),
+    ("roe", 143),
+    ("ore", 143),
+    ("sea", 137),
+    ("ear", 133),
+    ("are", 133),
+    ("era", 133),
+    ("nae", 130),
+    ("oat", 123),
+    ("tel", 121),
+    ("let", 121),
+    ("hoe", 121),
+    ("sat", 120),
+    ("hen", 120),
+    ("hie", 116),
+    ("res", 116),
+    ("ire", 115),
+    ("ode", 115),
+    ("doe", 115),
+    ("ted", 113),
+    ("sot", 112),
+    ("hes", 112),
+    ("she", 112),
+    ("ale", 110),
+    ("lea", 110),
+    ("its", 106),
+    ("sit", 106),
+    ("her", 106),
+    ("ton", 105),
+    ("not", 105),
+    ("ens", 105),
+    ("sen", 105),
+    ("tor", 105),
+    ("rot", 105),
+    ("hit", 104),
+    ("hat", 102),
+    ("oar", 100),
+    ("tan", 99),
+    ("ant", 99),
+    ("int", 98),
+    ("nit", 98),
+    ("tin", 98),
+    ("hot", 98),
+    ("tho", 98),
+    ("die", 94),
+    ("tar", 93),
+    ("lie", 93),
+    ("art", 93),
+    ("lei", 93),
+    ("air", 93),
+    ("rat", 93),
+    ("ole", 93),
+    ("ion", 90),
+    ("nth", 90),
+    ("den", 90),
+    ("end", 90),
+    ("alt", 89),
+    ("lat", 89),
+    ("eds", 89),
+    ("nor", 88),
+    ("dot", 88),
+    ("has", 87),
+    ("ash", 87),
+    ("etc", 87),
+    ("hos", 86),
+    ("ohs", 86),
+    ("rel", 85),
+    ("tad", 85),
+    ("red", 84),
+    ("met", 82),
+    ("ail", 77),
+    ("til", 75),
+    ("lit", 75),
+    ("his", 74),
+    ("sir", 74),
+    ("ran", 73),
+    ("ado", 73),
+    ("ace", 73),
+    ("lot", 73),
+    ("nah", 72),
+    ("dos", 72),
+    ("sod", 72),
+    ("aid", 72),
+    ("ans", 71),
+    ("hrs", 71),
+    ("rent", 70),
+    ("tern", 70),
+]            
+</code>
+</pre>
+
+      In hindsight, this seems kinda obvious as the alphabets with the highest
+      frequency are 'e', 't', and 'a', followed by 'o' and 'i'. However, it was
+      surprising to see how important 'r' (9<sup>th</sup> most popular) seemed
+      to be in the simulation. There were only two four-letter words in Top-100
+      and both had 'r' in them - rent and tern. I ran this again, and the
+      results seemed more or less similar. <br /><br />
+
+      This got me thinking -
+      <b>what would happen if all the alphabets have an equal probability?</b>
+
+      So I ran the same experiment with an equal probability distribution. Only
+      this time, the experiment got repeated with
+      <i>four thousand different starting grids</i>! Here are the results -
+
+      <br /><br />
+      Most common words:
+      <br />
+      <code class="language-python">
+        [('ltd', 108), ('ult', 104), ('jut', 103), ('icy', 103), ('tab', 103),
+        ('bat', 103), ('fut', 102), ('flt', 100), ('fro', 99), ('for', 99)]
+      </code>
+
+      <br /><br />
+      Most common four-letter words:
+      <br />
+      <code class="language-python">
+        [('iron', 30), ('ship', 30), ('phis', 30), ('hips', 30), ('bets', 30),
+        ('best', 30), ('pawn', 30), ('tube', 29), ('glut', 29), ('cult', 29)]
+      </code>
+
+      <br /><br />
+      Most common five-letter words:
+      <br />
+      <code class="language-python">
+        [('bahts', 10), ('baths', 10), ('donas', 9), ('wafer', 9), ('gaits', 9),
+        ('nitro', 8), ('intro', 8), ('prawn', 8), ('bytes', 8), ('chats', 8)]
+      </code>
+
+      <br /><br />
+      Most common six-letter words:
+      <br />
+      <code class="language-python">
+        [('ovular', 4), ('ration', 3), ('shadow', 3), ('thrive', 3), ('josher',
+        3), ('thorns', 3), ('bracts', 3), ('beauty', 3), ('prefab', 3),
+        ('ticker', 3)]
+      </code>
+
+      <br /><br />
+      Now, in all honesty, none of these seem to mean anything significant - it
+      all seems quite chaotic. The results could have easily been different with
+      a different random function (I was using Python's in-built module). I am
+      curious about how the results would look on a different architecture with
+      say ten thousand different starting grids! Having more than four
+      iterations of Game of Life seems to blow up the search space.
+
+      <br /><br />
+      I guess, for now, you could say that my machine has decided that its words
+      of life are - ltd, iron, bahts, and ovular. What a sequence!
+      <a href="https://gist.github.com/pncnmnp/f745fe9ee1d807a0b3373aef0a33693a"
+        >I am open-sourcing the script</a
+      >
+      used to conduct the above experiment.
+      <a href="../index.html">I would love to know your thoughts on this.</a>
+      Happy exploring!
+
+      <br /><br />
+      <a id="back-link" href="../blog.html">&#x2190;</a>
+    </div>
+    <footer>
+      <hr />
+      <div>© 2022 Parth Parikh.</div>
+    </footer>
+  </body>
+</html>
