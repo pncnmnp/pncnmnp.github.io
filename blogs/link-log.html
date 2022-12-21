@@ -28,7 +28,7 @@
       <h1>My Link Log</h1>
       <h2>A collection of links that are worth sharing</h2>
       <h3>First published: 9/11/19</h3>
-      <h4>Last updated: 06/11/22</h4>
+      <h4>Last updated: 20/12/22</h4>
       <p>
         A while back, I created a
         <a href="https://github.com/pncnmnp/Bookmark-Manager"
@@ -903,6 +903,101 @@
           polling instead of interrupts (io_uring) or routing interrupts to a
           small set of non-data path cores, and using huge pages to lower TLB
           misses.
+        </li>
+        <li>
+          <a
+            href="https://computerhistory.org/blog/the-apl-programming-language-source-code/"
+          >
+            The APL Programming Language Source Code</a
+          >: It amazes me how I never heard about APL till now. The idea of
+          functions executing everything on the right seems natural. Each
+          function in APL is either a monadic (one argument) or a dyadic (two
+          arguments). They don't have any formal loops and rely on the iota
+          function (⍳) for looping. The link contains a mind-bending APL program
+          to compute prime numbers upto R - (~T∊T∘.×T)/T←1↓⍳R
+        </li>
+        <li>
+          <a
+            href="https://www.core77.com/posts/55368/When-Splines-Were-Physical-Objects"
+          >
+            When Splines Were Physical Objects </a
+          >: Describes how splines were drawn before CAD came into the picture.
+        </li>
+        <li>
+          <a href="http://gamma.cs.unc.edu/COL/COML.pdf"
+            >Cache-oblivious Mesh Layouts</a
+          >: Yet another paper I came across in my Computer Graphics class. It
+          is about designing algorithms to construct cache-oblivious layouts of
+          polygonal meshes. Cache-oblivious layouts are different from
+          cache-aware layouts as they do not consider the cache parameters. It
+          was interesting to see that the number of cache misses at runtime can
+          be computed using the edge span distribution (based on the runtime
+          access pattern) and the cache miss ratio function, and that a local
+          permutation can help find an optimal edge span distribution. I also
+          enjoyed the part of the paper where they used Multilevel minimization
+          to approximate an NP-hard problem of finding all the local
+          permutations. If the paper appears dense, I recommend
+          <a href="http://gamma.cs.unc.edu/COL/"
+            >checking out the slides from their SIGGRAPH talk</a
+          >.
+        </li>
+        <li>
+          <a href="https://en.wikipedia.org/wiki/Bor%C5%AFvka%27s_algorithm"
+            >Borůvka's algorithm </a
+          >: A surprisingly simple and beautiful minimum spanning tree
+          algorithm, which should be taught in every algorithms class -
+          alongside Prim's and Krushkal's algorithms. It was designed by Otakar
+          Borůvka in 1926 to construct an electrical network connecting several
+          cities using the least amount of wire. This algorithm is described in
+          great detail by
+          <a
+            href="https://jeffe.cs.illinois.edu/teaching/algorithms/book/07-mst.pdf"
+            >Jeff Erickson</a
+          >.
+        </li>
+        <li>
+          <a href="https://catalog.hathitrust.org/Record/100497067"
+            >Twenty questions</a
+          >: A 19th century rule-book that describes the format of a game called
+          <a href="https://en.wikipedia.org/wiki/Twenty_questions"
+            >twenty questions</a
+          >. It introduces the concept of umpires (who resolve any dispute) and
+          captains (an official spokesperson). Interestingly, their version did
+          not have a constrain on the type of guess word. However, every Sunday
+          it was mandatory for the participants to pick an object, person, or
+          thing mentioned in the Bible.
+        </li>
+        <li>
+          <a href="https://pages.cs.wisc.edu/~jerryzhu/pub/homology.pdf"
+            >Persistent Homology: An Introduction and a New Text Representation
+            for Natural Language Processing</a
+          >: This short paper from Xiaojin Zhu is a great way to explore Group
+          Theory, Simplicial Homology, Persistent Homology, and apply their
+          basic principles to solve a fun NLP problem - classifying an author's
+          age (into child, adolescent, or adult) based on their writing style.
+        </li>
+        <li>
+          <a
+            href="https://en.chessbase.com/post/reconstructing-turing-s-paper-machine"
+            >Reconstructing Turing's "Paper Machine"</a
+          >: This article from ChessBase describes a chess algorithm written by
+          Alan Turing and David Champernowne in 1948. To the best of my
+          knowledge, it is the oldest existing chess algorithm. It introduces
+          the notion of quiescence search ("Captures had to be followed up at
+          least to the point where no further capture was immediately possible.
+          Check and forcing moves had to be followed further.") and game trees -
+          for chess. Remarkably, their relative values for chess pieces were
+          quite similar to the ones later discussed by I. A. Horowitz (in 1951)
+          and Bobby Fisher (in 1972). Their evaluation function also took king
+          safety, piece mobility, piece safety, castling, pawn advancement, and
+          mates/checks into consideration. The 2-ply variant seems to have a
+          Lichess rating of 1600 (for blitz and rapid games).
+        </li>
+        <li>
+          <a href="https://tafc.space/qna/the-topologists-world-map/"
+            >The topologist's world map</a
+          >: A unique way to describe a world map that is topologically
+          equivalent to a normal map.
         </li>
       </ul>
 
