@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="author" content="parth_parikh" />
+    <meta
+      name="description"
+      content="A blog post on KHyperLogLog, an algorithm that can help estimate the reidentifiability and joinability risks
+    of very large databases."
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KHyperLogLog</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="./style/common_styles.css"
+      id="light"
+    />
+    <link rel="stylesheet" type="text/css" href="../style.css" />
+    <link rel="shortcut icon" type="image/png" href="../favicon.png" />
+  </head>
+
+  <body>
+    <div class="blog-text">
+      <h1>KHyperLogLog</h1>
+      <h2>The Secret World of Data Structures and Algorithms, Chapter 1</h2>
+      <h3>Author: <a href="../index.html">Parth Parikh</a></h3>
+      <h4>First Published: 24/01/23</h4>
+
+      <blockquote>
+        <i
+          >Truth is much too complicated to allow anything but
+          approximations.</i
+        >
+        - John Von Neumann
+      </blockquote>
+      I have always dreamed of writing a short book on data structures and
+      algorithms that are not widely known outside of academic circles. My
+      initial goal was to complete it before I turned 30, but then I thought,
+      "Why wait? Carpe diem!" This is the draft of the first chapter. I plan to
+      open-source all eight chapters of my book. This is my first time pursuing
+      such an adventure, and
+      <a href="../index.html#contact"
+        >I would greatly appreciate your feedback</a
+      >.<br />
+
+      This chapter discusses
+      <a href="https://ieeexplore.ieee.org/document/8835393">KHyperLogLog</a>,
+      <i
+        >an algorithm introduced by Google that is based on approximate counting
+        techniques that can estimate the reidentifiability and joinability risks
+        of very large databases using linear runtime and minimal memory.</i
+      >
+      <h2>Introduction</h2>
+      <p>
+        In the mid-90s, the Massachusetts Group Insurance Commission (GIC)
+        released data on state employees&#39; hospital visits, claiming it was
+        anonymized. However, Latanya Sweeney, a PhD student at MIT at the time,
+        discovered that by linking the medical data with the voter roll in
+        Cambridge, some data could be de-anonymized. To the surprise of many,
+        Sweeney was able to successfully identify then Massachusetts governor,
+        William Weld, in relation to his medical records.
+      </p>
+      <p>
+        Paul Ohm, a Professor of Law at the Georgetown University, recalled this
+        incident in his paper titled &ldquo;<a
+          href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1450006"
+          >Broken Promises of Privacy</a
+        >&rdquo;:
+      </p>
+      <blockquote>
+        At the time that GIC released the data, William Weld,
+        then&minus;Governor of Massachusetts, assured the public that GIC had
+        protected patient privacy by deleting identifiers. In response,
+        then&minus;graduate student Sweeney started hunting for the
+        Governor&rsquo;s hospital records in the GIC data. She knew that
+        Governor Weld resided in Cambridge, Massachusetts, a city of fifty-four
+        thousand residents and seven ZIP codes. For twenty dollars, she
+        purchased the complete voter rolls from the city of Cambridge&mdash;a
+        database containing, among other things, the name, address, ZIP code,
+        birth date, and sex of every voter. By combining this data with the GIC
+        records, Sweeney found Governor Weld with ease. Only six people in
+        Cambridge shared his birth date; only three were men, and of the three,
+        only he lived in his ZIP code. In a theatrical flourish, Dr. Sweeney
+        sent the governor&rsquo;s health records (including diagnoses and
+        prescriptions) to his office.
+      </blockquote>
+      <p>
+        Later, in the year 2006,
+        <a href="https://en.wikipedia.org/wiki/AOL_search_log_release"
+          >AOL released approximately 20 million search queries</a
+        >
+        from 650,000 users collected over a three-month period, with the intent
+        of allowing researchers to understand search patterns. They anonymized
+        the records by removing user identifiers, and released the data with the
+        following attributes:
+        <i>AnonymousID, Query, QueryTime, ItemRank, ClickURL</i>.
+      </p>
+      <p>
+        A few days later, two New York Times journalists, Michael Barbaro and
+        Tom Zeller Jr.,
+        <a href="https://www.nytimes.com/2006/08/09/technology/09aol.html"
+          >began investigating the search queries</a
+        >
+        and discovered that a user with the anonymous ID 4417749 had queried for
+        things like <i>landscapers in Lilburn, GA</i>,
+        <i>people names with last name Arnold</i>, and
+        <i>homes sold in shadow lake subdivision gwinnett county georgia</i>.
+      </p>
+      <p>
+        By narrowing down the search to 14 citizens with the last name Arnold
+        near Lilburn, GA, they were able to identify the user as 62-year-old
+        Thelma Arnold! This led to a class-action lawsuit being filed against
+        AOL, which was eventually settled in 2013.
+      </p>
+      <p>
+        <i
+          >These incidents highlight the ease with which seemingly anonymized
+          data can be de-anonymized.</i
+        >
+        In an ideal world, organizations would employ mitigation techniques to
+        ensure that such linkage attacks cannot occur, both within the
+        organization and when the data is publicly released.
+      </p>
+      <p>
+        Let us begin by discussing two characteristics of data sets that can aid
+        in these privacy assessments - <i>reidentifiability</i> and
+        <i>joinability</i>.
+      </p>
+      <p>
+        To understand these concepts, let us consider an example of a medical
+        database with attributes such as
+        <i
+          >Social Security Number, Date of Birth, Gender, ZIP code, and
+          Diagnosis</i
+        >. Even if sensitive information like the Social Security Number is
+        removed from this database, it can still be vulnerable to a linkage
+        attack by using auxiliary data such as Date of Birth, Gender, and ZIP
+        code from voter information, as demonstrated by Dr. Sweeney in the
+        Cambridge de-anonymization case.
+      </p>
+      <p>
+        <b>Reidentifiability</b> is a characteristic that measures the potential
+        for a given anonymized or pseudonymized data to be de-anonymized,
+        revealing the identities of the users.
+      </p>
+      <p>
+        <b>Joinability</b> is another characteristic that measures whether two
+        or more datasets can be linked by unexpected join keys, such as
+        <i>Date of Birth, Gender, and ZIP code</i> in our example.
+      </p>
+
+      <p>
+        The
+        <a href="https://ieeexplore.ieee.org/document/8835393"
+          ><b>KHyperLogLog algorithm</b></a
+        >, which will be the focus of this chapter, is an algorithm introduced
+        by Google that helps estimate the risks of reidentifiability and
+        joinability in large databases.
+      </p>
+      <h2>Approximate Counting</h2>
+      <p>
+        To understand KHyperLogLog, we must first delve into the concept of
+        Approximate Counting. Simply put, approximate counting is a technique
+        that approximates the number of distinct elements in a set by using a
+        small amount of memory.
+      </p>
+
+      <p>
+        There are two common algorithms for approximate counting: K Minimum
+        Values (KMV) and HyperLogLog (HLL).
+      </p>
+      <h3>K Minimum Values</h3>
+      <p>
+        <b>K Minimum Values</b> (KMV) estimates the number of distinct elements
+        (<i>N</i>) in a set by keeping track of the <i>K</i> smallest hash
+        values of the elements. It has a time complexity of O(<i>N</i>) and a
+        space complexity of O(<i>K</i>).
+      </p>
+
+      <p>
+        The intuition behind KMV is that if we assume we have a hash function
+        <i>H</i>
+        whose output is evenly distributed across the hash space, we can
+        estimate the number of distinct elements by computing the average
+        distance between two consecutive hashes (referred to as the
+        <i>density</i>) and then dividing the length of the hash space by this
+        density.
+      </p>
+
+      <p>
+        However, even for 32-bit hashes, the storage cost can be substantial if
+        the number of distinct elements is large. To overcome this, KMV uses the
+        <i>K</i> smallest hash values to extrapolate the density of the hash
+        space. An example of this is shown in Figure 1.
+      </p>
+      <figure>
+        <img
+          src="./pics/khyperloglog/k-minimum-values.png"
+          style="height: 10%; width: 70%"
+        />
+        <figcaption>
+          Figure 1: An example of K Minimum Values algorithm, where K=3.
+        </figcaption>
+      </figure>
+
+      <h3>HyperLogLog</h3>
+      <p>
+        Instead of keeping track of the <i>K</i> smallest hash values and
+        computing the average distance estimation, we can keep track of the
+        maximum number of trailing zeros seen from all the hash values. This, as
+        we will observe, will help reduce the space complexity.
+      </p>
+
+      <p>
+        The intuition behind this approach is that, given the uniformity
+        assumption of our hash function, as the number of distinct elements seen
+        by us increases, the maximum number of trailing zeros seen also
+        increases. We can then use this idea to extrapolate the approximate
+        count. This concept
+        <a href="http://antirez.com/news/75"
+          >is perfectly explained by Salvatore Sanfilippo</a
+        >, the author of Redis, an in-memory database that supports HyperLogLog:
+      </p>
+
+      <blockquote>
+        Imagine you tell me you spent your day flipping a coin, counting how
+        many times you encountered a non interrupted run of heads. If you tell
+        me that the maximum run was of 3 heads, I can imagine that you did not
+        really flipped the coin a lot of times. If instead your longest run was
+        13, you probably spent a lot of time flipping the coin.
+      </blockquote>
+
+      <blockquote>
+        However if you get lucky and the first time you get 10 heads, an event
+        that is unlikely but possible, and then stop flipping your coin,
+        I&rsquo;ll provide you a very wrong approximation of the time you spent
+        flipping the coin. So I may ask you to repeat the experiment, but this
+        time using 10 coins, and 10 different piece of papers, one per coin,
+        where you record the longest run of heads. This time since I can observe
+        more data, my estimation will be better.
+      </blockquote>
+
+      <blockquote>
+        Long story short this is what HyperLogLog does: it hashes every new
+        element you observe. Part of the hash is used to index a register (the
+        coin+paper pair, in our previous example. Basically we are splitting the
+        original set into m subsets). The other part of the hash is used to
+        count the longest run of leading zeroes in the hash (our run of heads).
+        The probability of a run of N+1 zeroes is half the probability of a run
+        of length N, so observing the value of the different registers, that are
+        set to the maximum run of zeroes observed so far for a given subset,
+        HyperLogLog is able to provide a very good approximated cardinality.
+      </blockquote>
+
+      <p>
+        More formally, when working with a hash of <i>P</i> bits, we utilize the
+        first <i>X</i> bits to index into the register, and the remaining
+        <i>P-X</i> bits to count the maximum number of trailing zeros at that
+        register. This approach results in the creation of 2<sup>X</sup> such
+        registers, ensuring a space complexity of O(2<sup>X</sup>).
+      </p>
+
+      <p>
+        After the stream of data elements is observed, HyperLogLog estimates the
+        number of distinct elements in each register (B<sub>I</sub>) as
+        2<sup>I</sup>, where <i>I</i> represents the maximum number of trailing
+        zeros seen in register <i>I</i>. The overall estimation of unique values
+        is determined by taking the harmonic mean of B<sub>I</sub> for all
+        values of <i>I</i>.
+      </p>
+
+      <p>
+        <i>But why use the harmonic mean instead of the geometric mean?</i> The
+        authors of HyperLogLog
+        <a href="https://hal.science/hal-00406166/"
+          >explained in their paper that</a
+        >:
+      </p>
+      <blockquote>
+        The idea of using harmonic means originally drew its inspiration from an
+        insightful note of Chassaing and G&eacute;rin: such means have the
+        effect of taming probability distributions with slow-decaying right
+        tails, and here they operate as a variance reduction device, thereby
+        appreciably increasing the quality of estimates.
+      </blockquote>
+
+      <p>
+        Intuitively, this means that the harmonic mean helps reduce the impact
+        of unusually large trailing zero counts (outliers). For instance, the
+        harmonic mean of <code>{1,2,2,3,3,9}</code> is 2.16, whereas its
+        geometric mean is 2.62. Additionally, the harmonic mean
+        <a href="https://www.moderndescartes.com/essays/hyperloglog/"
+          >tends to ignore numbers as they approach infinity</a
+        >
+        - the harmonic mean of <code>{2, 2} = {1.5, 3} = {1, inf} = 2</code>.
+      </p>
+      <h2>KHyperLogLog</h2>
+      <p>
+        Now, let us understand how these approximate counting algorithms can
+        assist us in measuring reidentifiability and joinability.
+      </p>
+
+      <p>
+        Before proceeding, it is important to understand that possessing only
+        cardinality estimates is not helpful. Consider a scenario where we are
+        storing User Agents along with their corresponding user IDs. A User
+        Agent on Google Chrome, for example, would look like the following:
+        <!-- prettier-ignore -->
+        <code>Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36</code
+        >
+      </p>
+
+      <p>
+        When assessing reidentifiability, we are not particularly interested in
+        the number of unique User Agents we have seen. Instead, we would like to
+        estimate the uniqueness distribution of these User Agents given their
+        user IDs. This would help us understand how many User Agents have unique
+        user IDs, which in turn would increase their chances of getting
+        reidentified. For example, refer to Figure 2.
+      </p>
+      <figure>
+        <img src="./pics/khyperloglog/uniqueness-histogram.png" />
+        <figcaption>
+          Figure 2: Example uniqueness histogram. It is commonly observed that
+          User Agents have a uniqueness distribution such that the majority of
+          User Agent strings are associated with one or a few unique IDs.
+        </figcaption>
+      </figure>
+
+      <p>
+        To estimate such uniqueness distributions, the
+        <b>KHyperLogLog algorithm</b>
+        was introduced. It combines the K minimum values and HyperLogLog
+        algorithms into a <i>two-level data structure</i> that stores data of
+        the type <code>(field, ID)</code>. Using our previous example, the
+        <code>field</code> would be the User Agent, and the
+        <code>ID</code> would be the user ID.
+      </p>
+      <p>
+        The first level of KHyperLogLog stores the <i>K</i> smallest hashes of
+        field values. Each of these hashes corresponds to a HyperLogLog
+        structure that contains the hashes of IDs associated with their field
+        value and their trailing zero counts.
+      </p>
+
+      <p>
+        For a stream of <code>(field, ID)</code> pairs, the
+        <b>construction algorithm</b>
+        is as follows:
+      </p>
+      <ol>
+        <li>Calculate the <code>h(field)</code> and the <code>h(ID)</code>.</li>
+        <li>
+          If the <code>h(field)</code> is present inside the KHyperLogLog data
+          structure (i.e. it is one of the <i>K</i> smallest hashes of field
+          values seen so far), then use the <code>h(ID)</code> to update the
+          HyperLogLog part corresponding to <code>h(field)</code>.
+        </li>
+        <li>
+          If <code>h(field)</code> is not present in the KHyperLogLog data
+          structure, check if it belongs among the <i>K</i> smallest hashes.
+        </li>
+        <ul>
+          <li>If it does, proceed to the next step.</li>
+          <ol type="I">
+            <li>
+              Check if there are more than <i>K</i> entries in the
+              <i>K</i> Minimum Value structure, and if so, remove the entry with
+              the largest hash value.
+            </li>
+            <li>
+              Add the new <code>h(field)</code> to the <i>K</i> Minimum Value
+              structure, and add the <code>h(ID)</code> to its corresponding
+              HyperLogLog part.
+            </li>
+          </ol>
+          <li>Else, do nothing.</li>
+        </ul>
+      </ol>
+
+      <p>An example of such a construction is provided in Figure 3.</p>
+      <figure>
+        <img src="./pics/khyperloglog/khyperloglog.png" />
+        <figcaption>
+          Figure 3: An example of a KHyperLogLog construction. When the input
+          (UA-4, ID-6) arrives, as UA-4's hash is smaller than UA-3's hash, it
+          replaces UA-3 in the K Minimum Value structure, and updates the
+          HyperLogLog registers.
+        </figcaption>
+      </figure>
+
+      <p>
+        To understand the estimation of reidentifiability using KHyperLogLog, it
+        is essential to first understand the concept of <i>k-anonymity</i>.
+      </p>
+      <h3>k-anonymity</h3>
+      <p>
+        <b>k-anonymity</b> is a technique that prevents linkage attacks by
+        modifying values in such a way that no individual is uniquely
+        identifiable from a group of at least <i>k</i> or more. The value of
+        <i>k</i>
+        represents the degree of anonymity, and such groups form an equivalence
+        class.
+      </p>
+
+      <p>
+        One of the methods used to achieve k-anonymity is called Generalization.
+        This technique involves replacing specific values with generic and
+        semantically similar values. For example, ZIP codes such as
+        <code>{13053, 13058, 13063, 13067}</code> can be generalized into
+        <code>{1305*, 1306*}</code>. Additionally, categories such as
+        <code>{widow, married, divorced}</code> can be generalized into
+        <code>{been_married}</code>.
+      </p>
+
+      <p>An example of k-anonymity in action is illustrated in Figure 4.</p>
+      <figure>
+        <img src="./pics/khyperloglog/k-anonymity.png" />
+        <figcaption>
+          Figure 4: An example of k-anonymity, where K=2. Here, the ZIP code
+          attribute's last digit is generalized to create equivalence classes
+          with group size of atleast two.
+        </figcaption>
+      </figure>
+
+      <p>
+        The general rule of thumb is that:
+        <i
+          >The more generalization you perform, the more information is lost
+          (and thus, the less utility)</i
+        >. Therefore, it is recommended to not generalize more than what is
+        necessary.
+      </p>
+
+      <p>
+        k-anonymity is beneficial as it prevents membership disclosure and
+        sensitive attribute disclosure.
+      </p>
+      <p>
+        <b>Membership disclosure</b> refers to the ability to identify whether a
+        given person is present in a dataset or not. Additionally,
+        <b>sensitive attribute disclosure</b> refers to the ability to identify
+        sensitive attributes of a person, such as their salary information and
+        political affiliation.
+      </p>
+
+      <p>
+        It is clear that k-anonymity has a direct impact on reidentifiability.
+        When the <i>k</i> value is high, there is more generalization, which in
+        turn increases anonymity and decreases the potential for
+        reidentifiability.
+      </p>
+      <h3>Reidentifiability Estimation</h3>
+      <p>
+        Let us now return to the topic of estimating reidentifiability using
+        KHyperLogLog. Figures 5 and 6 demonstrate how Figure 2 can be modified
+        to estimate an optimal K threshold. We can then set up periodic analyses
+        to monitor whether the uniqueness is below a given optimal threshold or
+        not.
+      </p>
+      <figure>
+        <img src="./pics/khyperloglog/low-uniqueness-distribution.png" />
+        <figcaption>
+          Figure 5: A uniqueness histogram converted to show its cumulative
+          uniqueness distribution. Here, we see a relatively anonymous dataset
+          that can have a high k-anonymity threshold.
+        </figcaption>
+      </figure>
+      <figure>
+        <img src="./pics/khyperloglog/high-uniqueness-distribution.png" />
+        <figcaption>
+          Figure 6: A uniqueness histogram converted to show its cumulative
+          uniqueness distribution. Here, we see a highly reidentifying dataset
+          that has a low k-anonymity threshold, due to higher data loss.
+        </figcaption>
+      </figure>
+
+      <h3>Joinability Estimation</h3>
+      <p>
+        The joinability of two fields, say F<sub>1</sub> and F<sub>2</sub> (for
+        instance, User Agents from two databases), can be estimated using a
+        metric called <i>containment</i>.
+      </p>
+
+      <p>
+        The <b>containment</b> of F<sub>1</sub> in F<sub>2</sub> is defined as
+        |F<sub>1</sub> ∩ F<sub>2</sub>| / |F<sub>1</sub>|. This is different
+        from Jaccard Similarity, which is usually defined as |F<sub>1</sub> ∩
+        F<sub>2</sub>| / |F<sub>1</sub> U F<sub>2</sub>|. Jaccard Similarity is
+        not ideal in cases where one dataset contains a small subset of users
+        from a larger dataset, as the Jaccard Similarity would be quite low for
+        such cases, even though the containment of the smaller dataset in the
+        larger one would be high.
+      </p>
+
+      <p>
+        To compute containment using KHyperLogLog, we require the cardinality of
+        F<sub>1</sub>, F<sub>2</sub>, and their intersection. The cardinality of
+        their intersection can be computed using the inclusion-exclusion
+        principle, i.e. |F<sub>1</sub> ∩ F<sub>2</sub>| = |F<sub>1</sub>| +
+        |F<sub>2</sub>| - |F<sub>1</sub> U F<sub>2</sub>|.
+      </p>
+
+      <p>
+        The union of F<sub>1</sub> and F<sub>2</sub> can be estimated by merging
+        the KHyperLogLogs of F<sub>1</sub> and F<sub>2</sub>. This can be done
+        by finding the set union of their <i>K</i> Minimum Value structures;
+        that is, by combining the two structures and retaining their
+        <i>K</i> smallest hashes. If F<sub>1</sub> and F<sub>2</sub> have
+        different <i>K</i> values, we use the smallest <i>K</i>.
+      </p>
+
+      <p>
+        Furthermore, we can use F<sub>1</sub> and F<sub>2</sub>'s individual
+        <i>K</i>
+        Minimum Value structures to estimate the number of distinct elements in
+        them.
+      </p>
+
+      <p>
+        Once we know how to calculate the containment metric, we can create
+        periodic KHyperLogLog-based joinability analyses that check whether the
+        containment score is below an optimal threshold or not.
+      </p>
+
+      <p>
+        This strategy has proven to be quite useful for Google, who mentioned
+        how this metric was able to mitigate a significant joinability risk:
+      </p>
+      <blockquote>
+        Periodic KHLL-based joinability analyses have enabled us to uncover
+        multiple logging mistakes that we were able to quickly resolve. One
+        instance was the exact position of the volume slider on a media player,
+        which was mistakenly stored as a 64-bit floating-point number. Such a
+        high entropy value would potentially increase the joinability risk
+        between signed-in and signed-out identifiers. We were able to mitigate
+        the risk by greatly reducing the precision of the value we logged.
+      </blockquote>
+      <p>
+        However, care must be taken as this method is still susceptible to false
+        positives and negatives. For example, one could determine that the
+        <code>port_number</code> and <code>seconds_till_midnight</code> fields
+        are joinable since they both have an extensive overlap in the [0, 86400)
+        value region. Additionally, this metric would fail to detect fields that
+        have different encodings (such as base64 and raw string) or have
+        undergone a minor transformation (like microsecond timestamp and a
+        millisecond timestamp). Experimentally, it was also noticed that the
+        containment metric can be unreliable when dealing with highly unequal
+        set sizes. User intervention is necessary in such scenarios.
+      </p>
+
+      <p>
+        In conclusion, KHyperLogLog can be used to estimate reidentifiability
+        and joinability at scale in an offline fashion. This, in turn, can help
+        in evaluating privacy strategies surrounding your data and enable
+        efficient regression testing.
+      </p>
+      <br />
+      <a id="back-link" href="../blog.html">&#x2190;</a>
+    </div>
+    <footer>
+      <hr />
+      <div>© 2023 Parth Parikh.</div>
+    </footer>
+  </body>
+</html>
