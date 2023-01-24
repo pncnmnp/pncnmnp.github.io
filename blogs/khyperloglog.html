@@ -5,7 +5,7 @@
     <meta name="author" content="parth_parikh" />
     <meta
       name="description"
-      content="A blog post on KHyperLogLog, an algorithm that can help estimate the reidentifiability and joinability risks of very large databases."
+      content="A blog post on KHyperLogLog, an algorithm that can help estimate certain privacy risks of very large databases."
     />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>KHyperLogLog</title>
@@ -47,8 +47,8 @@
       <a href="https://ieeexplore.ieee.org/document/8835393">KHyperLogLog</a>,
       <i
         >an algorithm introduced by Google that is based on approximate counting
-        techniques that can estimate the reidentifiability and joinability risks
-        of very large databases using linear runtime and minimal memory.</i
+        techniques that can estimate certain privacy risks of very large
+        databases using linear runtime and minimal memory.</i
       >
       <h2>Introduction</h2>
       <p>
@@ -203,6 +203,18 @@
         </figcaption>
       </figure>
 
+      <p>
+        The estimations produced by K Minimum Values algorithm have a relative
+        standard error rate of
+        <span style="white-space: nowrap">
+          &radic;<span style="text-decoration: overline"
+            >&nbsp;1/K&nbsp;</span
+          > </span
+        >. For example, if <i>K</i> = 1024 and the hash function generates
+        64-bit hashes, then the relative standard error rate of the estimations
+        is 3.125% and the size of KMV is 8 KB (1024 * 8 bytes).
+      </p>
+
       <h3>HyperLogLog</h3>
       <p>
         Instead of keeping track of the <i>K</i> smallest hash values and
@@ -293,6 +305,19 @@
           >tends to ignore numbers as they approach infinity</a
         >
         - the harmonic mean of <code>{2, 2} = {1.5, 3} = {1, inf} = 2</code>.
+      </p>
+
+      <p>
+        In comparison to KMV, HyperLogLog has a relative standard error rate of
+        1.04/<span style="white-space: nowrap">
+          &radic;<span style="text-decoration: overline"
+            >&nbsp;M&nbsp;</span
+          > </span
+        >, where <i>M</i> = 2<sup>X</sup>. This means that if M = 1024 and the
+        hash function again generates 64-bit hashes, then the relative standard
+        error rate of the estimations is slightly increased to 3.25%, however
+        the size of is drastically reduced to 768 B (assuming each register is
+        of size 6 bits, 1024*6 = 6144 bits = 768 bytes).
       </p>
       <h2>KHyperLogLog</h2>
       <p>
@@ -548,6 +573,28 @@
         set sizes. User intervention is necessary for such scenarios.
       </p>
 
+      <h3>Distributed Workflow</h3>
+      The process of generating KHyperLogLog structures for different
+      <code>(field, ID)</code> tuples can be done in a distributed fashion. See
+      Figure 7 for an illustration of the workflow.
+      <figure>
+        <img
+          src="./pics/khyperloglog/distributed-workflow.png"
+          height="60%"
+          width="60%"
+        />
+        <figcaption>
+          Figure 7: This is a figure from the KHyperLogLog paper showing a
+          two-step approach of reidentifiability and joinability analysis. In
+          the step 1, distributed pipelines generate KHyperLogLog structures for
+          every <code>(field, ID)</code> tuples. Then in step 2, periodic
+          analyses of the thresholds generated from these structures can be done
+          offline.
+        </figcaption>
+      </figure>
+
+      <h2>Conclusion</h2>
+      <p></p>
       <p>
         In conclusion, KHyperLogLog can be very effective in estimating
         reidentifiability and joinability at scale in an offline fashion. This,
