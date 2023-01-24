@@ -55,14 +55,14 @@
       <p>
         In the mid-90s, the Massachusetts Group Insurance Commission (GIC)
         released data on state employees&#39; hospital visits, claiming it was
-        anonymized. However, Latanya Sweeney, a PhD student at MIT at the time,
-        discovered that by linking the medical data with the voter roll in
+        anonymized. However, Latanya Sweeney, a Ph.D. student at MIT at the
+        time, discovered that by linking the medical data with the voter roll in
         Cambridge, some data could be de-anonymized. To the surprise of many,
         Sweeney was able to successfully identify then Massachusetts governor,
         William Weld, in relation to his medical records.
       </p>
       <p>
-        Paul Ohm, a Professor of Law at the Georgetown University, recalled this
+        Paul Ohm, a Professor of Law at Georgetown University, recalled this
         incident in his paper titled &ldquo;<a
           href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1450006"
           >Broken Promises of Privacy</a
@@ -90,15 +90,15 @@
         <a href="https://en.wikipedia.org/wiki/AOL_search_log_release"
           >AOL released approximately 20 million search queries</a
         >
-        from 650,000 users collected over a three-month period, with the intent
-        of allowing researchers to understand search patterns. They anonymized
-        the records by removing user identifiers, and released the data with the
+        from 650,000 users collected over three months, with the intent of
+        allowing researchers to understand search patterns. They anonymized the
+        records by removing user identifiers and released the data with the
         following attributes:
-        <i>AnonymousID, Query, QueryTime, ItemRank, ClickURL</i>.
+        <i>AnonymousID, Query, QueryTime, ItemRank, and ClickURL</i>.
       </p>
       <p>
         A few days later, two New York Times journalists, Michael Barbaro and
-        Tom Zeller Jr.,
+        Tom Zeller Jr.
         <a href="https://www.nytimes.com/2006/08/09/technology/09aol.html"
           >began investigating the search queries</a
         >
@@ -200,7 +200,7 @@
           style="height: 10%; width: 70%"
         />
         <figcaption>
-          Figure 1: An example of K Minimum Values algorithm, where K=3.
+          Figure 1: An example of the K Minimum Values algorithm, where K=3.
         </figcaption>
       </figure>
 
@@ -209,7 +209,7 @@
         Instead of keeping track of the <i>K</i> smallest hash values and
         computing the average distance estimation, we can keep track of the
         maximum number of trailing zeros seen from all the hash values. This, as
-        we will observe, will help reduce the space complexity.
+        we will observe, will help reduce space complexity.
       </p>
 
       <p>
@@ -264,7 +264,7 @@
       <p>
         After the stream of data elements is observed, HyperLogLog estimates the
         number of distinct elements in each register (B<sub>I</sub>) as
-        2<sup>I</sup>, where <i>I</i> represents the maximum number of trailing
+        2<sup>I</sup>, where <i>I</i> represent the maximum number of trailing
         zeros seen in register <i>I</i>. The overall estimation of unique values
         is determined by taking the harmonic mean of B<sub>I</sub> for all
         values of <i>I</i>.
@@ -385,7 +385,7 @@
         <figcaption>
           Figure 3: An example of a KHyperLogLog construction. When the input
           (UA-4, ID-6) arrives, as UA-4's hash is smaller than UA-3's hash, it
-          replaces UA-3 in the K Minimum Value structure, and updates the
+          replaces UA-3 in the K Minimum Value structure and updates the
           HyperLogLog registers.
         </figcaption>
       </figure>
@@ -420,7 +420,7 @@
         <figcaption>
           Figure 4: An example of k-anonymity, where K=2. Here, the ZIP code
           attribute's last digit is generalized to create equivalence classes
-          with group size of atleast two.
+          with a group size of at least two.
         </figcaption>
       </figure>
 
@@ -441,15 +441,14 @@
         <b>Membership disclosure</b> refers to the ability to identify whether a
         given person is present in a dataset or not. Additionally,
         <b>sensitive attribute disclosure</b> refers to the ability to identify
-        sensitive attributes of a person, such as their salary information and
+        sensitive attributes of a person, such as a salary information and
         political affiliation.
       </p>
 
       <p>
-        It is clear that k-anonymity has a direct impact on reidentifiability.
-        When the <i>k</i> value is high, there is more generalization, which in
-        turn increases anonymity and decreases the potential for
-        reidentifiability.
+        k-anonymity has a direct impact on reidentifiability. When the
+        <i>k</i> value is high, there is more generalization, which in turn
+        increases anonymity and decreases the potential for reidentifiability.
       </p>
       <h3>Reidentifiability Estimation</h3>
       <p>
@@ -544,10 +543,10 @@
         are joinable since they both have an extensive overlap in the [0, 86400)
         value region. Additionally, this metric would fail to detect fields that
         have different encodings (such as base64 and raw string) or have
-        undergone a minor transformation (like microsecond timestamp and a
+        undergone a minor transformation (like a microsecond timestamp and a
         millisecond timestamp). Experimentally, it was also noticed that the
         containment metric can be unreliable when dealing with highly unequal
-        set sizes. User intervention is necessary in such scenarios.
+        set sizes. User intervention is necessary for such scenarios.
       </p>
 
       <p>
