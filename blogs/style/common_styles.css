@@ -71,7 +71,7 @@ figcaption {
 	max-width: 100%;
 }
 
-#on-off, #font-on-off, #zoom-text {
+#on-off, #rss-feed, #font-on-off, #zoom-text {
 	float: right;
 	border: 4px solid black;
 	color: black;

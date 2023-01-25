@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<rss version="2.0">
+    <channel>
+        <title>Parth Parikh's Blog</title>
+        <link>https://pncnmnp.github.io/blog.html</link>
+        <description>Explore the exciting world of Computer Science with me! From the depths of Data Structures and Algorithms to the cutting-edge advancements in NLP and Databases, my blog delves into a wide range of topics to keep you informed and inspired.</description>
+        <item>
+            <title>KHyperLogLog</title>
+            <link>https://pncnmnp.github.io/blogs/khyperloglog.html</link>
+            <description>This article discusses KHyperLogLog, an algorithm introduced by Google that is based on approximate counting techniques that can estimate certain privacy risks of very large databases using linear runtime and minimal memory.</description>
+            <pubDate>Tue, 24 Jan 2023</pubDate>
+        </item>
+    </channel>
+</rss>
