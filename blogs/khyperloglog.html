@@ -131,6 +131,13 @@
         organization and when the data is publicly released.
       </p>
       <p>
+        However, comprehending the privacy risks associated with data can be a
+        challenge, especially for large organizations that handle vast amounts
+        of information. It raises the question, how can we automate and scale
+        the process to accommodate large databases? This is the central issue we
+        will be addressing in this chapter.
+      </p>
+      <p>
         Let us begin by discussing two characteristics of data sets that can aid
         in these privacy assessments - <i>reidentifiability</i> and
         <i>joinability</i>.
@@ -175,15 +182,15 @@
       </p>
 
       <p>
-        There are two common algorithms for approximate counting: K Minimum
-        Values (KMV) and HyperLogLog (HLL).
+        There are two common algorithms for approximate counting:
+        <i>K</i> Minimum Values (KMV) and HyperLogLog (HLL).
       </p>
-      <h3>K Minimum Values</h3>
+      <h3><i>K</i> Minimum Values</h3>
       <p>
-        <b>K Minimum Values</b> (KMV) estimates the number of distinct elements
-        (<i>N</i>) in a set by keeping track of the <i>K</i> smallest hash
-        values of the elements. It has a time complexity of O(<i>N</i>) and a
-        space complexity of O(<i>K</i>).
+        <b><i>K</i> Minimum Values</b> (KMV) estimates the number of distinct
+        elements (<i>N</i>) in a set by keeping track of the <i>K</i> smallest
+        hash values of the elements. It has a time complexity of O(<i>N</i>) and
+        a space complexity of O(<i>K</i>).
       </p>
 
       <p>
@@ -208,16 +215,17 @@
           style="height: 10%; width: 70%"
         />
         <figcaption>
-          Figure 1: An example of the K Minimum Values algorithm, where K=3.
+          Figure 1: An example of the <i>K</i> Minimum Values algorithm, where
+          K=3.
         </figcaption>
       </figure>
 
       <p>
-        The estimations produced by K Minimum Values algorithm have a relative
-        standard error rate of
+        The estimations produced by <i>K</i> Minimum Values algorithm have a
+        relative standard error rate of
         <span style="white-space: nowrap">
           &radic;<span style="text-decoration: overline"
-            >&nbsp;1/K&nbsp;</span
+            >&nbsp;1/<i>K</i>&nbsp;</span
           > </span
         >. For example, if <i>K</i> = 1024 and the hash function generates
         64-bit hashes, then the relative standard error rate of the estimations
@@ -364,7 +372,7 @@
       <p>
         To estimate such uniqueness distributions, the
         <b>KHyperLogLog algorithm</b>
-        was introduced. It combines the K minimum values and HyperLogLog
+        was introduced. It combines the <i>K</i> Minimum Values and HyperLogLog
         algorithms into a <i>two-level data structure</i> that stores data of
         the type <code>(field, ID)</code>. Using our previous example, the
         <code>field</code> would be the User Agent, and the
@@ -399,11 +407,11 @@
           <ol type="I">
             <li>
               Check if there are more than <i>K</i> entries in the
-              <i>K</i> Minimum Value structure, and if so, remove the entry with
-              the largest hash value.
+              <i>K</i> Minimum Values structure, and if so, remove the entry
+              with the largest hash value.
             </li>
             <li>
-              Add the new <code>h(field)</code> to the <i>K</i> Minimum Value
+              Add the new <code>h(field)</code> to the <i>K</i> Minimum Values
               structure, and add the <code>h(ID)</code> to its corresponding
               HyperLogLog part.
             </li>
@@ -418,7 +426,7 @@
         <figcaption>
           Figure 3: An example of a KHyperLogLog construction. When the input
           (UA-4, ID-6) arrives, as UA-4's hash is smaller than UA-3's hash, it
-          replaces UA-3 in the K Minimum Value structure and updates the
+          replaces UA-3 in the <i>K</i> Minimum Values structure and updates the
           HyperLogLog registers.
         </figcaption>
       </figure>
@@ -443,7 +451,7 @@
         semantically similar values. For example, ZIP codes such as
         <code>{13053, 13058, 13063, 13067}</code> can be generalized into
         <code>{1305*, 1306*}</code>. Additionally, categories such as
-        <code>{widow, married, divorced}</code> can be generalized into
+        <code>{widowed, married, divorced}</code> can be generalized into
         <code>{been_married}</code>.
       </p>
 
@@ -451,9 +459,11 @@
       <figure>
         <img src="./pics/khyperloglog/k-anonymity.png" />
         <figcaption>
-          Figure 4: An example of k-anonymity, where K=2. Here, the ZIP code
-          attribute's last digit is generalized to create equivalence classes
-          with a group size of at least two.
+          Figure 4: An example of k-anonymity, where k=2. We start by selecting
+          a group of attributes (<i>Birth</i>, <i>Gender</i>, and <i>ZIP</i>)
+          that are likely to uniquely identify an individual, and that can be
+          generalized. Next, the ZIP code attribute's last digit is generalized
+          to create equivalence classes with a group size of at least two.
         </figcaption>
       </figure>
 
@@ -467,15 +477,31 @@
       </p>
 
       <p>
-        k-anonymity is beneficial as it prevents membership disclosure and
-        sensitive attribute disclosure.
+        k-anonymity is a valuable tool in protecting against
+        <b>membership disclosure</b>, which refers to the ability to determine
+        whether an individual is present in a dataset. Another type of
+        disclosure, <b>sensitive attribute disclosure</b>, involves the
+        identification of sensitive information such as salary or political
+        affiliation. While k-anonymity alone may not prevent sensitive attribute
+        disclosure, it can be used in combination with techniques like
+        l-diversity.
       </p>
+
       <p>
-        <b>Membership disclosure</b> refers to the ability to identify whether a
-        given person is present in a dataset or not. Additionally,
-        <b>sensitive attribute disclosure</b> refers to the ability to identify
-        sensitive attributes of a person, such as a salary information and
-        political affiliation.
+        <b>l-diversity</b> is concerned with ensuring diversity in sensitive
+        attributes within each equivalence class. In other words, it is
+        important for the sensitive attributes to vary among individuals in the
+        same group. Though we will not delve deeply into l-diversity in this
+        chapter, it is useful to visualize this concept using the above example.
+      </p>
+
+      <p>
+        If the second row would also contain <i>Uncommon cold</i>, then one
+        could deduce that someone matching the first three columns has
+        <i>Uncommon cold</i>. However, if we stipulate that the second row must
+        contain a different value for the <i>Medical Issue</i> attribute, then
+        we can ensure that this attribute is not disclosed for a person with the
+        same birth year, gender and ZIP code.
       </p>
 
       <p>
@@ -483,13 +509,21 @@
         <i>k</i> value is high, there is more generalization, which in turn
         increases anonymity and decreases the potential for reidentifiability.
       </p>
+      <p>
+        Lastly, it is important to note that k-anonymity is not a highly robust
+        privacy definition. If you desire to securely anonymize your data, more
+        powerful tools such as
+        <a href="https://privacytools.seas.harvard.edu/differential-privacy"
+          >Differential Privacy</a
+        >
+        may be beneficial.
+      </p>
       <h3>Reidentifiability Estimation</h3>
       <p>
         Let us now return to the topic of estimating reidentifiability using
         KHyperLogLog. Figures 5 and 6 demonstrate how Figure 2 can be modified
-        to estimate an optimal K threshold. We can then set up periodic analyses
-        to monitor whether the uniqueness is below a given optimal threshold or
-        not.
+        to estimate a good k threshold. We can then set up periodic analyses to
+        monitor whether the uniqueness is below a given threshold or not.
       </p>
       <figure>
         <img src="./pics/khyperloglog/low-uniqueness-distribution.png" />
@@ -537,7 +571,7 @@
       <p>
         The union of F<sub>1</sub> and F<sub>2</sub> can be estimated by merging
         the KHyperLogLogs of F<sub>1</sub> and F<sub>2</sub>. This can be done
-        by finding the set union of their <i>K</i> Minimum Value structures;
+        by finding the set union of their <i>K</i> Minimum Values structures;
         that is, by combining the two structures and retaining their
         <i>K</i> smallest hashes. If F<sub>1</sub> and F<sub>2</sub> have
         different <i>K</i> values, we use the smallest <i>K</i>.
@@ -609,6 +643,11 @@
         reidentifiability and joinability at scale in an offline fashion. This,
         in turn, can help in evaluating privacy strategies surrounding your data
         and enable efficient regression testing.
+      </p>
+      <p>
+        <b>Thanks to</b>
+        <a href="https://desfontain.es/serious.html">Damien Desfontaines</a> for
+        reading and improving this chapter.
       </p>
       <br />
       <a id="back-link" href="../blog.html">&#x2190;</a>
