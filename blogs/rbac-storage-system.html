@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="author" content="parth_parikh" />
+    <meta
+      name="description"
+      content="A blog post that presents an architecture for enforcing access control policies in a cloud storage system."
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Parth Parikh's Blog"
+      href="../rss.xml"
+    />
+    <title>An architecture for enforcing RBAC in a cloud storage system</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="./style/common_styles.css"
+      id="light"
+    />
+    <link rel="stylesheet" type="text/css" href="../style.css" />
+    <link rel="shortcut icon" type="image/png" href="../favicon.png" />
+  </head>
+
+  <body>
+    <div class="blog-text">
+      <a id="rss-feed" href="../rss.xml"
+        >If you like this blog post, do subscribe to my RSS feed</a
+      ><br />
+      <h1>An architecture for enforcing RBAC in a cloud storage system</h1>
+      <h2>Author: <a href="../index.html">Parth Parikh</a></h2>
+      <h3>First Published: 17/02/23</h3>
+      <blockquote>
+        <i>
+          ‘The words are in the elven-tongue of the West of Middle-earth in the
+          Elder Days,’ answered Gandalf. ‘But they do not say anything of
+          importance to us. They say only: The Doors of Durin, Lord of Moria.
+          Speak, friend, and enter. And underneath small and faint is written:
+          I, Narvi, made them. Celebrimbor of Hollin drew these signs.’
+
+          <br />‘What does it mean by speak, friend, and enter?’ asked Merry.
+
+          <br />‘That is plain enough,’ said Gimli. ‘If you are a friend, speak
+          the password, and the doors will open, and you can enter.’</i
+        >
+        <br />
+        - Lord of the Rings, A Journey in the Dark
+      </blockquote>
+      <p>
+        In this blog post, we will explore a
+        <a href="https://doi.org/10.1109/SP.2016.54"
+          >2016 paper by Garrison et al.</a
+        >
+        that presents an architecture for enforcing access control policies in a
+        cloud storage system, which was published in the IEEE Symposium on
+        Security and Privacy. If you are interested in Security and Privacy
+        topics, be sure to check out
+        <a href="./khyperloglog.html">my recent blog post on KHyperLogLog</a>, a
+        data structure from Google that estimates privacy risks in large
+        databases.
+      </p>
+
+      <h2>Introduction</h2>
+      <p>
+        <b>Access control</b>
+        <a
+          href="https://csrc.nist.gov/glossary/term/access_control
+        "
+          >is defined</a
+        >
+        by the National Institute of Standards and Technology (NIST) as the
+        process of permitting or restricting access to applications at a
+        granular level, such as per-user, per-group, and per-resources.
+      </p>
+
+      <p>
+        When we read this definition, one of the first words that come to mind
+        is <i>passwords.</i> The history of passwords is diverse and certainly
+        rich. In older times, they were commonly known as <i>watchwords</i>. In
+        his 1906 book on the
+        <a
+          href="https://en.wikipedia.org/wiki/Apostles'_Creed
+        "
+          >Apostles' Creed</a
+        >, Rev. A. G. Mortimer
+        <a
+          href="https://play.google.com/store/books/details?id=qwMbAvnwc8QC&rdid=book-qwMbAvnwc8QC
+        "
+          >mentions the following</a
+        >
+        regarding the history of watchwords:
+      </p>
+      <figure>
+        <img
+          src="./pics/rbac/watchword.png"
+          style="height: 100%; width: 100%"
+        />
+        <figcaption>
+          Figure 1: A reference to watchwords in Rev. A. G. Mortimer's 1906
+          book.
+        </figcaption>
+      </figure>
+
+      <p>
+        The Compatible Time-Sharing System (CTSS) was the first computer system
+        to use password-based login. Professor Robert Fano, who was involved in
+        CTSS development,
+        <a
+          href="https://www.multicians.org/fano1967.html
+        "
+          >spoke about the use of passwords at a 1967 IEEE conference</a
+        >:
+      </p>
+      <blockquote>
+        <p>
+          There are a number of system features that deserve special mention.
+          The private files of each individual are protected by a personal
+          password, which is requested by the system at the beginning of each
+          session at a terminal. The teletypewriter's printer is disabled while
+          the password is given, so that no record of it can be seen by other
+          people. The password is checked by the system against the user's name
+          and problem number, and further access is denied if any mismatch is
+          detected.
+        </p>
+
+        <p>
+          Together with this mechanism for insuring privacy of individual files,
+          the system includes facilities for making one's work easily available
+          to other people. A "permit" command is available for authorizing the
+          use of any particular file on the part of other people. Permission can
+          be granted to any number of specifically named individuals, or to
+          everybody, or even to everybody but Joe. The authorization can be
+          limited to using and copying a file, or it can include the right to
+          modify it or even delete it. Once a person has been authorized to use
+          a file owned by somebody else, he can "link" to it by means of an
+          appropriate command and thereafter use it as if it were his own. The
+          links established by each user are recorded in his file directory,
+          together with the records of his own files. These facilities for
+          making one's work available to other people are extensively used. At
+          present, the average number of recorded links per user of the Project
+          MAC system is 27, and the average number of private files per user is
+          34.
+        </p>
+      </blockquote>
+
+      <p>
+        Additionally, Tom Van Vleck, a CTSS system programmer,
+        <a
+          href="https://www.multicians.org/thvv/7094.html
+        "
+          >shared a fascinating story</a
+        >
+        about the use of passwords in CTSS:
+      </p>
+      <blockquote>
+        The one time XEC * was used in a good way was the day in 1966 that a
+        certain Computation Center administrator's mistake caused the CTSS
+        password file and the message of the day to be swapped. Everybody's
+        password was displayed in clear to each user that logged in. (The editor
+        in those days created a temporary file with a fixed name.) This was
+        before (and was the origin of) the idea of one-way encrypting passwords.
+        Bill Mathews of Project TIP noticed the passwords coming out, and
+        quickly entered the debugger and crashed the machine by entering an XEC
+        * instruction. Naturally this happened at 5 PM on a Friday, and I had to
+        spend several unplanned hours changing people's passwords. (The problem
+        is described and analyzed in Corby's Turing Award Lecture.)
+      </blockquote>
+      <p>
+        For some context, <code>XEC *</code> would cause the CPU to “sit there
+        taking I-cycles, uninterruptible, until an operator manually reset the
+        CPU.”
+      </p>
+
+      <h2>Access Control Models: RBAC and ABAC</h2>
+      <p>
+        Access control mechanisms have significantly evolved since the 1960s.
+        Today, <b>Role-Based Access Control (RBAC)</b> is one of the more common
+        access control models. For instance, an MNC with a storage system for
+        employee records can tie access privileges with job responsibilities to
+        ensure only authorized employees have access to the records. In this
+        scenario, an HR manager would have read and write access to all employee
+        records, while a software manager would only have access to records of
+        employees who report under her. Such roles are then assigned to
+        individual users, with new employees receiving access privileges related
+        to their roles.
+      </p>
+
+      <p>
+        In this blog, we will primarily discuss RBAC models, specifically
+        RBAC<sub>0</sub>, whose state can be formally described as follows:
+      </p>
+      <ul>
+        <li><code>U</code> is a set of users</li>
+        <li><code>R</code> is a set of roles</li>
+        <li><code>P</code> is a set of permissions</li>
+        <li>
+          <code>PA</code> is the permission assignment relation, a subset of
+          <code>R x P</code>
+        </li>
+        <li>
+          <code>UR</code> is the user assignment relation, a subset of
+          <code>U x R</code>
+        </li>
+        <li>
+          <code>auth</code> determines if a given user <code>u</code> with a
+          role <code>r</code> can use permission <code>p</code>. This is true
+          when <code>(u, r)</code> is in set <code>UR</code> and
+          <code>(r, p)</code> is in set <code>PA</code>.
+        </li>
+      </ul>
+      <p>
+        This system will be useful in our discussion of construction. See Figure
+        2 for a visual representation of RBAC.
+      </p>
+      <figure>
+        <img src="./pics/rbac/rbac.png" style="height: 100%; width: 60%" />
+        <figcaption>
+          Figure 2: A visual representation of RBAC in an MNC.
+        </figcaption>
+      </figure>
+
+      <p>
+        There are other access control models out there, such as
+        <b>Attribute-Based Access Control (ABAC)</b>. ABACs are known to provide
+        more fine-tuning than their RBAC counterparts. To get a better idea,
+        imagine that the aforementioned MNC has a department working on
+        government projects. Such projects likely require a security clearance
+        level (an example of an <b>attribute</b>). Two employees in the
+        organization may have the same roles (e.g., SDE-2), but their security
+        clearance levels differ. If we use ABAC with security clearance level as
+        an attribute, a user attempting to access the file but not meeting these
+        criteria will be denied access.
+      </p>
+
+      <h2>Identity-based encryption and Identity-based signature</h2>
+      <p>
+        Before we jump into the architecture, let's discuss some preliminaries,
+        such as identity-based encryption (IBE) and Identity-based signature
+        (IBS) schemes, which we will be using during the construction.
+      </p>
+      <p>
+        <b>Identity-Based Encryption</b> is a type of public-key encryption
+        system that provides confidentiality by encrypting messages. It allows
+        the use of user identities, such as email addresses, phone numbers, IP
+        addresses, or other unique identifiers, as public keys. This is
+        different from traditional public-key encryption, where a user's public
+        key is typically a large pseudo-random number. IBEs can be particularly
+        useful in scenarios where key management is challenging.
+      </p>
+      <p>
+        In this blog post, we won't dive into the different types of IBE
+        systems, but we will take a brief look at the four algorithms used by
+        these systems. For our purposes, their implementation can be thought of
+        as an abstraction.
+      </p>
+      <p>
+        The four algorithms are <code>MSKGen</code>, <code>KeyGen</code>,
+        <code>Enc</code>, and <code>Dec</code>:
+      </p>
+      <ul>
+        <li>
+          <code>MSKGen</code> takes a security parameter <code>n</code> and
+          generates public parameters <code>pp</code>, and master key
+          <code>msk</code>.
+        </li>
+        <li>
+          <code>KeyGen</code> takes the master key <code>msk</code> and the
+          <code>ID</code> and generates a private key
+          <code>k<sub>ID</sub></code> for the <code>ID</code>. Here,
+          <code>ID</code> is the public key and can be something like a user's
+          email address.
+        </li>
+        <li>
+          <code>Enc</code> encrypts the message <code>m</code> using the public
+          key <code>ID</code> and public parameters <code>pp</code>.
+        </li>
+        <li>
+          <code>Dec</code> decrypts the ciphertext using the private key
+          <code>k<sub>ID</sub></code
+          >.
+        </li>
+      </ul>
+      <p>A visual representation of IBE is provided in Figure 3.</p>
+      <figure>
+        <img src="./pics/rbac/ibe.png" style="height: 100%; width: 60%" />
+        <figcaption>
+          Figure 3: A visual representation of IBE. Here, Admin acts as a
+          private key generator (PKG).
+        </figcaption>
+      </figure>
+
+      <p>
+        Now, let's take a look at <b>Identity-Based Signature</b> schemes. IBE
+        and IBS are related in the sense that they both use a user's identity
+        (such as an email address) as a public key. However, the difference lies
+        in their functionality. IBS schemes are used to sign messages to prove
+        their authenticity.
+      </p>
+      <p>
+        In essence, a user's identity is used to generate a signature that is
+        attached to the message to prove that the message was created by the
+        user and has not been altered since then. The receiver of the message
+        can then verify its authenticity by using the user's identity and
+        signature. The private keys are generated using a trusted third party,
+        known as the <b>Private Key Generator (PKG)</b>. A visual representation
+        of IBS is shown in Figure 4.
+      </p>
+      <figure>
+        <img src="./pics/rbac/ibs.png" style="height: 100%; width: 80%" />
+        <figcaption>
+          Figure 4: A visual representation of IBS. Here, Admin acts as a
+          private key generator (PKG). Furthermore, there is a level of
+          indirection on the receiver's side as Alice sends the message to the
+          Minimal Reference Monitor for authenticity verification. This is done
+          to stay consistent with the construction part that we will be
+          discussing next.
+        </figcaption>
+      </figure>
+
+      <p>
+        As before, we won't be delving into the implementation, but it is
+        important to familiarize ourselves with the following algorithms:
+        <code>MSKGen</code>, <code>KeyGen</code>, <code>Sign</code>, and
+        <code>Ver</code>.
+      </p>
+      <ul>
+        <li>
+          <code>MSKGen</code> takes a security parameter <code>n</code> and
+          generates public parameters <code>pp</code>, and master key
+          <code>msk</code>.
+        </li>
+        <li>
+          <code>KeyGen</code> takes the master key <code>msk</code> and the
+          <code>ID</code> and generates a private signing key
+          <code>s<sub>ID</sub></code> for this <code>ID</code>.
+        </li>
+        <li>
+          <code>Sign</code> takes the message <code>M</code> and the private key
+          <code>s<sub>ID</sub></code> to generate a signature <code>sig</code>.
+        </li>
+        <li>
+          <code>Ver</code> takes the message <code>M</code> and signature
+          <code>sig</code> to help verify whether <code>sig</code> is valid for
+          a given <code>ID</code>.
+        </li>
+      </ul>
+      <h2>Enforcing RBAC<sub>0</sub> in a cloud storage system</h2>
+      <h3>Architecture</h3>
+      <p>
+        In this blog post, we will consider a cloud storage system with three
+        entities: an <b>administrator</b>, a <b>user</b>, and a
+        <b>cloud storage service</b>. Figure 5 provides a visualization of this
+        system.
+      </p>
+      <figure>
+        <img
+          src="./pics/rbac/architecture.png"
+          style="height: 100%; width: 60%"
+        />
+        <figcaption>
+          Figure 5: A visual representation of the cloud storage system. This
+          figure is from the paper.
+        </figcaption>
+      </figure>
+      <p>
+        The <i>administrator</i> is mainly responsible for managing
+        cryptographic keys, such as creating and revoking them. For example, as
+        we saw in the IBE and IBS sections, the administrator would act as a
+        trusted third party and be responsible for using their master key
+        <code>msk</code> to generate a private signing key for a user.
+        Interestingly, in this architecture, any user can download files from
+        the cloud. However, since all files are encrypted, only the user with
+        the appropriate role-based key can decrypt, read, and modify their
+        contents.
+      </p>
+      <p>
+        As can be seen, the files are hosted in the cloud, along with the access
+        control policy data that protects them. The read access permissions are
+        enforced on the user's side, whereas the write permissions are enforced
+        on the cloud side. Before authorizing writes, a
+        <b> minimal reference monitor </b> validates the user's signature. The
+        architecture we will be examining makes the following assumptions about
+        the storage system:
+      </p>
+      <ul>
+        <li>
+          the cloud provider is not trusted to view the contents of the stored
+          files,
+        </li>
+        <li>trusted with ensuring the availability of the files, and</li>
+        <li>
+          trusted to ensure that only authorized users can update their
+          respective files.
+        </li>
+      </ul>
+      <p>
+        With all these preliminaries in mind, let's move on to a naive
+        construction for enforcing RBAC<sub>0</sub> on a cloud storage system.
+      </p>
+      <h3>Naive Construction</h3>
+      <p>
+        When a new user, such as Alice, joins an organization, she must complete
+        an initial registration process with the administrator. The
+        administrator will use their master keys (<code>msk</code>) to generate
+        two private keys: <code>k<sub>u</sub></code> and
+        <code>s<sub>u</sub></code
+        >, using <code>KeyGen</code> for the IBE and IBS schemes, respectively.
+        These private keys will be sent to Alice.
+      </p>
+      <p>
+        Similarly, when a new role, such as Sales Ninja, is created in the
+        organization, the administrator will generate similar private keys:
+        <code>k<sub>r</sub></code> and <code>s<sub>r</sub></code
+        >, using <code>KeyGen</code>. For each user, such as Alice, assigned to
+        this role, the administrator creates and uploads a tuple of the form
+      </p>
+      <!-- prettier-ignore -->
+      <blockquote>
+<code>&lt;RK, Alice’s ID, role, Enc(kr, sr), IBS signature of the administrator&gt;
+</code>
+</blockquote>
+      <p>
+        Here, <code>RK</code> is a special value indicating that this is a role
+        key tuple. <code>Enc(k<sub>r</sub>, s<sub>r</sub>)</code> provides Alice
+        with cryptographically protected access to
+        <code>k<sub>r</sub></code> and <code>s<sub>r</sub></code
+        >. The administrator does this by using Alice's private key (<code
+          >k<sub>u</sub></code
+        >) to encrypt the message (<code>k<sub>r</sub></code> and
+        <code>s<sub>r</sub></code
+        >) with Alice's identity. As Alice also has her private key, she can
+        easily decrypt and obtain <code>k<sub>r</sub></code
+        >/<code>s<sub>r</sub></code
+        >.
+      </p>
+      <p>
+        For each file that is to be shared with a particular role, the
+        administrator creates and uploads a tuple of the form
+      </p>
+      <!-- prettier-ignore -->
+      <blockquote>
+<code>&lt;F, role, &lt;file name, access privileges&gt;, Enc(file), IBS signature of the administrator&gt;</code></blockquote>
+
+      <p>
+        Again, <code>F</code> is a special value indicating that this is a file
+        tuple, and <code>Enc(file)</code> is an IBE-encrypted file with a role
+        as the <code>ID</code>. The access privileges can be read or read-write
+        and the file can be decrypted using the private key
+        <code>k<sub>r</sub></code> corresponding to that role.
+      </p>
+      <p>
+        After the administrator completes the preparation, a user can start
+        reading and writing their authorized files. Let's say, Alice, who is a
+        Sales Ninja, wants to read an authorized file called
+        <code>sales.txt</code>. To do this, she needs to:
+      </p>
+      <ol>
+        <li>
+          Download an <code>RK</code> tuple for the Sales Ninja role and an
+          <code>F</code> tuple for <code>sales.txt</code>.
+        </li>
+        <li>Validate the IBS signatures on both tuples.</li>
+        <li>
+          Decrypt <code>k<sub>r</sub></code> from the <code>RK</code> tuple
+          using her private IBE key <code>k<sub>u</sub></code
+          >.
+        </li>
+        <li>
+          Decrypt <code>sales.txt</code> using <code>k<sub>r</sub></code> and
+          read the file.
+        </li>
+      </ol>
+      <p>To write to a file, Alice can create a new <code>F</code> tuple:</p>
+      <!-- prettier-ignore -->
+      <blockquote>
+        <code>&lt;F, Sales Ninja, &lt;sales.txt, write&gt;, Enc(updated sales.txt), IBS signature of Alice&gt;</code></blockquote>
+      <p>
+        once she's done changing the contents locally. She can then send it to
+        the cloud. If the minimal reference monitor can verify Alice's
+        signature, the file <code>sales.txt</code> will be replaced with the
+        updated one.
+      </p>
+      <h3>Issues with the Construction and Suggested Improvements</h3>
+      <p>
+        The above construction has significant issues. For instance, encrypting
+        large amounts of data using IBE can impact performance, and the
+        <code>F</code> tuple incurs duplicate work as the entire file needs to
+        be encrypted multiple times, once for each role.
+      </p>
+      <p>
+        To address these issues, it's recommended to split an
+        <code>F</code> tuple into two tuples, <code>F</code> and
+        <code>FK</code>, as follows:
+      </p>
+      <ul>
+        <li>
+          The <code>FK</code> tuple is:
+          <!-- prettier-ignore --><code>&lt;FK, role, &lt;file name, access privileges&gt;, Enc(k), IBS signature of the administrator&gt;</code
+          >. Here, <code>k</code> is a symmetric key generated by the
+          administrator, and <code>Enc(k)</code> encrypts this key using the IBE
+          scheme with the role as <code>ID</code>.
+        </li>
+        <li>
+          The <code>F</code> tuple is:
+          <!-- prettier-ignore --><code>&lt;F, file name, Enc(file), IBS signature using the role key of the last authorized updater&gt;</code
+          >. Here, <code>Enc(file)</code> uses faster
+          <b> symmetric-key cryptography </b> with <code>k</code> as the
+          symmetric key, rather than the IBE scheme.
+        </li>
+      </ul>
+      <p>
+        This technique greatly reduces duplication, as a single
+        <code>F</code> tuple can be created for a file, with multiple
+        <code>FK</code> tuples, one for each role. Only one symmetric key per
+        file needs to be generated, and a more cost-efficient symmetric key
+        cryptography is used for encrypting files.
+      </p>
+
+      <p>
+        Another issue with the construction is the lack of provision for
+        <b>revoking</b> access to a file. Ideally, we should be able to do this
+        on a <i>per-role</i> and <i>per-user level</i>.
+      </p>
+
+      <p>
+        One way to address this issue is by <b>versioning</b> the tuples. To
+        achieve per-role functionality, we create a version number
+        <code>v</code> corresponding to the symmetric key <code>k</code> and use
+        it to version the <code>F</code> and <code>FK</code> tuples. To remove
+        permission for a role, we create a new version number, use it to
+        generate a new symmetric key, and re-encrypt the file with it. This
+        would not only modify the <code>F</code> tuple but also the
+        <code>FK</code> tuples for all the roles whose access to the file has
+        not been revoked.
+      </p>
+
+      <h2>Conclusion</h2>
+      <p>
+        That's all for now! The paper provides an in-depth analysis of the
+        efficiency of this construction, and it also includes algorithms for
+        various operations, such as adding and deleting users, as well as
+        revoking access and permissions. If you're interested in learning more,
+        I highly recommend checking out the paper for further details.
+      </p>
+      <br />
+      <a id="back-link" href="../blog.html">&#x2190;</a>
+    </div>
+    <footer>
+      <hr />
+      <div>© 2023 Parth Parikh.</div>
+    </footer>
+  </body>
+</html>
