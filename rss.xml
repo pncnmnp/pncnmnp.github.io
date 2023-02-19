@@ -5,6 +5,12 @@
         <link>https://pncnmnp.github.io/blog.html</link>
         <description>Explore the exciting world of Computer Science with me! From the depths of Data Structures and Algorithms to the cutting-edge advancements in NLP and Databases, my blog delves into a wide range of topics to keep you informed and inspired.</description>
         <item>
+            <title>Odd Sketches</title>
+            <link>https://pncnmnp.github.io/blogs/odd-sketches.html</link>
+            <description>This article discusses Odd Sketches, a data structure that offers a more precise estimation of Jaccard similarity compared to b-bit minhashing, while also reducing the space complexity significantly compared to standard minhashing techniques.</description>
+            <pubDate>Sun, 19 Feb 2023</pubDate>
+        </item>
+        <item>
             <title>An architecture for enforcing RBAC in a cloud storage system</title>
             <link>https://pncnmnp.github.io/blogs/rbac-storage-system.html</link>
             <description>This article explores a 2016 paper by Garrison et al. that presents an architecture for enforcing access control policies in a cloud storage system.</description>
