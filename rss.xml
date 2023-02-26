@@ -5,6 +5,12 @@
         <link>https://pncnmnp.github.io/blog.html</link>
         <description>Explore the exciting world of Computer Science with me! From the depths of Data Structures and Algorithms to the cutting-edge advancements in NLP and Databases, my blog delves into a wide range of topics to keep you informed and inspired.</description>
         <item>
+            <title>What does Kirchoff, Cayley, and Carroll have in common? And who is Kahrimanian?</title>
+            <link>https://pncnmnp.github.io/blogs/history-of-trees.html</link>
+            <description>This article discusses the three individuals who made early contributions to a mathematical structure that we now know as a tree. We will also see how the tree was introduced in both mathematics and computer science.</description>
+            <pubDate>Sun, 26 Feb 2023</pubDate>
+        </item>
+        <item>
             <title>Odd Sketches</title>
             <link>https://pncnmnp.github.io/blogs/odd-sketches.html</link>
             <description>This article discusses Odd Sketches, a data structure that offers a more precise estimation of Jaccard similarity compared to b-bit minhashing, while also reducing the space complexity significantly compared to standard minhashing techniques.</description>
