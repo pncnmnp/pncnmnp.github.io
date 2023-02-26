@@ -1,16 +1,24 @@
 @font-face {
-	font-family: 'lusitana';
-	src: url('../fonts/lusitana/Lusitana-Regular.ttf') format('truetype');
+	font-family: 'Crimson_Text';
+	src: url('../fonts/Crimson_Text/CrimsonText-Regular.ttf') format('truetype');
 		 /* url('../fonts/opensans/opensans-regular-webfont.woff') format('woff'); */
 	font-weight: 400;
 	font-style: normal;
 }
 
 @font-face {
-	font-family: 'lusitana';
-	src: url('../fonts/lusitana/Lusitana-Bold.ttf') format('truetype');
+	font-family: 'Crimson_Text';
+	src: url('../fonts/Crimson_Text/CrimsonText-SemiBold.ttf') format('truetype');
 		 /* url('../fonts/opensans/opensans-regular-webfont.woff') format('woff'); */
 	font-weight: bold;
+}
+
+@font-face {
+	font-family: 'Crimson_Text';
+	src: url('../fonts/Crimson_Text/CrimsonText-Italic.ttf') format('truetype');
+		 /* url('../fonts/opensans/opensans-regular-webfont.woff') format('woff'); */
+	font-weight: 400;
+	font-style: italic;
 }
 
 body {
@@ -20,9 +28,9 @@ body {
 }
 
 div {
-	font-size: 14px;
+	font-size: 16px;
 	font-weight: 400;
-	font-family: 'lusitana', 'Helvetica', sans-serif;
+	font-family: 'Crimson_Text', 'Helvetica', sans-serif;
 	font-style: normal;
 	max-width: 800px;
 	margin-left: auto;
@@ -72,7 +80,7 @@ figcaption {
 
 .like-pre, code {
 	font-family: monospace; 
-	font-size: 14px;
+	font-size: 16px;
 	word-wrap: break-word;
 	white-space: pre-wrap;
 }

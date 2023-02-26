@@ -12,7 +12,7 @@
 	text-align: center;
 	text-decoration: none;
 	padding: 14px 16px;
-	font-size: 14px;
+	font-size: 16px;
 }
 
 .topnav a:hover {
@@ -43,7 +43,7 @@
 	}
 
 	.topnav a {
-		font-size: 14px;
+		font-size: 16px;
 		float: none;
 		padding: 14px 18px;
 		padding-bottom: 0px; 
@@ -66,7 +66,7 @@
 		}
 
 		.topnav a {
-			font-size: 14px;
+			font-size: 16px;
 			float: none;
 			padding: 14px 18px;
 			padding-bottom: 0px; 

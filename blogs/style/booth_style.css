@@ -19,7 +19,7 @@ span {
 span:before {
     font-size: 12px;
     display: block;
-    position absolute;
+    /* position absolute; */
     left: 0;
     top: 0;
     content: "N";
@@ -30,7 +30,7 @@ span:before {
 span:after {
     font-size: 12px;
     display: block;
-    position absolute;
+    /* position absolute; */
     left: 0;
     bottom: 0;
     content: "k = 0";
