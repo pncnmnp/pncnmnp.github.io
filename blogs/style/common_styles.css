@@ -45,6 +45,7 @@ body {
 
 div {
 	font-size: 16px;
+	line-height: normal;
 	font-weight: 400;
 	font-family: 'Crimson_Text', 'Helvetica', sans-serif;
 	font-style: normal;
