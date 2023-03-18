@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="author" content="parth_parikh" />
+    <meta
+      name="description"
+      content="Can you play the Twenty Questions game with ChatGPT? In this blog
+    post, we will see just how well it can play this classic game."
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Playing Twenty Questions with ChatGPT</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="./style/common_styles.css"
+      id="light"
+    />
+    <link href="./style/prism.css" rel="stylesheet" />
+    <script src="./js/prism.js"></script>
+    <script
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+    <link rel="stylesheet" type="text/css" href="../style.css" />
+    <link rel="shortcut icon" type="image/png" href="../favicon.png" />
+    <noscript
+      ><style>
+        .off {
+          display: none;
+        }
+      </style></noscript
+    >
+  </head>
+  <body>
+    <div class="blog-text">
+      <a id="rss-feed" href="../rss.xml"
+        >If you like this blog post, do subscribe to my RSS feed</a
+      ><br />
+      <h1>Playing Twenty Questions with ChatGPT</h1>
+      <h2>Author: <a href="../index.html">Parth Parikh</a></h2>
+      <h4>First Published: 17/03/23</h4>
+      <blockquote>
+        <i
+          >It is better to have an approximate answer to the right question than
+          an exact answer to the wrong one.<br
+        /></i>
+        - John Tukey
+      </blockquote>
+      <p>
+        About a year and a half ago, I had the opportunity to take an NLP class
+        at NC State taught by Prof. Munindar Singh. The class was absolutely
+        fascinating, and it led me to discover more about the classical side of
+        NLP.
+      </p>
+
+      <p>
+        One of my favorite discussions in his class was about the
+        <i> Centering Theory</i>. This framework from the 90s was used, among
+        many things, to model coherence in a text. The idea is to start by
+        dividing the text into utterances, or sentences for simplicity, and
+        identifying the <i>center</i>, which would be the most salient part of
+        an utterance (usually an entity). Once we have the center, we can
+        identify how it moves in future utterances. If it bounces around too
+        much, we can say that the text is less coherent. The second edition of
+        Jurafsky and Martin's
+        <a href="https://github.com/rain1024/slp2-pdf"
+          >Speech and Language Processing book</a
+        >
+        has a nice section on this topic, Section 18.1 on page 685.
+      </p>
+
+      <p>
+        We also had some other interesting discussions, such as about languages
+        that are not written (e.g.,
+        <a href="https://en.wikipedia.org/wiki/Konkani_language">Konkani</a>),
+        whether there are any <i>true</i> synonyms, how French has a more
+        prominent gender classification, and how the French government tries to
+        regulate their language.
+      </p>
+
+      <p>
+        Anyway, in his course, we were tasked with brainstorming and working on
+        an NLP project. My colleague Anisha and I decided to work on reversing
+        the twenty-questions game.
+      </p>
+
+      <h2>Reversing the Twenty Questions game</h2>
+      <p><i>So, what is this game all about?</i></p>
+
+      <p>
+        Some of you may have heard of the
+        <a href="https://en.wikipedia.org/wiki/Twenty_questions"
+          >twenty-questions game</a
+        >
+        or a similar online version called
+        <a href="https://en.akinator.com/">Akinator</a>. The game involves a
+        <i>questioner</i> and an <i>answerer</i>. The answerer thinks of a
+        random person, such as a famous movie star like <i>Tom Cruise</i>. The
+        objective of the game is for the questioner to guess this person in less
+        than twenty questions by asking a series of yes-no type questions to the
+        answerer. For instance, is the person male? Is he a movie star? Has he
+        acted in any superhero films? And so on.
+      </p>
+
+      <p>
+        Today, efficient computer programs like Akinator can act as the
+        questioner to try and guess the entity we are thinking about. They
+        usually use space-partitioning methods to select questions (based on
+        previously answered questions) that are likely to drastically decrease
+        the search space.
+      </p>
+
+      <p>
+        However, we were trying to solve
+        <i>a reverse version of this problem</i>:
+      </p>
+      <blockquote>
+        <b
+          >Make the computer randomly choose a name and let the human guess the
+          name by asking the computer a series of natural language questions.
+          The game ends when the human correctly guesses the name selected by
+          the computer.
+        </b>
+      </blockquote>
+
+      <p>
+        In our research, we developed an entire NLP pipeline that included an
+        <i>entity formulation</i> and <i>pronoun resolution</i> phase, a
+        <i> paragraph/sentence retrieval</i> phase, and a
+        <i>boolean question-answering</i> phase. Initially, we encountered some
+        difficulty when working with completely random entities, so we decided
+        to limit the domain to commonly known animals. Although our results were
+        not incredibly promising, they were not underwhelming either.
+      </p>
+
+      <p>
+        If you are interested in our research, you can
+        <a href="https://arxiv.org/abs/2301.08718">
+          find our paper on Arxiv.org
+        </a>
+        or
+        <a
+          href="https://pncnmnp.github.io/blogs/reversing-twenty-questions-game-slides.pdf"
+          >view our slides</a
+        >.
+      </p>
+
+      <p>
+        Anyways, I had given up on this variant of the game until today I
+        decided to play it with ChatGPT. To my surprise, the results were
+        absolutely mind-boggling!
+      </p>
+
+      <h2>ChatGPT playing Twenty Questions</h2>
+      <p>
+        Here are three games I played with ChatGPT today. Although it failed the
+        first game, it made accurate predictions in the second and third games.
+        The <i>italicized</i> text represents ChatGPT's responses.
+        <b>
+          This conversation is presented exactly as it occurred, without any
+          edits </b
+        >.
+      </p>
+
+      <h3>Game 1</h3>
+      <p>
+        Hey let us play a game of 20 questions where you think of someone in the
+        film industry and I will try and guess who that person is. Ready?<br />
+        <i>Sure, I'm ready! Go ahead and start.</i><br />
+        <br />
+        Is it a male?<br />
+        <i>Yes, it is a male.</i><br />
+        <br />
+        Is he young?<br />
+        <i>No, he is not young.</i><br />
+        <br />
+        Has he recently acted in any blockbuster films?<br />
+        <i>No, he has not recently acted in any blockbuster films.</i><br />
+        <br />
+        Has he ever acted in any blockbuster films?<br />
+        <i
+          >Yes, he has acted in some blockbuster films, but he is not
+          necessarily known for them.</i
+        ><br />
+        <br />
+        Has he acted in TV shows?<br />
+        <i>Yes, he has acted in TV shows as well.</i><br />
+        <br />
+        Has he acted in a franchise film?<br />
+        <i>Yes, he has acted in a franchise film.</i><br />
+        <br />
+        Does he act in action films?<br />
+        <i
+          >Not typically, no. While he may have appeared in action films before,
+          he is not primarily known for acting in action films.</i
+        ><br />
+        <br />
+        Does he act in drama films?<br />
+        <i>Yes, he is known for his roles in drama films.</i><br />
+        <br />
+        Has he won an oscar?<br />
+        <i>Yes, he has won an Oscar for Best Actor.</i><br />
+        <br />
+        Has he won an oscar multiple times?<br />
+        <i>No, he has won the Oscar for Best Actor only once.</i><br />
+        <br />
+        Has any of his films made more than a billion dollars in box office
+        revenue?<br />
+        <i
+          >No, none of his films have made more than a billion dollars in box
+          office revenue.</i
+        ><br />
+        <br />
+        Is he above 60 in age?<br />
+        <i>Yes, he is above 60 in age.</i><br />
+        <br />
+        Has he acted in gangster/mafia films?<br />
+        <i>Yes, he has acted in gangster/mafia films.</i><br />
+        <br />
+        Has he acted in a martin Scorsese film?<br />
+        <i>Yes, he has acted in a Martin Scorsese film.</i><br />
+        <br />
+        Was the film Goodfellas?<br />
+        <i>No, he did not appear in Goodfellas.</i><br />
+        <br />
+        Has he acted in a film from Christopher Nolan?<br />
+        <i>Yes, he has acted in a film directed by Christopher Nolan.</i><br />
+        <br />
+        I know the answer! Al Pacino!<br />
+        <i
+          >I'm sorry, but the person I was thinking of is not Al Pacino. Do you
+          want to continue asking questions or make another guess?</i
+        ><br />
+        <br />
+        I want to continue guessing, dont tell the answer<br />
+        <i>Okay, feel free to ask another question!</i><br />
+        <br />
+        Was he in True Detectives?<br />
+        <i>No, he did not appear in True Detective.</i><br />
+        <br />
+        Has he acted in Titanic?<br />
+        <i>No, he did not appear in Titanic.</i><br />
+        <br />
+        Okay! I give up! Tell me the answer?<br />
+        <i
+          >The person I was thinking of is Anthony Hopkins. He is a Welsh actor
+          known for his work in films such as The Silence of the Lambs (for
+          which he won an Oscar), The Remains of the Day, and The Two Popes,
+          among others. He has also appeared in TV shows like Westworld and
+          Frasier, and in films directed by Christopher Nolan (The Prestige) and
+          Martin Scorsese (The Edge of Darkness).</i
+        ><br />
+        <br />
+        Wait what? Anthony Hopkins was not in The Prestige!<br />
+        <i
+          >I apologize for the mistake. You are correct, Anthony Hopkins did not
+          appear in The Prestige. That was my error.</i
+        ><br />
+        <br />
+        Uhh! That was why I was unable to guess<br />
+        <i
+          >I'm sorry about that. I made a mistake, which probably made the
+          guessing game more difficult. If you want to play another round of the
+          game, I'd be happy to participate and try to do better this time!</i
+        >
+      </p>
+
+      <p>
+        As you can see, there are quite a few issues with this conversation.
+        It's worth noting that Martin Scorsese did not direct
+        <i> The Edge of Darkness </i>; that was actually <i>Martin Campbell</i>.
+        Additionally, it's important to point out that Anthony Hopkins did not
+        appear in <i>The Prestige </i> or <i>Frasier</i>.
+      </p>
+
+      <h3>Game 2</h3>
+      <p>
+        Okay lets play another round<br />
+        <i>Sure! Go ahead and start with your first question.</i><br />
+        <br />
+        Is it a male actor?<br />
+        <i>Yes, it is a male actor.</i><br />
+        <br />
+        Is he older than 50?<br />
+        <i>No, he is not older than 50.</i><br />
+        <br />
+        Is he younger than 30?<br />
+        <i>No, he is not younger than 30.</i><br />
+        <br />
+        Has he acted in a blockbuster franchise?<br />
+        <i>Yes, he has acted in a blockbuster franchise.</i><br />
+        <br />
+        Has the franchise grossed over a billion dollars in box office
+        revenue?<br />
+        <i
+          >Yes, the franchise he acted in has grossed over a billion dollars in
+          box office revenue.</i
+        ><br />
+        <br />
+        Was the franchise related to superhero genre?<br />
+        <i>Yes, the franchise he acted in is related to the superhero genre.</i
+        ><br />
+        <br />
+        Was it MCU?<br />
+        <i
+          >Yes, the franchise he acted in is a part of the Marvel Cinematic
+          Universe (MCU).</i
+        ><br />
+        <br />
+        Has he acted in The Avengers movie?<br />
+        <i>Yes, he has acted in The Avengers movie.</i><br />
+        <br />
+        Was he one of the Avengers?<br />
+        <i>Yes, he was one of the Avengers.</i><br />
+        <br />
+        Has he acted in Sherlock Holmes franchise?<br />
+        <i>No, he has not acted in the Sherlock Holmes franchise.</i><br />
+        <br />
+        Has he acted in Knives Out?<br />
+        <i>No, he did not appear in Knives Out.</i><br />
+        <br />
+        Was he part of Ghostbusters reboot?<br />
+        <i>No, he was not part of the Ghostbusters reboot.</i><br />
+        <br />
+        Did he act in a TV show from MCU?<br />
+        <i>Yes, he has acted in a TV show from the MCU.</i><br />
+        <br />
+        Has he played the Hulk?<br />
+        <i>No, he did not play the Hulk.</i><br />
+        <br />
+        Does he throw arrows in the Avengers film?<br />
+        <i>Yes, he throws arrows in The Avengers film.</i><br />
+        <br />
+        Jeremy Renner?<br />
+        <i
+          >Yes, you are correct! The actor I was thinking of is Jeremy Renner.
+          He is known for his role as Clint Barton/Hawkeye in the Marvel
+          Cinematic Universe, including The Avengers movie, as well as other
+          films like The Hurt Locker and Arrival. He has also appeared in TV
+          shows like The Unusuals and most recently in the Hawkeye TV series.</i
+        ><br />
+        <br />
+        Good One!<br />
+        <i
+          >Thank you! It was fun playing the game with you again. Let me know if
+          you want to play another round or if you have any other questions.</i
+        >
+      </p>
+
+      <h3>Game 3</h3>
+      <p>
+        I found it incredibly fun! Can we play another game?<br />
+        <i
+          >Absolutely! I'm ready whenever you are. What would you like me to
+          think of this time?</i
+        ><br />
+        <br />
+        Same, actor/actress in the film industry<br />
+        <i
+          >Sure thing! I'm thinking of someone in the film industry again. Let's
+          begin!</i
+        ><br />
+        <br />
+        Is it male?<br />
+        <i>No, it is not male.</i><br />
+        <br />
+        Has she acted in any blockbuster films with a franchise?<br />
+        <i
+          >Yes, she has acted in at least one blockbuster film with a
+          franchise.</i
+        ><br />
+        <br />
+        Has that film grossed over a billion dollars in box office
+        collection?<br />
+        <i
+          >Yes, the film she acted in has grossed over a billion dollars in box
+          office revenue.</i
+        ><br />
+        <br />
+        Are we talking about the MCU franchise?<br />
+        <i
+          >No, I'm not thinking of an actress from the Marvel Cinematic
+          Universe.</i
+        ><br />
+        <br />
+        Has she acted in superhero films?<br />
+        <i>Yes, she has acted in superhero films.</i><br />
+        <br />
+        Is she from the DC franchise?<br />
+        <i>Yes, she is from the DC franchise.</i><br />
+        <br />
+        Is she from DCEU?<br />
+        <i>Yes, she is from the DC Extended Universe (DCEU).</i><br />
+        <br />
+        Did she act in the Justice League?<br />
+        <i>Yes, she did.</i><br />
+        <br />
+        Does her character in that film wear a red suit?<br />
+        <i>No, her character in that film does not wear a red suit.</i><br />
+        <br />
+        Is she a reporter in that film?<br />
+        <i>Yes, her character is a reporter in the film.</i><br />
+        <br />
+        Is she related to Superman in the film?<br />
+        <i>Yes, she is related to Superman in the film.</i><br />
+        <br />
+        Has she acted in Arrival and the TV show The Office?<br />
+        <i>Yes, the actress is Amy Adams.</i><br />
+        <br />
+        Gotcha! :)<br />
+        <i
+          >Glad you enjoyed the game! Do you want to play another round or is
+          there anything else I can assist you with?
+        </i>
+      </p>
+
+      <h2>Conclusion</h2>
+      <p>
+        That's it, folks! I hope you enjoyed reading this blog post as much as I
+        enjoyed writing it. With ChatGPT's remarkable capabilities, it's clear
+        that much of the NLP research of the past will be superseded. And this
+        is only the beginning! I'm excited to see what the future holds for this
+        technology.
+      </p>
+
+      <p>
+        In the meantime, I encourage you to explore this game on your own and
+        share it with friends and family. If you have any questions or comments,
+        please don't hesitate to <a href="../index.html">reach out to me</a>.
+        I'd love to hear from you!
+      </p>
+      <br />
+      <a id="back-link" href="../blog.html">&#x2190;</a>
+    </div>
+    <footer>
+      <hr />
+      <div>© 2023 Parth Parikh.</div>
+    </footer>
+  </body>
+</html>
