@@ -5,6 +5,12 @@
         <link>https://pncnmnp.github.io/blog.html</link>
         <description>Explore the exciting world of Computer Science with me! From the depths of Data Structures and Algorithms to the cutting-edge advancements in NLP and Databases, my blog delves into a wide range of topics to keep you informed and inspired.</description>
         <item>
+            <title>GADDAG</title>
+            <link>https://pncnmnp.github.io/blogs/gaddag.html</link>
+            <description>This article discusses GADDAG, a data structure for efficiently generating moves in Scrabble using a modified directed acyclic word graph.</description>
+            <pubDate>Fri, 22 Jun 2023</pubDate>
+        </item>
+        <item>
             <title>Playing Twenty Questions with ChatGPT</title>
             <link>https://pncnmnp.github.io/blogs/chatgpt-twenty-questions.html</link>
             <description>Can you play the Twenty Questions game with ChatGPT? In this article, we will see just how well it can play this classic game.</description>

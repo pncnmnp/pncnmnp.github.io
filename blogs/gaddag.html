@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="author" content="parth_parikh" />
+    <meta
+      name="description"
+      content="A data structure for efficiently generating moves in Scrabble using a modified directed acyclic word graph."
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GADDAG</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="./style/common_styles.css"
+      id="light"
+    />
+    <link href="./style/prism.css" rel="stylesheet" />
+    <script src="./js/prism.js"></script>
+    <script
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+    <link rel="stylesheet" type="text/css" href="../style.css" />
+    <link rel="shortcut icon" type="image/png" href="../favicon.png" />
+    <noscript
+      ><style>
+        .off {
+          display: none;
+        }
+      </style></noscript
+    >
+  </head>
+
+  <body>
+    <div class="blog-text">
+      <a id="rss-feed" href="../rss.xml"
+        >If you like this blog post, do subscribe to my RSS feed</a
+      ><br />
+      <h1>GADDAG</h1>
+      <h2>
+        <a href="dsa-book.html"
+          >The Secret World of Data Structures and Algorithms</a
+        >, Chapter 3
+      </h2>
+      <h3>Author: <a href="../index.html">Parth Parikh</a></h3>
+      <h4>First Published: 22/06/23</h4>
+      <blockquote>
+        <i
+          >Words are, in my not-so-humble opinion, our most inexhaustible source
+          of magic. Capable of both inflicting injury, and remedying it.</i
+        >
+        <br />
+        - Albus Dumbledore, from J.K. Rowling's Harry Potter and the Deathly
+        Hallows
+      </blockquote>
+      <p>
+        Welcome to the draft of the <i>third</i> chapter of my journey to write
+        a short book on data structures and algorithms that are not widely known
+        outside of academic circles. We have previously covered
+        <a href="khyperloglog.html">KHyperLogLog</a> and
+        <a href="odd-sketches.html">Odd Sketches</a>. As always,
+        <a href="../index.html#contact">
+          I'm looking forward to your feedback </a
+        >, which is greatly appreciated.
+      </p>
+      <h2>Introduction</h2>
+      <p>
+        Throughout history, humans have always been captivated by board games.
+        One of the earliest discovered games is the Egyptian board game,
+        <a href="https://en.wikipedia.org/wiki/Senet">Senet</a>, dating back to
+        around 3500 BCE. The game featured a board of thirty squares, arranged
+        into three parallel rows with ten squares each, with pieces (known as
+        draughtsmen) being moved across the board. Although the exact rules of
+        the game are still a mystery, it is believed that the objective was to
+        reach the edge of the board first, and accomplishing this may have had
+        some significance towards the afterlife. Pieces were moved based on the
+        throw of sticks or bones. According to a
+        <a
+          href="https://healthy.uwaterloo.ca/museum/Archives/Piccione/index.html"
+        >
+          1980 article by Peter A. Piccione</a
+        >:
+      </p>
+      <blockquote>
+        This research demonstrates that the stratagems of the game reflect
+        nothing less than the stratagems of the gods, and that senet, when
+        properly understood, can reveal essential Egyptian religious beliefs
+        about the afterlife. At the most, the game indicates that ancient
+        Egyptians believed they could join the god of the rising sun,
+        Re-Horakhty, in a mystical union even before they died. At the least,
+        senet shows that, while still living, Egyptians felt they could actively
+        influence the inevitable afterlife judgment of their souls - a belief
+        that was not widely recognized by Egyptologists.
+      </blockquote>
+      <blockquote>
+        Senet was originally strictly a pastime with no religious significance.
+        As the Egyptian religion evolved and fascination with the netherworld
+        increased - reflected in such ancient works as the Book of Gates, Book
+        of What is in the Netherworld, and portions of the Book of the Dead -
+        the Egyptians superimposed their beliefs onto the gameboard and specific
+        moves of senet. By the end of the Eighteenth Dynasty in 1293 BC, the
+        senet board had been transformed into a simulation of the netherworld,
+        with its squares depicting major divinities and events in the afterlife.
+      </blockquote>
+      <figure>
+        <img
+          src="./pics/gaddag/senet.jpg"
+          alt="Senet board"
+          style="width: 80%"
+        />
+        <figcaption>
+          Figure 1: A senet board
+          <a href="https://www.metmuseum.org/art/collection/search/548482"
+            >from the Egyptian collection</a
+          >
+          at the Metropolitan Museum of Art. The board is a wooden game box
+          inscribed for Taia and his family, dating back to circa 1550-1295 B.C.
+        </figcaption>
+      </figure>
+
+      <p>
+        Perhaps equally fascinating is our desire to become the absolute best at
+        these board games. A remarkable example of this is the 1984 chess world
+        championship between Garry Kasparov and Anatoly Karpov. Karpov was the
+        reigning world champion going into the tournament and the rules stated
+        that the first player to win six games would be crowned the champion
+        (draws were not counted). The match was fiercely fought over five
+        months, and a total of 48 games were played. However, neither player won
+        the required six games to claim the title. It was eventually halted
+        without a winner, with a follow-up scheduled five months later.
+      </p>
+
+      <p>
+        In recent history, our hunger to understand board games has prompted us
+        to explore the use of computers to dominate them. This drive partly
+        arises from our desire to uncover game secrets and expand our thinking
+        into new dimensions. An intriguing anecdote, which is somewhat
+        antithetical in this context, involves yet another chess world
+        championship match between Garry Kasparov and Vladimir Kramnik in 2000.
+        As chess engines gained in prominence, they began to reveal innovative
+        lines employed by grandmasters, but there were still many openings that
+        remained a mystery to these engines. One such enigma was the Berlin
+        Defense, a variation of the centuries-old Ruy Lopez that had been
+        largely forgotten. However, Kramnik utilized the defense to draw against
+        Kasparov with the black pieces, as it was widely believed that computer
+        engines struggled to understand this opening at the time. This technique
+        propelled Kramnik to victory, as he went on to be crowned the new world
+        champion. Later on, computer engines developed incredible defensive
+        resources using the Berlin Defense, and it is now widely used among
+        top-level chess players.
+      </p>
+
+      <p>
+        But in this chapter, we are not going to talk about Senet or Chess.
+        Instead, we will discuss <b>Scrabble</b>. In particular, we will explore
+        two fascinating data structures called <i>DAWG</i> and
+        <i>GADDAG</i> that helped pave the way for computer domination in the
+        world of Scrabble playing.
+      </p>
+
+      <p>
+        Alfred Butts, the creator of Scrabble, spent much of his later life in
+        seclusion; however, his inspiration behind the game's creation was
+        fascinatingly shared in a
+        <a
+          href="https://archive.org/details/Life-1953-12-14-Vol-35-No-24/page/100/mode/2up"
+          >1953 article in Life magazine</a
+        >:
+      </p>
+      <blockquote>
+        Scrabble is not, in fact, new. It has been swimming around in the brain
+        of a mild, bespectacled, New York architect named Alfred Butts for about
+        20 years. Early in the Depression, Butts found himself temporarily
+        unemployed. Casting about for some means of making a living, he decided
+        to invent a game. He disliked dice games, which are almost entirely
+        luck, and felt that all-skill games, like chess, were too highbrow for
+        the general market. A game which was half luck and half skill, he
+        thought, would be about right. He had always enjoyed anagrams and
+        crossword puzzles and so set out to combine these games within the
+        luck-skill formula. After two or three years of experiment he developed
+        the thing that is now Scrabble, although he never found a satisfactory
+        name and referred to it simply as “it”.
+      </blockquote>
+
+      <figure>
+        <img
+          src="./pics/gaddag/scrabble-rules-life-magazine.png"
+          alt="Image about rules of Scrabble"
+          style="width: 90%"
+        />
+        <figcaption>
+          Figure 2: A brief piece from
+          <a
+            href="https://archive.org/details/Life-1953-12-14-Vol-35-No-24/page/100/mode/2up"
+            >Life magazine's December 14, 1953 issue</a
+          >, outlining the rules of Scrabble.
+        </figcaption>
+      </figure>
+
+      <h2>Directed Acyclic Word Graphs</h2>
+      <p>
+        In 1988, Andrew Appel and Guy Jacobson
+        <a
+          href="https://www.cs.cmu.edu/afs/cs/academic/class/15451-s06/www/lectures/scrabble.pdf"
+          >presented an intriguing algorithm</a
+        >
+        for rapidly generating Scrabble moves. But before we delve into the
+        nitty-gritty of the algorithm, let's first take a step back and truly
+        understand the problem we're attempting to solve here.
+      </p>
+
+      <p>
+        Specifically, our focus is on <b>generating moves</b> in Scrabble. This
+        means that given a turn, we aim to identify viable moves that a player
+        can make using the letters both on their rack and on the game board.
+      </p>
+
+      <p>
+        Throughout this chapter, we will be using the term
+        <b>anchor squares</b>. An anchor square refers to any square on the
+        board onto which letters can be hooked to create new words. It's easy to
+        identify the anchor squares by finding the empty squares that are
+        adjacent (vertically or horizontally) to filled squares. Figure 3
+        provides a visualization of this concept.
+      </p>
+
+      <figure>
+        <img
+          src="./pics/gaddag/anchor-squares.png"
+          alt="Anchor squares"
+          style="width: 50%"
+        />
+        <figcaption>Figure 3: Visualization of the anchor squares.</figcaption>
+      </figure>
+
+      <p>
+        To determine possible valid moves, it is crucial to maintain a data
+        structure that searches through parts of a lexicon in order to gather
+        valid moves. But what would this data structure look like?
+      </p>
+
+      <p>
+        A potential solution would be to use a
+        <a href="https://en.wikipedia.org/wiki/Trie">trie</a>. A <b>trie</b> is
+        a tree-like data structure that can be used to test whether a particular
+        string is present in the set of strings. The root node represents an
+        empty string, and each node represents a possible continuation of the
+        string. For instance, a trie that represents the entire English lexicon
+        would have 26 nodes (for the letters A to Z) as children to the root
+        node, and it would further branch out from there. A visualization of a
+        trie for a subset of the English lexicon is shown in the figure 4.
+      </p>
+
+      <figure>
+        <img src="./pics/gaddag/trie.png" alt="Trie" style="width: 80%" />
+        <figcaption>
+          Figure 4: Constructing a trie from a small lexicon.
+        </figcaption>
+      </figure>
+
+      <p>
+        Tries are simple to build, as one can easily insert new strings
+        repeatedly. They are also fast to search, but they consume a lot of
+        space. This can be easily visualized by considering the number of
+        repetitions that occur in a trie when words ending with -s, -ed, or -ing
+        are encountered.
+      </p>
+
+      <p>
+        When Appel and Jacobson experimented with tries, they discovered that a
+        94,240-word lexicon could be represented by a 117,150-node trie with
+        179,618 edges. To improve this naive solution, they suggested using a
+        <b>Directed Acyclic Word Graph (DAWG)</b>. A DAWG is a finite state
+        machine where the nodes represent its states, the edges show the
+        transition, and the terminal nodes represent the accepted states - or in
+        our case, the words within a lexicon. However, it's worth noting that
+        there can be multiple finite state machines derived from a lexicon.
+        Therefore, DAWG is the minimized finite state machine, ensuring that all
+        equivalent sub-tries merge - for example, words that end with -s, -ed,
+        or -ing. A visual depiction of this structure with the same lexicon is
+        shown in the figure 5.
+      </p>
+
+      <p>
+        Using DAWG, Appel, and Jacobson reduced the 117,150-node trie to 19,853
+        nodes.
+      </p>
+
+      <figure>
+        <img
+          src="./pics/gaddag/dawg.png"
+          alt="Directed Acyclic Word Graph"
+          style="width: 100%"
+        />
+        <figcaption>
+          Figure 5: Constructing a Directed Acyclic Word Graph (DAWG) for the
+          same lexicon as mentioned in Figure 4.
+        </figcaption>
+      </figure>
+
+      <p>
+        But how do we parse a DAWG? To begin, let's define the concept of a
+        <b>left part</b> of a word. This refers to the segment of a word that
+        starts from the left of the anchor square. It can include letters from
+        either the rack or the board, but not both simultaneously. Similarly, a
+        <b> right part </b> of a word consists of a segment including and to the
+        right of the anchor square. With this in mind, we can use a two-part
+        strategy:
+      </p>
+      <ol>
+        <li>
+          Identify all possible left parts of a word anchored at a given anchor.
+        </li>
+        <li>For each left part, find all suitable right parts.</li>
+      </ol>
+
+      <p>
+        The way vertical words are treated is by considering them as horizontal
+        words with the board transposed.
+      </p>
+
+      <p>Here is a <i>recursive algorithm to compute the left parts</i>.</p>
+      <ol>
+        <b>LeftPart</b
+        >(\(PartialWord\), \(N\), \(Limit\)):
+        <li><b>ExtendRight</b>(\(PartialWord\), \(N\), \(AnchorSquare\))</li>
+        <li>If \(Limit > 0\):</li>
+        <ol type="a">
+          <li>For each edge \(E\) from \(N\):</li>
+          <ol type="I">
+            <li>If letter \(L\) on edge \(E\) is in rack:</li>
+            <ol type="i">
+              <li>Remove \(L\) from rack</li>
+              <li>
+                <b>LeftPart</b>(\(PartialWord \cdot L\), node reached from
+                \(E\), \(Limit - 1\))
+              </li>
+              <li>Return \(L\) to rack</li>
+            </ol>
+          </ol>
+        </ol>
+      </ol>
+
+      <p>
+        To generate all the moves from the \(AnchorSquare\), a
+        <b>LeftPart</b>(" ", root node \(N\), \(Limit\)) call can be made, where
+        \(Limit\) is the number of non-anchor squares to the left of the
+        \(AnchorSquare\).
+      </p>
+
+      <p>The right parts can then be computed as follows:</p>
+      <ol>
+        <b>ExtendRight</b
+        >(\(PartialWord\), \(N\), \(Square\)):
+        <li>If \(Square\) is vacant:</li>
+        <ol type="a">
+          <li>If \(N\) is terminal node:</li>
+          <ol type="I">
+            <li><b>LegalMove</b>(\(PartialWord\))</li>
+          </ol>
+          <li>For each edge \(E\) from \(N\):</li>
+          <ol type="I">
+            <li>If letter \(L\) on edge \(E\) is in rack:</li>
+            <ol type="i">
+              <li>Remove \(L\) from rack</li>
+              <li>
+                <b>ExtendRight</b>(\(PartialWord \cdot L\), node reached from
+                \(E\), square to the right of \(Square\))
+              </li>
+              <li>Return \(L\) to rack</li>
+            </ol>
+          </ol>
+        </ol>
+        <li>Else:</li>
+        <ol type="a">
+          <li>\(L =\) letter occupying \(Square\)</li>
+          <li>If node \(N\) has an out-edge \(L\):</li>
+          <ol type="I">
+            <li>
+              <b>ExtendRight</b>(\(PartialWord \cdot L\), node reached from
+              out-edge \(L\), square to the right of \(Square\))
+            </li>
+          </ol>
+        </ol>
+      </ol>
+
+      <p>
+        Here's a visual of parsing a DAWG from an \(AnchorSquare\). As you can
+        see, in the case of two squares, we ultimately find two valid words:
+        "terrain" and "terrains". "ter-" serves as the prefix and "-s" the
+        suffix for the latter.
+      </p>
+
+      <figure>
+        <img
+          src="./pics/gaddag/move-generation-dawg.png"
+          alt="Parsing a DAWG from an AnchorSquare"
+          style="width: 100%"
+        />
+        <figcaption>
+          Figure 6: Parsing a DAWG from an anchor square. As you can see, this
+          anchor square is the square immediately to the left of the word
+          "rain". We utilize the "LeftPart" algorithm to produce all feasible
+          prefixes, and then use the "ExtendRight" algorithm to create all
+          possible suffixes for each prefix. Eventually, we come across
+          "terrain" that is formed using the words in our rack and is a valid
+          word in the lexicon.
+        </figcaption>
+      </figure>
+
+      <p>
+        One of the major pain points of DAWG is the unconstrained generation of
+        prefixes. As the words are only generated from left to right, the part
+        that focuses on the calculation of prefixes is crucial. However, there
+        may be scenarios where prefixes cannot be completed with any remaining
+        tiles in the rack, or where prefixes cannot be completed using the
+        letters on the board that the algorithm must go through. By using the
+        above approach, we can see that a considerable amount of backtracking
+        would be necessary for such situations.
+      </p>
+
+      <p>
+        So, how can we improve on this limitation? Approximately five years
+        after DAWG,
+        <a href="https://ericsink.com/downloads/faster-scrabble-gordon.pdf"
+          >Steven Gordon published a paper introducing GADDAG</a
+        >, a data structure that avoids the non-deterministic prefix generation
+        method used by DAWG. Gordon's approach creates bidirectional paths for
+        every word starting at each letter. While Gordon's approach remains
+        non-deterministic, it is more deterministic than Appel and Jacobson's
+        approach. In the following section, we will explore this data structure.
+      </p>
+
+      <h2>GADDAG</h2>
+      <p>
+        The key idea in GADDAG that enables bidirectional paths is the fact that
+        <!-- prettier-ignore -->
+        a language such as \[L = \{REV(x)\diamond y \;|\; xy \text{ is a word and } x \text{ is not empty}\}\] can be used to avoid non-deterministic
+        prefix generation. Here, \(REV(x)\) is the reverse string of \(x\) and
+        \(\diamond\) is a delimiter. So, what does this mean for the language
+        \(L\) and how does it make GADDAG bidirectional?
+      </p>
+
+      <p>
+        The first part (\(REV(x)\)) is the reverse of the directed acyclic graph
+        for prefixes, and the second part (\(y\)) is the directed acyclic graph
+        for suffixes. Reversing the prefixes allows us to iterate over them one
+        at a time, just as we will be doing with suffixes. For the prefixes, we
+        move away from the anchor squares. Once we find a valid prefix, we can
+        continue the iteration to find a valid suffix for the current prefix.
+      </p>
+
+      <p>
+        The prefixes must not be empty, as this guarantees that the first letter
+        of the prefix in reverse will be placed directly on the anchor square.
+      </p>
+
+      <p>
+        Here is an example of how an un-minimized GADDAG would look, where we
+        only have one word "rain" in the lexicon. This visualization will also
+        demonstrate the various ways we can play "rain" on the word "air" using
+        this un-minimized GADDAG.
+      </p>
+
+      <figure>
+        <img
+          src="./pics/gaddag/unminimized-gaddag.png"
+          alt="Unminimized GADDAG"
+          style="width: 80%"
+        />
+        <figcaption>
+          Figure 7: Shows how an unminimized GADDAG would appear when the
+          lexicon contains only one word. It can be observed that such a
+          structure has a high space complexity. In addition, the figure
+          illustrates various ways to play the word "rain" on the word "air"
+          using several anchor squares. The arrows on the board signify the
+          movements seen in the GADDAG. For example, the left arrows indicate
+          the prefix finding step in GADDAG, whereas the right arrows correspond
+          to the blue arrows of GADDAG, representing the jump to the suffix
+          part.
+        </figcaption>
+      </figure>
+
+      <p>
+        As you can see, each word in the lexicon is created by placing letters
+        leftwards from the anchor square until a \(\diamond\) is observed. Then,
+        letters are placed to the right of the anchor square until an acceptable
+        word is formed. The paths are explored using a depth-first search
+        approach, backtracking when necessary due to letter availability on the
+        rack or board limitations.
+      </p>
+
+      <p>
+        However, as one might notice, an un-minimized GADDAG generates more
+        edges than an un-minimized DAWG. To make it space-efficient, we can
+        optimize it by allowing arcs to connect letters that if encountered
+        next, can form a word. Applying this partial minimization technique
+        would have the following effect on the above GADDAG:
+      </p>
+
+      <figure>
+        <img
+          src="./pics/gaddag/minimized-gaddag.png"
+          alt="Minimized GADDAG"
+          style="width: 70%"
+        />
+        <figcaption>Figure 8: Visualization of a minimized GADDAG.</figcaption>
+      </figure>
+
+      <p>
+        Furthermore, here's a minimized GADDAG for a much larger lexicon
+        consisting of five words.
+      </p>
+
+      <figure>
+        <img
+          src="./pics/gaddag/minimized-gaddag-large-lexicon.png"
+          alt="Minimized GADDAG"
+          style="width: 90%"
+        />
+        <figcaption>
+          Figure 9: Visualization of a minimized GADDAG when there are multiple
+          words in the lexicon.
+        </figcaption>
+      </figure>
+
+      <p>
+        To generate valid moves from an anchor square using a GADDAG, the
+        following backtracking, recursive algorithm can be used.
+      </p>
+
+      <ol>
+        <b>Gen</b
+        >\((pos, word, rack, arc)\):
+        <li>If a letter \(L\) is already on this square:</li>
+        <ol type="a">
+          <li>\(nextArc = arc \rightarrow L\)</li>
+          <li>GoOn\((pos, L, word, rack, nextArc, arc)\)</li>
+        </ol>
+        <li>Else if letters remain on \(rack\):</li>
+        <ol type="a">
+          <li>For each letter \(L\) on the \(rack\):</li>
+          <ol type="I">
+            <li>
+              If letter is allowed on this square (i.e. there can be a potential
+              arc):
+            </li>
+            <ol type="i">
+              <li>\(nextArc = arc \rightarrow L\)</li>
+              <li>GoOn\((pos, L, word, rack - L, nextArc, arc)\)</li>
+            </ol>
+          </ol>
+        </ol>
+      </ol>
+
+      <ol>
+        <b>GoOn</b
+        >\((pos, L, word, rack, newArc, oldArc)\):
+        <li>If \(pos \le 0\):</li>
+        <ol type="a">
+          <li>\(word = L || word\)</li>
+          <li>If terminal node is reached & no letter directly left:</li>
+          <ol type="I">
+            <li>
+              \(word\) is a valid word in the lexicon, can be a possible move
+            </li>
+          </ol>
+          <li>If newArc be traversed further:</li>
+          <ol type="I">
+            <li>If there is room to the left:</li>
+            <ol type="i">
+              <li>Gen\((pos - 1, word, rack, newArc)\)</li>
+              <li>\(nextArc = newArc \rightarrow \diamond\)</li>
+              <li>
+                If \(nextArc\) can be traversed further & no letter directly
+                left & room to the right:
+              </li>
+              <ol type="A">
+                <li>Gen\((1, word, rack, nextArc)\)</li>
+              </ol>
+            </ol>
+          </ol>
+        </ol>
+        <li>Else if \(pos \gt 0 \):</li>
+        <ol type="a">
+          <li>\(word = word || L\)</li>
+          <li>If terminal node is reached & no letter directly right:</li>
+          <ol type="I">
+            <li>
+              \(word\) is a valid word in the lexicon, can be a possible move
+            </li>
+          </ol>
+          <li>If \(newArc\) can be traversed further & room to the right:</li>
+          <ol type="I">
+            <li>Gen\((pos + 1, word, rack, newArc)\)</li>
+          </ol>
+        </ol>
+      </ol>
+
+      <p>
+        The <b>Gen</b> function takes the position (\(pos\)) on the board where
+        the move should start, the current word being formed (\(word\)), the
+        letters remaining in the rack (\(rack\)), and the current arc (\(arc\))
+        being followed as inputs. When initially starting at the anchor square,
+        <b>Gen</b>\((0, Null, Rack, Init)\) is called, where the arc is to the
+        initial state of GADDAG \(Init\).
+      </p>
+
+      <p>
+        The algorithm first checks if a letter exists at the current square. If
+        it does, it follows the arc corresponding to that letter (\(newArc\))
+        and calls itself recursively with the new position.
+      </p>
+
+      <p>
+        If there is no letter at the current square, it loops over all the
+        letters in the rack and checks if they can be played on the current
+        square (i.e. if there exists a potential arc). If there is, it follows
+        the arc corresponding to that letter (\(newArc\)) and calls itself
+        recursively with this new position.
+      </p>
+
+      <p>
+        When the algorithm finds that the current word is a valid word in the
+        lexicon and that there is no letter immediately preceding/succedding it
+        on the board, the word is added to the list of possible moves.
+      </p>
+
+      <p>
+        Throughout, <b>GoOn</b> checks if the new arc can be traversed further
+        and if there is room to the left or right to continue forming the word.
+        If there is, the algorithm follows the new arc and calls itself
+        recursively with the new position.
+      </p>
+
+      <p>
+        The Figure 10 shows a step-by-step process of how the GADDAG from Figure
+        9 can be used to generate moves from a particular anchor square.
+      </p>
+
+      <figure>
+        <img
+          src="./pics/gaddag/move-generation-gaddag.png"
+          alt="Move generation using a GADDAG"
+          style="width: 100%"
+        />
+        <figcaption>
+          Figure 10: Shows how a GADDAG can be used to generate moves from a
+          particular anchor square on the word "air". The GADDAG shown in Figure
+          9 can be used to generate these moves.
+        </figcaption>
+      </figure>
+
+      <p>
+        In his performance analysis, Gordon shows how GADDAGs can generate moves
+        twice as fast as DAWGs. However, they can take up to five times as much
+        memory for a typical-sized lexicon. We won't be delving into these
+        analyses, but we encourage curious readers to read his paper.
+      </p>
+
+      <br />
+      <a id="back-link" href="../blog.html">&#x2190;</a>
+    </div>
+    <footer>
+      <hr />
+      <div>© 2023 Parth Parikh.</div>
+    </footer>
+  </body>
+</html>
