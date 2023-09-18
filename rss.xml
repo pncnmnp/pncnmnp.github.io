@@ -5,6 +5,12 @@
         <link>https://pncnmnp.github.io/blog.html</link>
         <description>Explore the exciting world of Computer Science with me! From the depths of Data Structures and Algorithms to the cutting-edge advancements in NLP and Databases, my blog delves into a wide range of topics to keep you informed and inspired.</description>
         <item>
+            <title>Before advanced-flight simulators, there was Navitrainer</title>
+            <link>https://pncnmnp.github.io/blogs/navitrainer.html</link>
+            <description>In this blog post, we will delve into the history of another poster that I recently bought. We will explore the Navitrainer, a precursor to advanced flight simulators. We will investigate its origins, how it works, how it was used, and its crucial role in teaching techniques like dead reckoning to trainee pilots.</description>
+            <pubDate>Mon, 18 Sept 2023</pubDate>
+        </item>
+        <item>
             <title>Before Xerox, there was Addressograph</title>
             <link>https://pncnmnp.github.io/blogs/addressograph.html</link>
             <description>In this article, we will delve into the history of a poster that I recently bought. Our journey will lead us into the fascinating world of the Addressograph - an early addressing machine, invented by Joseph Smith Duncan in the year 1892.</description>
@@ -27,12 +33,6 @@
             <link>https://pncnmnp.github.io/blogs/history-of-trees.html</link>
             <description>All four individuals made interesting early contributions to a mathematical structure that we now know as a tree. In this article, we will briefly explore their unique contributions and see how the tree structure was introduced in both mathematics and computer science.</description>
             <pubDate>Sun, 26 Feb 2023</pubDate>
-        </item>
-        <item>
-            <title>Odd Sketches</title>
-            <link>https://pncnmnp.github.io/blogs/odd-sketches.html</link>
-            <description>This article discusses Odd Sketches, a data structure that offers a more precise estimation of Jaccard similarity compared to b-bit minhashing, while also reducing the space complexity significantly compared to standard minhashing techniques.</description>
-            <pubDate>Sun, 19 Feb 2023</pubDate>
         </item>
     </channel>
 </rss>
