@@ -5,6 +5,12 @@
         <link>https://pncnmnp.github.io/blog.html</link>
         <description>Explore the exciting world of Computer Science with me! From the depths of Data Structures and Algorithms to the cutting-edge advancements in NLP and Databases, my blog delves into a wide range of topics to keep you informed and inspired.</description>
         <item>
+            <title>Bao, a learned system for query optimization</title>
+            <link>https://pncnmnp.github.io/blogs/bao.html</link>
+            <description>A blog post about Bao, a learned query optimizer that employs neural networks and Thompson sampling to enhance native database optimizers' adaptability to changes in workloads, data, and schema.</description>
+            <pubDate>Fri, 17 Nov 2023</pubDate>
+        </item>
+        <item>
             <title>Before advanced-flight simulators, there was Navitrainer</title>
             <link>https://pncnmnp.github.io/blogs/navitrainer.html</link>
             <description>In this blog post, we will delve into the history of another poster that I recently bought. We will explore the Navitrainer, a precursor to advanced flight simulators. We will investigate its origins, how it works, how it was used, and its crucial role in teaching techniques like dead reckoning to trainee pilots.</description>
@@ -27,12 +33,6 @@
             <link>https://pncnmnp.github.io/blogs/chatgpt-twenty-questions.html</link>
             <description>Can you play the Twenty Questions game with ChatGPT? In this article, we will see just how well it can play this classic game.</description>
             <pubDate>Fri, 17 Mar 2023</pubDate>
-        </item>
-        <item>
-            <title>What do Kirchhoff, Cayley, and Carroll have in common? And who is Kahrimanian?</title>
-            <link>https://pncnmnp.github.io/blogs/history-of-trees.html</link>
-            <description>All four individuals made interesting early contributions to a mathematical structure that we now know as a tree. In this article, we will briefly explore their unique contributions and see how the tree structure was introduced in both mathematics and computer science.</description>
-            <pubDate>Sun, 26 Feb 2023</pubDate>
         </item>
     </channel>
 </rss>
