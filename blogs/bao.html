@@ -382,7 +382,7 @@
       </p>
       <p>
         So, what does the TCNN architecture look like? In essence, the
-        architecture (as shown in Figure X) begins with three layers of tree
+        architecture (as shown in Figure 2) begins with three layers of tree
         convolution. This is followed by a dynamic pooling layer and then two
         fully connected layers, which output the performance prediction.
       </p>
@@ -425,13 +425,13 @@
         \(x_p\) of a node and two of its left and right child, \(x_l\) and
         \(x_r\) (0 if the node is a leaf), to produce a new tree node \(x'_p\):
         \[x'_p = \sigma(e_p \odot x_p + e_l \odot x_l + e_r \odot x_r).\] Here,
-        \(\sigma(·)\) is a non-linear transformation (e.g., ReLU [16]), \odot is
-        a dot product, and \(x'_p\) is the output of the filter. Each filter
-        thus combines information from the local neighborhood of a tree node.
-        The same filter is “slid” across each tree in an execution plan,
-        allowing a filter to be applied to plans of arbitrary size. A set of
-        filters can be applied to a tree in order to produce another tree with
-        the same structure, but with potentially different sized vectors
+        \(\sigma(·)\) is a non-linear transformation (e.g., ReLU [16]),
+        \(\odot\) is a dot product, and \(x'_p\) is the output of the filter.
+        Each filter thus combines information from the local neighborhood of a
+        tree node. The same filter is “slid” across each tree in an execution
+        plan, allowing a filter to be applied to plans of arbitrary size. A set
+        of filters can be applied to a tree in order to produce another tree
+        with the same structure, but with potentially different sized vectors
         representing each node. In practice, hundreds of filters are applied.
         Since the output of a tree convolution is another tree, multiple layers
         of tree convolution filters can be “stacked.” The first layer of tree
