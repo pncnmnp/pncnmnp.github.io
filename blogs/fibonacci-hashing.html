@@ -286,8 +286,8 @@
         <a
           href="https://martin.ankerl.com/2009/12/09/how-to-create-random-colors-programmatically/"
           >was proposed by Martin Leitner‑Ankerl</a
-        >. It utilizes the <b>golden ratio</b>: \[ \Phi = \dfrac{\sqrt{5} -
-        1}{2} \approx 0.618033988749895 \]
+        >. It utilizes the reciprocal of <b>golden ratio</b>: \[ \Phi^{-1} =
+        \dfrac{\sqrt{5} - 1}{2} \approx 0.618033988749895 \]
       </p>
 
       <p>
@@ -308,28 +308,43 @@
       <p>
         The foundation of Fibonacci hashing is based upon the
         <a href="https://en.wikipedia.org/wiki/Three-gap_theorem">
-          three-distance theorem </a
+          three-distance theorem</a
         >. This theorem states: Suppose \(\theta\) is an irrational number. When
         the points \(\theta\), \((2*theta) % 1\), ….., \((n*theta) % 1\) are
         placed on a line segment ranging from \(0\) to \(1\) (inclusive), the
         \(n + 1\) line segments formed will have at most three distinct lengths.
-        Furthermore, the next point \(((n+1)*theta) % 1\) will fall into one of
-        the largest existing segments.
+        Furthermore, the next point \(((n+1)*theta) % 1\)
+        <b>will fall into one of the largest existing segments</b>.
       </p>
       <p>
         Consider the largest existing segment, spanning from \(a\) to \(c\)
         (inclusive), being divided into two parts: \(a\) to \(b\) and \(b\) to
         \(c\). If one of these parts is more than twice the length of the other,
-        we call this division a bad break. Using the three-distance theorem, it
-        can be shown that the two numbers \(\Phi\) (<b>the golden ratio!</b>)
-        and \(1 - \Phi\) lead to the most uniformly distributed sequences among
-        all numbers \(\theta\) between \(0\) and \(1\). In other words, a break
-        break will occur unless \(\Phi\) or \(1 - \Phi\) are used.
+        we call this division a <i>bad break</i>. Using the three-distance
+        theorem, it can be shown that the two numbers \(\Phi^{-1}\) (<b
+          >the reciprocal of golden ratio!</b
+        >) and \(1 - \Phi^{-1}\) lead to the most uniformly distributed
+        sequences among all numbers \(\theta\) between \(0\) and \(1\). In other
+        words, a break break will occur unless \(\Phi^{-1}\) or \(1 -
+        \Phi^{-1}\) are used.
       </p>
       <p>
-        And that’s it! We can start at a random hue value between 0 and 1 and
-        use the Fibonacci hashing from that point to evenly select colors on the
-        color spectrum.
+        Using the theory described above, we can now define
+        <b>Fibonacci hashing</b>. However, before diving into that, it is
+        important to first understand <b>multiplicative hashing</b>.
+        Multiplicative hashing involves multiplying a key \(K\) by a constant
+        \(\alpha\). The fractional part of this product is then used to
+        determine the index in a hash table.
+        <i>
+          Fibonacci hashing is a specific variant of multiplicative hashing
+        </i>
+        where the constant \(\alpha\) is set to be the reciprocal of the golden
+        ratio \(\Phi^{-1}\).
+      </p>
+      <p>
+        And that’s it! We can start at a random hue value between 0 and 1 (this
+        will be our initial key \(K_1\)) and use the Fibonacci hashing from that
+        point to evenly select colors on the color spectrum.
       </p>
       <figure>
         <img
