@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="author" content="parth_parikh" />
+    <meta
+      name="description"
+      content="In this blog post, we explore Spotify's journey from using the Fisher-Yates shuffle to a more sophisticated song shuffling algorithm that prevents clustering of tracks by the same artist. We then connect this challenge to Fibonacci hashing, and propose a novel, evenly distributed artist shuffling method."
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Scrambling Eggs for Spotify with Knuth's Fibonacci Hashing</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="./style/common_styles.css"
+      id="light"
+    />
+    <link href="./style/prism.css" rel="stylesheet" />
+    <script src="./js/prism.js"></script>
+    <script
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+    <link rel="stylesheet" type="text/css" href="../style.css" />
+    <link rel="shortcut icon" type="image/png" href="../favicon.png" />
+    <noscript
+      ><style>
+        .off {
+          display: none;
+        }
+      </style></noscript
+    >
+  </head>
+
+  <body>
+    <div class="blog-text">
+      <a id="rss-feed" href="../rss.xml"
+        >If you like this blog post, do subscribe to my RSS feed</a
+      ><br />
+      <h1>Scrambling Eggs for Spotify with Knuth's Fibonacci Hashing</h1>
+      <h2>First Published: 08/12/23</h2>
+      <blockquote>
+        <i>
+          He was very late in returning -- so late, that I knew that the concert
+          could not have detained him all the time. Dinner was on the table
+          before he appeared.
+          <br />
+          "It was magnificent," he said, as he took his seat. "Do you remember
+          what Darwin says about music? He claims that the power of producing
+          and appreciating it existed among the human race long before the power
+          of speech was arrived at. Perhaps that is why we are so subtly
+          influenced by it. There are vague memories in our souls of those misty
+          centuries when the world was in its childhood."
+          <br />
+          "That's rather a broad idea," I remarked.
+          <br />
+          "One's ideas must be as broad as Nature if they are to interpret
+          Nature," he answered.
+        </i>
+        <br />
+        - A Study in Scarlet, Arthur Conan Doyle
+      </blockquote>
+      <p>
+        A few weeks back, while browsing Hacker News’
+        <a href="https://news.ycombinator.com/pool">second chance pool</a>, I
+        came across a
+        <a
+          href="https://engineering.atspotify.com/2014/02/how-to-shuffle-songs/"
+          >2014 blog post from Spotify</a
+        >
+        discussing how to shuffle songs.
+      </p>
+      <p>
+        Now, at first glance, you might think, “How challenging could it be to
+        shuffle songs in a playlist? Can we not randomly shuffle them out?”
+      </p>
+      <p>
+        You see, that’s precisely the approach Spotify initially took. They used
+        the
+        <a href="https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle"
+          >Fisher–Yates shuffle</a
+        >
+        to do this. Say you have five songs from three artists, as illustrated
+        in the figure below:
+      </p>
+      <figure>
+        <img
+          src="./pics/fibonacci-hashing/songs-artists.png"
+          alt="Songs and Artists"
+        />
+        <figcaption>
+          <i>Figure 1: 5 songs from 3 artists in a playlist</i>
+        </figcaption>
+      </figure>
+      <p>
+        The modern implementation of Fisher–Yates shuffle is an \(O(n)\) time
+        algorithm and can be described as follows:
+      </p>
+      <ol>
+        <li style="list-style: none">
+          To shuffle an array \(a\) of \(n\) elements (indices \(0..n-1\)):
+        </li>
+        <li style="list-style: none">
+          For \(i\) from \(n - 1\) down to \(1\) do
+        </li>
+        <ol>
+          <li>
+            \(j \leftarrow \) random integer such that \( 0 \le j \le i \)
+          </li>
+          <li>exchange \(a[j]\) and \(a[i]\)</li>
+        </ol>
+      </ol>
+      <p>Using the figure above, we can visualize the algorithm:</p>
+      <figure>
+        <img
+          src="./pics/fibonacci-hashing/fisher-yates.png"
+          alt="Fisher Yates Shuffle"
+        />
+        <figcaption>
+          <i>Figure 2: Fisher Yates Shuffle</i>
+        </figcaption>
+      </figure>
+      <p>
+        Now, this was all fine for the Sweden-based team till they faced a
+        fascinating issue. In their words:
+      </p>
+      <blockquote>
+        ..... We noticed some users complaining about our shuffling algorithm
+        playing a few songs from the same artist right after each other. The
+        users were asking “Why isn’t your shuffling random?”. We responded “Hey!
+        Our shuffling is random!”
+      </blockquote>
+      <blockquote>
+        At first we didn’t understand what the users were trying to tell us by
+        saying that the shuffling is not random, but then we read the comments
+        more carefully and noticed that some people don’t want the same artist
+        playing two or three times within a short time period.
+      </blockquote>
+      <blockquote>
+        ..... If you just heard a song from a particular artist, that doesn’t
+        mean that the next song will be more likely from a different artist in a
+        perfectly random order. However, the old saying says that the user is
+        always right, so we decided to look into ways of changing our shuffling
+        algorithm so that the users are happier. We learned that they don’t like
+        perfect randomness.
+      </blockquote>
+      <p>
+        Fascinating indeed! To create an illusion of randomness -
+        <i>randomness with artists evenly spread throughout the playlist</i> -
+        the engineers drew inspiration from a
+        <a href="https://keyj.emphy.de/balanced-shuffle/"
+          >2007 blog-post by Martin Fiedler</a
+        >.
+      </p>
+      <p>
+        Fiedler’s algorithm is divided into two parts:
+        <b>the merge algorithm</b> and <b>the fill algorithm</b>. Initially, the
+        songs to be shuffled are <i>categorized</i> based on their artist. For
+        instance, assume that we now have three artists and ten songs in our
+        playlist. Then,
+      </p>
+      <figure>
+        <img
+          src="./pics/fibonacci-hashing/categorization-step.png"
+          alt="Categorization step"
+        />
+        <figcaption>
+          <i
+            >Figure 3: Categorization step in Fiedler’s algorithm using 10 songs
+            from 3 artists.</i
+          >
+        </figcaption>
+      </figure>
+      <p>
+        The <i>fill algorithm</i> aims to distribute dummy tracks evenly among
+        shorter categories to match the length of the longest one. This step is
+        followed by the <i>merge algorithm</i>, which combines tracks from
+        different categories to form a single playlist in a column-wise fashion.
+      </p>
+      <p>
+        For example, with the categories mentioned earlier, the fill algorithm
+        would:
+      </p>
+      <figure>
+        <img
+          src="./pics/fibonacci-hashing/fill-algorithm.png"
+          alt="Fill algorithm"
+        />
+        <figcaption>
+          <i>Figure 4: Fill algorithm in Fiedler’s algorithm</i>
+        </figcaption>
+      </figure>
+      <p>
+        Subsequently, the merge algorithm would create a final playlist as
+        follows:
+      </p>
+      <figure>
+        <img
+          src="./pics/fibonacci-hashing/merge-algorithm.png"
+          alt="Merge algorithm"
+        />
+        <figcaption>
+          <i>Figure 5: Merge algorithm in Fiedler’s algorithm</i>
+        </figcaption>
+      </figure>
+      <p>
+        While this method distributes the songs quite efficiently, as mentioned
+        by Spotify, it is complicated and potentially slow in certain scenarios,
+        particularly due to the numerous randomization operations.
+      </p>
+      <p>
+        Spotify suggested drawing inspiration from existing dithering
+        algorithms, like
+        <a
+          href="https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering"
+          >Floyd–Steinberg dithering</a
+        >, to spread each artist as evenly as possible. Although they don't
+        provide specific details of their algorithm, the basic concept they
+        describe is as follows:
+      </p>
+      <blockquote>
+        Let’s say we have 4 songs from The White Stripes as in the picture
+        above. This means that they should appear roughly every 25% of the
+        length of the playlist. We spread out the 4 songs along a line, but
+        their distance will vary randomly from about 20% to 30% to make the
+        final order look more random.
+      </blockquote>
+      <blockquote>
+        We introduce a random offset in the beginning; otherwise all first songs
+        would end up at position 0.
+      </blockquote>
+      <blockquote>
+        We also shuffle the songs by the same artist among each other. Here we
+        can use Fisher-Yates shuffle or apply the same algorithm recursively,
+        for example we could prevent songs from the same album playing too close
+        to each other.
+      </blockquote>
+      <p>
+        After reading Spotify’s blog post, an idea struck me! You see, a year
+        ago, I wrote a small library to generate aesthetically pleasing colors
+        in the
+        <a href="https://en.wikipedia.org/wiki/HSL_and_HSV"
+          >HSV (hue, saturation, value) space</a
+        >.
+      </p>
+      <figure>
+        <img
+          src="./pics/fibonacci-hashing/hsv-space.png"
+          alt="HSV color space"
+        />
+        <figcaption>
+          <i
+            >Figure 6: HSV color space. This image is
+            <a
+              href="https://commons.wikimedia.org/wiki/File:HSV_color_solid_cylinder_saturation_gray.png"
+            >
+              licensed under CC BY-SA 3.0</a
+            >.</i
+          >
+        </figcaption>
+      </figure>
+      <p>
+        But how do we define "aesthetically pleasing colors"? And what's the
+        connection to shuffling algorithms?
+      </p>
+      <p>
+        Let's consider an example where we need to pick five colors to label a
+        chart. Choosing these colors randomly from the RGB space can be quite
+        problematic. Some colors, especially on darker backgrounds, can make
+        text hard to read. Moreover, it is possible to end up with colors that
+        are too similar to each other.
+      </p>
+      <p>
+        Addressing the issue of dark or light backgrounds turns out to be
+        relatively straightforward – <i>avoid the RGB space</i> and instead,
+        <i>use the HSV space with fixed saturation and value</i>. However, even
+        then, there's a high chance of selecting colors that are too close on
+        the color spectrum. In other words,
+        <b>the selection can be too random</b>, and we might prefer colors that
+        are distributed as evenly as possible across the entire color spectrum.
+      </p>
+      <p>
+        To achieve this, my library employed <b>Fibonacci hashing</b>. The
+        algorithm I implemented
+        <a
+          href="https://martin.ankerl.com/2009/12/09/how-to-create-random-colors-programmatically/"
+          >was proposed by Martin Leitner‑Ankerl</a
+        >. It utilizes the <b>golden ratio</b>: \[ \Phi = \dfrac{\sqrt{5} -
+        1}{2} \approx 0.618033988749895 \]
+      </p>
+
+      <p>
+        As Martin explains in his blog, one of the intriguing properties of the
+        golden ratio is that
+        <i>
+          each subsequent hash value divides the interval into which it falls in
+          accordance with the golden ratio!
+        </i>
+      </p>
+      <p>
+        To better understand Fibonacci hashing, let us explore it through the
+        perspective of Donald Knuth’s
+        <a href="https://en.wikipedia.org/wiki/The_Art_of_Computer_Programming"
+          >The Art of Computer Programming, Volume 3</a
+        >.
+      </p>
+      <p>
+        The foundation of Fibonacci hashing is based upon the
+        <a href="https://en.wikipedia.org/wiki/Three-gap_theorem">
+          three-distance theorem </a
+        >. This theorem states: Suppose \(\theta\) is an irrational number. When
+        the points \(\theta\), \((2*theta) % 1\), ….., \((n*theta) % 1\) are
+        placed on a line segment ranging from \(0\) to \(1\) (inclusive), the
+        \(n + 1\) line segments formed will have at most three distinct lengths.
+        Furthermore, the next point \(((n+1)*theta) % 1\) will fall into one of
+        the largest existing segments.
+      </p>
+      <p>
+        Consider the largest existing segment, spanning from \(a\) to \(c\)
+        (inclusive), being divided into two parts: \(a\) to \(b\) and \(b\) to
+        \(c\). If one of these parts is more than twice the length of the other,
+        we call this division a bad break. Using the three-distance theorem, it
+        can be shown that the two numbers \(\Phi\) (<b>the golden ratio!</b>)
+        and \(1 - \Phi\) lead to the most uniformly distributed sequences among
+        all numbers \(\theta\) between \(0\) and \(1\). In other words, a break
+        break will occur unless \(\Phi\) or \(1 - \Phi\) are used.
+      </p>
+      <p>
+        And that’s it! We can start at a random hue value between 0 and 1 and
+        use the Fibonacci hashing from that point to evenly select colors on the
+        color spectrum.
+      </p>
+      <figure>
+        <img
+          src="./pics/fibonacci-hashing/colors-fibonacci-hashing.png"
+          alt="Colors generated using Fibonacci hashing"
+        />
+        <figcaption>
+          <i>Figure 8: Colors generated using Fibonacci hashing.</i>
+        </figcaption>
+      </figure>
+      <p>
+        So how can we apply all of this to shuffle songs? Well, the algorithm I
+        came up with is as follows:
+      </p>
+      <ol>
+        <li>
+          <b>Categorization Function:</b> Let \(S\) be the set of all songs in
+          the playlist. Define a categorization function \(C: S \rightarrow A\),
+          where \(A\) is the set of artists. This function assigns each song in
+          \(S\) to an artist in \(A\).
+        </li>
+        <li>
+          <b>Shuffle Songs per Artist:</b> For each artist \(a \in A\), shuffle
+          the subset of \(S\) where \(C(s) = A\) for all \(s\) in the subset.
+        </li>
+        <li>
+          <b>Shuffle Artist List:</b> Let \(A’\) be the list of all artists.
+          Apply a random permutation \(\pi\) to \(A’\).
+        </li>
+        <li>
+          <b>Initialize Playlist \(P\)</b>: Let \(P\) be an empty list that will
+          store the final shuffled songs.
+        </li>
+        <li>
+          <b>Set Parameters:</b> Initialize \(K=1\) and let \(N = |A|\) (the
+          total number of artists).
+        </li>
+        <li>
+          <b>Select Artist Index:</b> Compute the index \(I = \lfloor ((K *
+          0.618033988749895) % 1) * N) \rfloor \).
+        </li>
+        <li>
+          <b>Add Songs to \(P\)</b>: Remove the first song from the list of
+          songs corresponding to the artist at \(A’[I]\) and append it to \(P\).
+        </li>
+        <li><b>Update Parameters:</b> Increment \(K\) by 1.</li>
+        <li>
+          <b>Update Artist List:</b> If the artist at \(A’[I]\) has no remaining
+          songs, decrement \(N\) by 1 and remove the artist from \(A’\).
+        </li>
+        <li>
+          <b>Loop Through:</b> Repeat steps 6 to 9 until \(A’\) is empty. When
+          empty, return \(P\).
+        </li>
+      </ol>
+      <figure>
+        <img
+          src="./pics/fibonacci-hashing/shuffle-with-fibonacci-hashing.png"
+          alt="Algorithm for shuffling songs using Fibonacci hashing"
+        />
+        <figcaption>
+          <i
+            >Figure 9: An illustration of the above algorithm for shuffling
+            songs using Fibonacci hashing.</i
+          >
+        </figcaption>
+      </figure>
+      <p>
+        If we use a hash table in the categorization function and an array to
+        store the list of all artists, then the overall time complexity of the
+        algorithm would be \(O(S)\).
+      </p>
+      <p>
+        To compare this algorithm against the naive Fisher-Yates shuffle, I used
+        a measure that calculates the ratio of the count of adjacent song pairs
+        by the same artist to the total number of songs in the playlist minus
+        one. That is,
+      </p>
+      <pre><code class="language-python">def measure(shuffled_songs):
+    clusters = sum(
+        1
+        for i in range(len(shuffled_songs) - 1)
+        if shuffled_songs[i][‘artist’] == shuffled_songs[i + 1][‘artist’]
+    )
+    return clusters / (len(shuffled_songs) - 1)    
+</code></pre>
+      <p>
+        When the playlist contains songs only from one artist, this measure will
+        be 1. Conversely, when no adjacent song pairs are by the same artist,
+        the measure will return 0.
+      </p>
+      <p>
+        Using fuzzy testing on a maximum of ten artists, with each having up to
+        ten songs, I generated a million playlists and calculated the statistics
+        for the above algorithm (A) and the fisher-yates shuffle (B). The
+        results were as follows:
+      </p>
+      <ul>
+        <li>
+          A - Mean: 0.11831, Median: 0.05263, Mode: 0.0, p25: 0.02040, p75:
+          0.14814, p90: 0.33333, p95: 0.5
+        </li>
+        <li>
+          B - Mean: 0.23296, Median: 0.18181, Mode: 0.33333, p25: 0.12121, p75:
+          0.29629, p90: 0.46666, p95: 0.58333
+        </li>
+      </ul>
+      <p>
+        At first glance, the p95 result might seem surprising. However, this
+        occurs in cases where the fuzzy testing populates a playlist
+        predominantly with songs from a single artist, rendering optimal
+        shuffling infeasible. When a minimum of four songs per artist were used,
+        the results were:
+      </p>
+      <ul>
+        <li>
+          A - Mean: 0.05948, Median: 0.03703, Mode: 0.0, p25: 0.01694, p75:
+          0.07843, p90: 0.14285, p95: 0.2
+        </li>
+        <li>
+          B - Mean: 0.17223, Median: 0.15555, Mode: 0.2, p25: 0.10909, p75:
+          0.21875, p90: 0.29268, p95: 0.34482
+        </li>
+      </ul>
+      <p>
+        The results look decent. I’d expect Fiedler’s algorithm to have a
+        near-zero mean, however, the simplicity and speed of the above algorithm
+        does look appealing to me.
+      </p>
+      <p>
+        And that’s it folks! I hope you enjoyed this little journey. Happy
+        exploring!
+      </p>
+      <h2>Addendum</h2>
+      <p>
+        Recently, I was exploring the “History” section in Knuth’s TAOCP volume
+        3 to trace back the history of hashing. In it, Knuth states that:
+      </p>
+      <blockquote>
+        The idea of hashing appears to have been originated by H. P. Luhn, who
+        wrote an internal IBM memorandum in January 1953 that suggested the use
+        of chaining; in fact, his suggestion was one of the first applications
+        of linked linear lists.
+      </blockquote>
+      <p>
+        Unfortunately, I couldn't locate the memo. It seems they never made it
+        public. However, I stumbled upon a nice paper from 1953 in which he
+        discusses
+        <a href="http://jonathanstray.com/papers/Luhn-SearchEngine-1953.pdf"
+          >enhancing search engines by refining sets</a
+        >.
+      </p>
+      <p>
+        Knuth also references Arnold I. Dumey, who appears to be the first to
+        describe hash tables in open literature.
+        <a
+          href="https://archive.org/details/sim_computers-and-people_1956-12_5_12/page/n5/mode/2up"
+        >
+          I was able to retrieve his paper </a
+        >.
+      </p>
+      <p>
+        Dumey initiates with an \(O(log\; n)\) solution using the "twenty
+        questions" game, subsequently explaining how we'd be better off if we
+        could do computation before we access the memory. I found his
+        introduction to the hash function rather intriguing:
+      </p>
+      <blockquote>
+        A certain manufacturing company had a parts and assemblies list of many
+        thousands of items. A mixed digital and alphabetic system of numbering
+        items was used, of six positions in all. Eight complex machines or
+        assemblies were sold to the public. These had item numbers taken from
+        the general system. In setting up a punch card control system on these
+        eight items it was first proposed to record the entire six digit number
+        for each item. However, examination of the eight assembly numbers
+        disclosed that no two were alike on the fourth digit. It was therefore
+        sufficient, for sorting purposes, merely to record the fourth digit,
+        thereby releasing five badly needed information spaces for other
+        purposes.
+      </blockquote>
+      <blockquote>
+        This rather extreme case indicates that an examination of the item
+        description may disclose a built-in redunancy which can be used to cut
+        the field down to practical size.
+      </blockquote>
+      <p>He further discusses handling duplicates and introduces chaining:</p>
+      <blockquote>
+        Adjust the addressing scheme, according to a method which will be
+        described later, to reduce the number of direct addresses, and use the
+        excess locations to store overflows. Put the overflow address at the
+        tail end of stored item information. What the best reduction is varies
+        from case to case. Note that the expectation of the number of accesses
+        to be made goes up when these methods are used. At each access we check
+        by using the complete item description, usually.
+      </blockquote>
+      <p>
+        And discusses how a somewhat efficient hash address can be constructed
+        by dividing a prime number and using the remainder:
+      </p>
+      <blockquote>
+        Consider the item description as though it were a number in the scale of
+        37 or whatever. Or write it as a binary number by using the appropriate
+        punched tape coding. Divide this number by a number slightly less than
+        the number of addressable locations (the writer prefers the nearest
+        prime). Throw away the quotient. Use the remainder as the address,
+        adjusting to base 10, as the case may be.
+      </blockquote>
+      <br />
+      <a id="back-link" href="../blog.html">&#x2190;</a>
+    </div>
+    <footer>
+      <hr />
+      <div>© 2023 Parth Parikh.</div>
+    </footer>
+  </body>
+</html>

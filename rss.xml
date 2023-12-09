@@ -5,6 +5,12 @@
         <link>https://pncnmnp.github.io/blog.html</link>
         <description>Explore the exciting world of Computer Science with me! From the depths of Data Structures and Algorithms to the cutting-edge advancements in NLP and Databases, my blog delves into a wide range of topics to keep you informed and inspired.</description>
         <item>
+            <title>Scrambling Eggs for Spotify with Knuth's Fibonacci Hashing</title>
+            <link>https://pncnmnp.github.io/blogs/fibonacci-hashing.html</link>
+            <description>In this blog post, we explore Spotify's journey from using the Fisher-Yates shuffle to a more sophisticated song shuffling algorithm that prevents clustering of tracks by the same artist. We then connect this challenge to Fibonacci hashing, and propose a novel, evenly distributed artist shuffling method.</description>
+            <pubDate>Fri, 08 Dec 2023</pubDate>
+        </item>
+        <item>
             <title>Bao, a learned system for query optimization</title>
             <link>https://pncnmnp.github.io/blogs/bao.html</link>
             <description>A blog post about Bao, a learned query optimizer that employs neural networks and Thompson sampling to enhance native database optimizers' adaptability to changes in workloads, data, and schema.</description>
