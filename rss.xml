@@ -5,6 +5,12 @@
         <link>https://pncnmnp.github.io/blog.html</link>
         <description>Explore the exciting world of Computer Science with me! From the depths of Data Structures and Algorithms to the cutting-edge advancements in NLP and Databases, my blog delves into a wide range of topics to keep you informed and inspired.</description>
         <item>
+            <title>Tangoing with a Martin Gardner Word Game</title>
+            <link>https://pncnmnp.github.io/blogs/martin-gardner-game.html</link>
+            <description>In this blog post, we explore a 1969 word game from Martin Gardner. We dive into its computational solving strategies, highlighting the complexity and fun of this NYT-esque puzzle.</description>
+            <pubDate>Sun, 28 Jan 2024</pubDate>
+        </item>
+        <item>
             <title>Scrambling Eggs for Spotify with Knuth's Fibonacci Hashing</title>
             <link>https://pncnmnp.github.io/blogs/fibonacci-hashing.html</link>
             <description>In this blog post, we explore Spotify's journey from using the Fisher-Yates shuffle to a more sophisticated song shuffling algorithm that prevents clustering of tracks by the same artist. We then connect this challenge to Fibonacci hashing, and propose a novel, evenly distributed artist shuffling method.</description>
@@ -27,18 +33,6 @@
             <link>https://pncnmnp.github.io/blogs/addressograph.html</link>
             <description>In this article, we will delve into the history of a poster that I recently bought. Our journey will lead us into the fascinating world of the Addressograph - an early addressing machine, invented by Joseph Smith Duncan in the year 1892.</description>
             <pubDate>Sun, 25 Jun 2023</pubDate>
-        </item>
-        <item>
-            <title>GADDAG</title>
-            <link>https://pncnmnp.github.io/blogs/gaddag.html</link>
-            <description>This article discusses GADDAG, a data structure for efficiently generating moves in Scrabble using a modified directed acyclic word graph.</description>
-            <pubDate>Fri, 22 Jun 2023</pubDate>
-        </item>
-        <item>
-            <title>Playing Twenty Questions with ChatGPT</title>
-            <link>https://pncnmnp.github.io/blogs/chatgpt-twenty-questions.html</link>
-            <description>Can you play the Twenty Questions game with ChatGPT? In this article, we will see just how well it can play this classic game.</description>
-            <pubDate>Fri, 17 Mar 2023</pubDate>
         </item>
     </channel>
 </rss>
