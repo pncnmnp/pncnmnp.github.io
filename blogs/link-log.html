@@ -28,7 +28,7 @@
       <h1>My Link Log</h1>
       <h2>A collection of links that are worth sharing</h2>
       <h3>First published: 9/11/19</h3>
-      <h4>Last updated: 26/03/23</h4>
+      <h4>Last updated: 18/03/24</h4>
       <p>
         A while back, I created a
         <a href="https://github.com/pncnmnp/Bookmark-Manager"
@@ -1298,6 +1298,289 @@
             >This is still a motherfucking website</a
           >: Shows how websites can be made aesthetically pleasing with minimal
           use of CSS.
+        </li>
+        <li>
+          <a href="https://www.cs.cmu.edu/~wkw/humour/carproblems.txt"
+            >Car Problems</a
+          >: Shows how even insane-looking problems can sometimes be real.
+        </li>
+        <li>
+          <a href="https://www.cs.cmu.edu/~mblum/research/pdf/grad.html"
+            >Advice to a Beginning Graduate Student</a
+          >: For many years now, this talk from Manuel Blum has held a special
+          place in my mind and has greatly influenced my reading and writing
+          habits. This is thanks to a beyond fascinating
+          <i>philosophically mathematical</i>
+          argument he makes:
+          <details>
+            <summary>
+              Is writing elevating our powers to that of a Turing machine?
+            </summary>
+            <blockquote>
+              <i>
+                You are all computer scientists. You know what FINITE AUTOMATA
+                can do. You know what TURING MACHINES can do. For example,
+                Finite Automata can add but not multiply. Turing Machines can
+                compute any computable function. Turing machines are incredibly
+                more powerful than Finite Automata. Yet the only difference
+                between a FA and a TM is that the TM, unlike the FA, has paper
+                and pencil. Think about it. It tells you something about the
+                power of writing. Without writing, you are reduced to a finite
+                automaton. With writing you have the extraordinary power of a
+                Turing machine.
+              </i>
+            </blockquote>
+          </details>
+          Additionally, there are some other gems in there as well.
+          <details>
+            <summary>One involving Bertram Kostant's literacy skills.</summary>
+            <blockquote>
+              <i
+                >I remember a professor of Mathematics at MIT, name of BERTRAM
+                KOSTANT, who would keep his door open whenever he was in his
+                office, and he would always be at his desk writing. Writing.
+                Always writing. Was he writing up his research? Maybe. Writing
+                up his ideas? Maybe. I personally think he was reading, and
+                writing what he was reading. At least for me, writing what I
+                read is one of the most enjoyable and profitable ways to learn
+                hard material.</i
+              >
+            </blockquote>
+          </details>
+          <details>
+            <summary>
+              And the power of combining random access with books.
+            </summary>
+            <blockquote>
+              <i
+                >Books are not scrolls. Scrolls must be read like the Torah from
+                one end to the other. Books are random access -- a great
+                innovation over scrolls. Make use of this innovation! Do NOT
+                feel obliged to read a book from beginning to end. Permit
+                yourself to open a book and start reading from anywhere. In the
+                case of mathematics or physics or anything especially hard, try
+                to find something anything that you can understand. Read what
+                you can. Write in the margins. (You know how useful that can
+                be.) Next time you come back to that book, you'll be able to
+                read more. You can gradually learn extraordinarily hard things
+                this way.</i
+              >
+            </blockquote>
+          </details>
+        </li>
+        <li>
+          <a
+            href="https://renatobudinich.com/create-random-images-with-randimage/"
+            >Create random images in Python</a
+          >: A beautiful algorithm by Renato Budinich to create random images
+          using a two-step procedure. The first step involves taking a random
+          gray-valued mask image and applying the path-finding procedure of the
+          <i>Easy Path Wavelet Transform</i> (EPWT) to it. This path-finding
+          technique is greedy and aims to obtain a succession of vectorized
+          pixel values with minimal variation. It does this by always picking
+          the next point (among the available neighbors) that yields the minimum
+          absolute value difference in pixel values. This approach helps it
+          select regions with similar pixel values before making a jump to
+          pixels with significantly lighter or darker regions. Once a random
+          path of length N is obtained, a random color map is applied, with each
+          point k in the path mapped to the k/N point in the color map. Et
+          voilà! A gorgeous image emerges.
+        </li>
+        <li>
+          <a
+            href="https://www.atlasobscura.com/articles/null-island-is-one-of-the-most-visited-places-on-earth-too-bad-it-doesnt-exist"
+            >Null Island Is One of the Most Visited Places on Earth. Too Bad It
+            Doesn’t Exist</a
+          >: Null Island is a fantasy island located at the point where the
+          equator meets the prime meridian. This post explains how it became a
+          dumping ground for geocoding errors.
+        </li>
+        <li>
+          <a
+            href="https://www.cs.princeton.edu/courses/archive/spring03/cs333/thompson"
+            >Unix and Beyond: An Interview with Ken Thompson</a
+          >: A 1999 interview with Ken Thompson, where he discusses the design
+          of the Plan 9 and Inferno operating systems, the history of Unix, and
+          his hobby of collecting jukebox music. Years later, at SCaLE 20x,
+          <a href="https://www.youtube.com/watch?v=kaandEt_pKw"
+            >Thompson gave a talk on his jukebox</a
+          >. Having worked on
+          <a href="https://github.com/pncnmnp/phoenix10.1"
+            >radio generation software myself</a
+          >, I can strongly resonate with his hobby. Thompson also intersperses
+          some great wisdom in his interview, such as the importance of
+          orthogonal thinking -
+          <i>
+            it's always good to take an orthogonal view of something. It
+            develops ideas.
+          </i>
+        </li>
+        <li>
+          <a
+            href="https://github.com/denkspuren/BitboardC4/blob/master/BitboardDesign.md"
+            >Bitboards and Connect Four</a
+          >: Prof. Dominikus Herzberg explains how a Connect Four game can be
+          represented and operated using a bitboard.
+        </li>
+        <li>
+          <a
+            href="https://archive.org/details/sim_scientific-american_1969-04_220_4/page/124/mode/2up"
+            >Martin Gardner's 1969 column, "Mathematical Games"</a
+          >: This was the April edition, in which Gardner had laid out eight
+          problems based on logic and probability. A central theme amongst many
+          of them was that the problem involved some sort of game - such as
+          chess, name cards, and word games. To call these problems intriguing
+          would be an understatement - there's an uncrossed knight's tour
+          problem, a variant of chess where the first person to check the
+          opponent's king wins, a variant of the urn problem, and, a word game.
+          I have provided an analysis on this word game
+          <a href="https://pncnmnp.github.io/blogs/martin-gardner-game.html"
+            >in one of my blogs</a
+          >.
+        </li>
+        <li>
+          <a href="https://research.swtch.com/tictactoe"
+            >Play Tic-Tac-Toe with Knuth</a
+          >: This little blog post from Russ Cox has amazed me for a long time.
+          This year, I finally got the opportunity to go over TAOCP Volume 4A,
+          hoping to understand Knuth's algorithm. The algorithm discusses how
+          optimal tic-tac-toe moves can be represented using Boolean logic.<br />
+          He starts by picturing two 3x3 grids - one for the X’s and another for
+          the O’s. This setup introduces 18 boolean variables - x1 to x9 for the
+          X's, and o1 to o9 for the O's.<br />
+          Now, creating a full-scale truth table for these 18 variables means we
+          would be looking at 2^18, or 262,144 rows. However, it turns out only
+          4520 of those are legal inputs. So, the question becomes, how do we
+          find patterns in this boolean chain to build our tic-tac-toe
+          strategies.<br />
+          Knuth simplifies it by considering only the following strategies -
+          (a.) winning - when putting an X in a cell wins the game - like when
+          two cells in any line already have X's. (b.) blocking - when putting
+          an X in a cell stops the other player from winning - like when two
+          cells in any line have O's. (c.) forking - when putting an X in a cell
+          opens up multiple winning moves - you store all the winning line
+          possibilities (horizontal, vertical, and diagonal lines - all 9) in a
+          set, and for each winning line (say {i, j, k}), you place an X on i,
+          leave k empty, and see if a move on j creates two win chances. (d.)
+          defending - similar, when putting an X in a cell stops the other
+          player from creating multiple win chances. (e.) And just making any
+          legal move - when a cell does not have an X or an O.<br />
+          The priority order of moves follows the order above. There's also a
+          bit of priority within the legal moves - like the middle spot is best
+          since it's part of more winning lines, while the edges are the last
+          choice.
+        </li>
+        <li>
+          <a
+            href="https://dougseven.com/2014/04/17/knightmare-a-devops-cautionary-tale/"
+            >Knightmare: A DevOps Cautionary Tale</a
+          >: A bone-chilling tale of a financial services firm that faced a $460
+          million loss in 45 minutes due to a software bug.
+        </li>
+        <li>
+          <a href="https://en.wikipedia.org/wiki/Ghost_leg">Ghost Leg</a>: I
+          believe I am done using <i>rock, paper, scissors</i> after finding out
+          about this elegant algorithm. Ghost leg essentially boils down to a
+          sequence of swaps on a set of indices, where each horizontal line
+          (leg) represents a swap between two adjacent indices at a time
+          <i>t</i>. The final order of these indices after all swaps have been
+          applied gives us a permutation of the original set. <br />
+          Furthermore, the Wikipedia page describes what a "prime" ghost leg is
+          -
+          <i>
+            as there are an infinite number of ghost legs representing a
+            particular permutation, those ghost legs have a kind of equivalence.
+            Among those equivalent ghost legs, the ones which have smallest
+            number of legs are called "prime"</i
+          >. Fascinatingly, there is a relationship between ghost legs and
+          bubble sort. Bubble sort is a sorting algorithm that sorts an array by
+          repeatedly swapping adjacent elements that are in the wrong order.
+          This effectively "bubbles up" the largest unsorted element to its
+          correct position in each iteration through the array. If you think of
+          a ghost leg's end configuration as a shuffled sequence, then the
+          process of adding legs to revert it back to the initial sorted state
+          with the minimum number of moves would be analogous to bubble sort. In
+          other words, each leg would represent a swap that bubble sort would
+          perform. There is also an algorithm to parallelize a ghost leg;
+          however, I leave that up to the curious reader to explore. Hint:
+          red-black balls.
+        </li>
+        <li>
+          <a href="https://www.youtube.com/watch?v=pcBJfkE5UwU"
+            >John Graham-Cumming's keynote on "The Great Railway Caper"</a
+          >: John Graham-Cumming narrates the fascinating story of the 1951
+          business computer LEO I, one of the world's first, which was handed a
+          big data problem by the British Rail: to calculate the shortest
+          distance between each of their 5,500 railway stations. What follows is
+          an engineering feat that spanned over 9 months - the discovery of
+          Dijkstra's algorithm years before Dijkstra published it, optimizations
+          to distribute the data processing tasks, and the fascinating use of
+          punch cards. Tim Greening-Jackson has also documented this story in
+          his paper on
+          <a
+            href="https://www.computinghistory.org.uk/userdata/files/greening-jackson_leobrpaper-1.pdf"
+            >LEO I and the BR job</a
+          >.
+        </li>
+        <li>
+          <a href="https://engineersneedart.com/">John Calhoun's blog</a>: My
+          favorites include
+          <a href="https://engineersneedart.com/blog/interview/interview.html"
+            >his experience interviewing at Apple in 1995</a
+          >, after which he worked there for over two decades, and his
+          <a href="https://engineersneedart.com/systemsix/systemsix.html"
+            >SystemSix</a
+          >
+          project.
+        </li>
+        <li>
+          <a href="http://alvyray.com/Papers/EdgePiece_WhyDoMoviesMove.pdf"
+            >Why Do Movies Move?</a
+          >: In this post, Alvy Ray Smith discusses how we perceive motion in
+          films despite them consisting only of individual, still frames shown
+          in quick succession. He explores motion blur and how computationally
+          generated animations recreate it.
+        </li>
+        <li>
+          <a
+            href="https://www.ll.mit.edu/sites/default/files/page/doc/2018-05/LookingBack_19_1.pdf"
+            >The TX-2 Computer and Sketchpad</a
+          >: In this article, Ivan Sutherland recollects his experience working
+          with the TX-2 computer and developing Sketchpad for it.
+        </li>
+        <li>
+          <a
+            href="https://www.cs.utexas.edu/users/EWD/transcriptions/EWD03xx/EWD365.html"
+            >A Parabel</a
+          >: A 1973 Parabel narrated by Dijkstra that involves a train toilet
+          problem. Dijkstra's EWD manuscript archive is fascinating; I encourage
+          exploring his trip reports,
+          <a
+            href="https://www.cs.utexas.edu/users/EWD/transcriptions/EWD04xx/EWD494.html"
+            >such as this one</a
+          >. Furthermore, his
+          <a
+            href="https://www.cs.utexas.edu/users/EWD/transcriptions/EWD06xx/EWD637.html"
+          >
+            three golden rules for successful scientific research
+          </a>
+          are very well put.
+        </li>
+        <li>
+          <a href="https://boyter.org/posts/publishing-a-pico8-game/"
+            >Publishing my first game using Pico-8</a
+          >: A fun blog from Ben Boyter. It brings new life to the conventional
+          rock, paper, scissors game. One day, I'll make my own Pico-8 game.
+        </li>
+        <li>
+          <a href="https://tylervigen.com/the-mystery-of-the-bloomfield-bridge"
+            >The Mystery of the Bloomfield Bridge</a
+          >: There is a pedestrian bridge that crosses I-494 just west of the
+          Minneapolis Airport, connecting Bloomington to Richfield. Hundreds of
+          thousands of cars drive under it, but why is it there, especially in
+          an area that is neither particularly walkable nor connected to any
+          establishments? In this blog post, the author investigates this
+          seemingly irrelevant yet surprisingly fun internet mystery.
         </li>
       </ul>
 
