@@ -5,6 +5,12 @@
         <link>https://pncnmnp.github.io/blog.html</link>
         <description>Explore the exciting world of Computer Science with me! From the depths of Data Structures and Algorithms to the cutting-edge advancements in NLP and Databases, my blog delves into a wide range of topics to keep you informed and inspired.</description>
         <item>
+            <title>One Billion Row Challenge in Rust</title>
+            <link>https://pncnmnp.github.io/blogs/one-billion-row-challenge.html</link>
+            <description>In this blog post, we will tackle the One Billion Row Challenge using Rust and Python, converging on a solution in under 10 seconds and looking into some exciting optimizations at play.</description>
+            <pubDate>Tue, 23 Apr 2024</pubDate>
+        </item>
+        <item>
             <title>Roaring Bitmaps</title>
             <link>https://pncnmnp.github.io/blogs/roaring-bitmaps.html</link>
             <description>In this blog post, we explore Bitmap indexes and their compression techniques, emphasizing their use in databases. We take a look at data structures like Run Length Encoding, Byte-Aligned Bitmap Code, Word-Aligned Hybrid Code, Concise, and Roaring Bitmaps.</description>
@@ -27,12 +33,6 @@
             <link>https://pncnmnp.github.io/blogs/bao.html</link>
             <description>A blog post about Bao, a learned query optimizer that employs neural networks and Thompson sampling to enhance native database optimizers' adaptability to changes in workloads, data, and schema.</description>
             <pubDate>Fri, 17 Nov 2023</pubDate>
-        </item>
-        <item>
-            <title>Before advanced-flight simulators, there was Navitrainer</title>
-            <link>https://pncnmnp.github.io/blogs/navitrainer.html</link>
-            <description>In this blog post, we will delve into the history of another poster that I recently bought. We will explore the Navitrainer, a precursor to advanced flight simulators. We will investigate its origins, how it works, how it was used, and its crucial role in teaching techniques like dead reckoning to trainee pilots.</description>
-            <pubDate>Mon, 18 Sept 2023</pubDate>
         </item>
     </channel>
 </rss>
