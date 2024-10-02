@@ -5,6 +5,12 @@
         <link>https://pncnmnp.github.io/blog.html</link>
         <description>Explore the exciting world of Computer Science with me! From the depths of Data Structures and Algorithms to the cutting-edge advancements in NLP and Databases, my blog delves into a wide range of topics to keep you informed and inspired.</description>
         <item>
+            <title>We’ll buy back your Typewriter ... for Uncle Sam!</title>
+            <link>https://pncnmnp.github.io/blogs/typewriter-uncle-sam.html</link>
+            <description>In this blog post, we will explore another poster I recently bought, which highlights Smith-Corona’s campaign to buy back typewriters for the U.S. government due to wartime shortages during World War II.</description>
+            <pubDate>Wed, 2 Oct 2024</pubDate>
+        </item>
+        <item>
             <title>IBM 305 RAMAC and the 1960 Winter Olympics</title>
             <link>https://pncnmnp.github.io/blogs/ibm-ramac-and-1960-winter-olympics.html</link>
             <description>In this blog post, we will explore the IBM 305 RAMAC and its use in the 1960 Winter Olympics.</description>
@@ -27,12 +33,6 @@
             <link>https://pncnmnp.github.io/blogs/martin-gardner-game.html</link>
             <description>In this blog post, we explore a 1969 word game from Martin Gardner. We dive into its computational solving strategies, highlighting the complexity and fun of this NYT-esque puzzle.</description>
             <pubDate>Sun, 28 Jan 2024</pubDate>
-        </item>
-        <item>
-            <title>Scrambling Eggs for Spotify with Knuth's Fibonacci Hashing</title>
-            <link>https://pncnmnp.github.io/blogs/fibonacci-hashing.html</link>
-            <description>In this blog post, we explore Spotify's journey from using the Fisher-Yates shuffle to a more sophisticated song shuffling algorithm that prevents clustering of tracks by the same artist. We then connect this challenge to Fibonacci hashing, and propose a novel, evenly distributed artist shuffling method.</description>
-            <pubDate>Fri, 08 Dec 2023</pubDate>
         </item>
     </channel>
 </rss>
