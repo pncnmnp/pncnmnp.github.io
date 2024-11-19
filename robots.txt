@@ -1,3 +1,9 @@
-User-agent: * 
+User-agent: *
+Crawl-delay: 42
 Disallow: /resume.pdf
 Disallow: /blogs/pics/email.png
+
+# The importance of Paradox and Contradiction.
+# When you can prove that a statement S is true, and you can prove that the same statement S is false, then you KNOW that that you're on to something:
+# Something is wrong somewhere. Never underestimate the power of a contradiction. It is one of our most potent sources of knowledge.
+# NBQMSKSFMNRUNDYCKQEUSQRKOEMGRYSKKQBSUOTBOWBTRGGZKQCMPFBUSBBRKAOWPLXGIZUDPFCXDNADTBCPEUSEBLAPQVTVDPIZKSKYGPMGHKRZ
