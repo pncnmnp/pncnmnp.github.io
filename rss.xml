@@ -5,6 +5,12 @@
         <link>https://pncnmnp.github.io/blog.html</link>
         <description>Explore the exciting world of Computer Science with me! From the depths of Data Structures and Algorithms to the cutting-edge advancements in NLP and Databases, my blog delves into a wide range of topics to keep you informed and inspired.</description>
         <item>
+            <title>Tinker Postman Collector Scribe</title>
+            <link>https://pncnmnp.github.io/blogs/national-postal-museum.html</link>
+            <description>In this blog post, we will explore art, USPS postal technology, philately, and generative art — all inspired by my trip to D.C. last month.</description>
+            <pubDate>Fri, 13 Dec 2024</pubDate>
+        </item>
+        <item>
             <title>We’ll buy back your Typewriter ... for Uncle Sam!</title>
             <link>https://pncnmnp.github.io/blogs/typewriter-uncle-sam.html</link>
             <description>In this blog post, we will explore another poster I recently bought, which highlights Smith-Corona’s campaign to buy back typewriters for the U.S. government due to wartime shortages during World War II.</description>
@@ -27,12 +33,6 @@
             <link>https://pncnmnp.github.io/blogs/roaring-bitmaps.html</link>
             <description>In this blog post, we explore Bitmap indexes and their compression techniques, emphasizing their use in databases. We take a look at data structures like Run Length Encoding, Byte-Aligned Bitmap Code, Word-Aligned Hybrid Code, Concise, and Roaring Bitmaps.</description>
             <pubDate>Wed, 28 Feb 2024</pubDate>
-        </item>
-        <item>
-            <title>Tangoing with a Martin Gardner Word Game</title>
-            <link>https://pncnmnp.github.io/blogs/martin-gardner-game.html</link>
-            <description>In this blog post, we explore a 1969 word game from Martin Gardner. We dive into its computational solving strategies, highlighting the complexity and fun of this NYT-esque puzzle.</description>
-            <pubDate>Sun, 28 Jan 2024</pubDate>
         </item>
     </channel>
 </rss>
