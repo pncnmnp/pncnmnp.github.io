@@ -5,6 +5,12 @@
         <link>https://pncnmnp.github.io/blog.html</link>
         <description>Explore the exciting world of Computer Science with me! From the depths of Data Structures and Algorithms to the cutting-edge advancements in NLP and Databases, my blog delves into a wide range of topics to keep you informed and inspired.</description>
         <item>
+            <title>What if companies were governed as republics?</title>
+            <link>https://pncnmnp.github.io/blogs/corporate-republic.html</link>
+            <description>In this blog post, we will explore a whitepaper for technology startups, describing a 'mini-republic' corporate charter inspired by some historical constitutional documents and the Roman Republic.</description>
+            <pubDate>Tue, 26 May 2025</pubDate>
+        </item>
+        <item>
             <title>An Afternoon with SMT, TRIM, and SMART</title>
             <link>https://pncnmnp.github.io/blogs/afternoon-smt-trim-smart.html</link>
             <description>In this blog post, we will be diving into the world of SSDs, covering SMT, TRIM, and SMART, plus I'll be geeking out over my MacBook upgrade.</description>
@@ -27,12 +33,6 @@
             <link>https://pncnmnp.github.io/blogs/ibm-ramac-and-1960-winter-olympics.html</link>
             <description>In this blog post, we will explore the IBM 305 RAMAC and its use in the 1960 Winter Olympics.</description>
             <pubDate>Tue, 3 Sept 2024</pubDate>
-        </item>
-        <item>
-            <title>One Billion Row Challenge in Rust</title>
-            <link>https://pncnmnp.github.io/blogs/one-billion-row-challenge.html</link>
-            <description>In this blog post, we will tackle the One Billion Row Challenge using Rust and Python, converging on a solution in under 10 seconds and looking into some exciting optimizations at play.</description>
-            <pubDate>Tue, 23 Apr 2024</pubDate>
         </item>
     </channel>
 </rss>
