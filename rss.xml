@@ -5,6 +5,12 @@
         <link>https://pncnmnp.github.io/blog.html</link>
         <description>Explore the exciting world of Computer Science with me! From the depths of Data Structures and Algorithms to the cutting-edge advancements in NLP and Databases, my blog delves into a wide range of topics to keep you informed and inspired.</description>
         <item>
+            <title>Timing Wheels</title>
+            <link>https://pncnmnp.github.io/blogs/timing-wheels.html</link>
+            <description>In this blog-post, we will start by discussing the evolution of timekeeping, leading all the way to its use in computers. We will then introduce software timer modules, and explain timing wheels as a fast and memory efficient way to manage timers. Finally, we will discuss both the classic Linux timer wheel implementation and its modern variant.</description>
+            <pubDate>Sun, 26 Oct 2025</pubDate>
+        </item>
+        <item>
             <title>What if companies were governed as republics?</title>
             <link>https://pncnmnp.github.io/blogs/corporate-republic.html</link>
             <description>In this blog post, we will explore a whitepaper for technology startups, describing a 'mini-republic' corporate charter inspired by some historical constitutional documents and the Roman Republic.</description>
@@ -23,16 +29,10 @@
             <pubDate>Fri, 13 Dec 2024</pubDate>
         </item>
         <item>
-            <title>We’ll buy back your Typewriter ... for Uncle Sam!</title>
+            <title>We'll buy back your Typewriter ... for Uncle Sam!</title>
             <link>https://pncnmnp.github.io/blogs/typewriter-uncle-sam.html</link>
-            <description>In this blog post, we will explore another poster I recently bought, which highlights Smith-Corona’s campaign to buy back typewriters for the U.S. government due to wartime shortages during World War II.</description>
+            <description>In this blog post, we will explore another poster I recently bought, which highlights Smith-Corona's campaign to buy back typewriters for the U.S. government due to wartime shortages during World War II.</description>
             <pubDate>Wed, 2 Oct 2024</pubDate>
-        </item>
-        <item>
-            <title>IBM 305 RAMAC and the 1960 Winter Olympics</title>
-            <link>https://pncnmnp.github.io/blogs/ibm-ramac-and-1960-winter-olympics.html</link>
-            <description>In this blog post, we will explore the IBM 305 RAMAC and its use in the 1960 Winter Olympics.</description>
-            <pubDate>Tue, 3 Sept 2024</pubDate>
         </item>
     </channel>
 </rss>
