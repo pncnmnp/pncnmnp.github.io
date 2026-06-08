@@ -1,0 +1,1459 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="author" content="parth_parikh" />
+    <meta
+      name="description"
+      content="In this blog post, we will tear into ChatGPT's code execution sandbox. We will decipher and benchmark the real compute and memory limits behind the claims of 56 cores and 4 GB of RAM."
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tearing into ChatGPT's container environment</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="./style/common_styles.css"
+      id="light"
+    />
+    <link href="./style/prism.css" rel="stylesheet" />
+    <script src="./js/prism.js"></script>
+    <link rel="stylesheet" type="text/css" href="../style.css" />
+    <link rel="shortcut icon" type="image/png" href="../favicon.png" />
+  </head>
+  <body>
+    <div class="blog-text">
+      <a id="rss-feed" href="../rss.xml"
+        >If you like this blog post, do subscribe to my RSS feed</a
+      ><br />
+      <h1>Tearing into ChatGPT's container environment</h1>
+      <h2>First published: 8/6/26</h2>
+      <blockquote>
+        <i>
+          I'd say the Cloud is now the data center, where, boom, you have these
+          at scale. You have such massive resources available. They're readily
+          available, easy to use. I've always viewed that computing follows the
+          Gas Law. It fills the available space. It always keeps expanding and
+          it's really more a statement where ..... how much computing do you
+          want to do? Well, as much as I can afford. How many more simulations
+          do you do, before you send a chip to the fab? Well, as many as I can
+          get done before I think I've exhausted it, but there are always more
+          tests you can run. How many more analysis of your radiology results do
+          you want, running through the AI algorithms to determine if it's
+          carcinomic or not? Well, as many as you can afford, right? Please give
+          me the best results you can, and the list goes on and on and on.
+        </i>
+        <br />
+        <i>
+          So to me, computing has always wanted to fill the available space
+          where the available space is often more limited by economics than
+          anything else. And if I make the unit cost of computing lower, and the
+          ability to reach the data ..... Every time there is a dramatic
+          decrease in that, you open up new opportunities for computing. If we
+          use the AI example, hidden Markov models, convoluted neural nets, et
+          cetera, those ideas were around, all of a sudden that got economical,
+          and Cloud made it economical and all of the sudden Cloud made datasets
+          large enough that I could use learning algorithms that before were
+          infeasible, now became feasible as well. So that combination of
+          compute capacity and datasets, allowed AI to start demonstrating
+          meaningful breakthroughs and now it's sort of like, “Wow, how much
+          computing do you need for AI?” Well, the learning algorithms, it's
+          almost unlimited, right? Really, if you give me another thousand GPUs
+          in my GPU farm, I'll use them all. Many of the hardest problems in
+          computing have always demonstrated this characteristic, whether it's
+          weather prediction, whether it's predictive modeling, whether it's
+          computational fluid dynamics, these are n-complexity algorithms that,
+          boy, you can just keep throwing computing at them.
+        </i>
+        <br />
+        - Pat Gelsinger in his
+        <a
+          href="https://archive.computerhistory.org/resources/access/text/2019/06/102781086-05-01-acc.pdf"
+          >2019 Oral History with CHM</a
+        >.
+      </blockquote>
+      <p>
+        A few months back, while randomly browsing old Hacker News submissions,
+        I came across a rather interesting submission from Simon Willison
+        <a href="https://simonwillison.net/2026/Jan/26/chatgpt-containers/">
+          on ChatGPT Containers</a
+        >. What immediately caught my attention was not the post itself but one
+        of the
+        <a href="https://news.ycombinator.com/item?id=46772003"
+          >comment threads on HN</a
+        >:
+      </p>
+      <blockquote>
+        xnx: How much compute do you get in these containers? Could I have it
+        run whisper on an mp3 it downloads?
+        <br /><br />
+        simonw: That might work! You would have to figure out how to get Whisper
+        working in there but I'm sure that's possible with a bit of creativity
+        concerning uploading files and maybe running a build with the available
+        C compiler. It appears to have 4GB of RAM and 56 (!?) CPU cores
+        <a href="https://chatgpt.com/share/6977e1f8-0f94-8006-9973-e9fab6d24418"
+          >https://chatgpt.com/share/6977e1f8-0f94-8006-9973-e9fab6d24418</a
+        >
+      </blockquote>
+
+      <p>
+        <b>56 LPs?? 4GB of RAM??!</b> One of the users in the thread, named
+        tintor, who appears to be ex-OpenAI (O1 reasoning model and code
+        interpreter), briefly mentioned that
+        <a href="https://news.ycombinator.com/item?id=46772442"
+          >the cores are shared with other containers</a
+        >. However, even with oversubscription, the number seemed baffling. So,
+        I decided to further investigate this. In this blog post, we will dive
+        into what their container environment looks like.
+      </p>
+
+      <p>
+        Before we begin, note that all of my chat prompts and their subsequent
+        containerized executions were performed on ChatGPT's paid plan - ChatGPT
+        Plus. They were running GPT 5.5 Extended Thinking.
+      </p>
+
+      <p>
+        Let us start by focusing on ChatGPT's container environment. If we ask
+        it to run
+        <a href="https://man7.org/linux/man-pages/man1/dmesg.1.html">dmesg</a>
+        and report the output of the command, here is what we get:
+      </p>
+
+      <pre><code style="font-size: 14px;" class="language-markup">[    0.000000] Starting gVisor...
+[    0.541400] Checking naughty and nice process list...
+[    0.648754] Mounting deweydecimalfs...
+[    0.661315] Daemonizing children...
+[    1.145987] Searching for needles in stacks...
+[    1.455202] Verifying that no non-zero bytes made their way into /dev/zero...
+[    1.791613] Creating cloned children...
+[    2.209217] Rewriting operating system in Javascript...
+[    2.593286] Checking naughty and nice process list...
+[    2.602568] Letting the watchdogs out...
+[    2.972217] Creating bureaucratic processes...
+[    3.195269] Setting up VFS...
+[    3.254751] Setting up FUSE...
+[    3.723550] Ready!</code></pre>
+
+      <p>
+        This is strong evidence that ChatGPT uses gVisor as a sandboxing
+        environment for code execution. To better understand gVisor, I encourage
+        checking out
+        <a href="https://youtu.be/Ur0hbW_K66s?si=QDaudvBSQPsbOpVf"
+          >Emma Haruka Iwao's 2019 talk</a
+        >
+        and Ye Lin's
+        <a href="https://blog.yelinaung.com/posts/gvisor/">recent blog post</a>.
+        Andrea and Remzi Arpaci-Dusseau (of OSTEP fame) have also
+        <a
+          href="https://www.usenix.org/system/files/hotcloud19-paper-young.pdf"
+        >
+          co-authored a paper on it</a
+        >. Here is what the
+        <a
+          href="https://gvisor.dev/blog/2024/09/23/safe-ride-into-the-dangerzone/"
+          >gVisor team has to say about their product</a
+        >:
+      </p>
+
+      <blockquote>
+        gVisor is a container security solution. ….. An open source project
+        written in Go, gVisor was released in May 2018 by Google under the
+        Apache 2.0 license. It runs on Linux and integrates with all popular
+        container management software, such as Docker, Podman, or Kubernetes. At
+        its core, gVisor is an application kernel that implements a substantial
+        portion of the Linux system call interface. This means gVisor sits
+        between a container and the Linux kernel and plays both roles: from the
+        container's perspective, gVisor acts as a kernel, but from Linux's
+        perspective, gVisor is just a regular application. That means the
+        container can no longer directly interface with the Linux kernel. This
+        is a massive reduction in attack surface.
+        <br />
+        gVisor manages to pull the above trick with the help of two components:
+        <br />
+        <ul>
+          <li>
+            Sentry is the component that runs the containerized application. It
+            intercepts every system call that the application makes and
+            reimplements it in Go. As part of this, it may decide to do one or
+            more system calls to the host Linux kernel. However, it's heavily
+            restricted with a strict seccomp filter (that's why system calls
+            like open, socket, or exec are not allowed).
+          </li>
+          <li>
+            Gofer is a component that runs outside the container and is
+            responsible for filesystem operations. The sentry may make I/O
+            requests to the gofer. The gofer will independently validate them,
+            then perform these I/O operations on the container's behalf (that's
+            how the container can read files from the host filesystem, even
+            though open is not allowed from the sentry).
+          </li>
+        </ul>
+      </blockquote>
+
+      <p>
+        Circling back to the above dmesg output, you might notice that the logs
+        appear somewhat nonsensical. Why is that? By default, dmesg is used to
+        print the messages in the kernel ring buffer. The modern interface to
+        read this message buffer involves <code>/dev/kmsg</code>. The older
+        interface involved reading from syslog. However, if you ask ChatGPT to
+        perform the following command in its container:
+        <code>ls -l /dev/kmsg</code>, you will get an
+        <code>"ls: cannot access '/dev/kmsg': No such file or directory"</code>
+        error. This is because <code>/dev/kmsg</code> is not present in their
+        gVisor sandbox, and the command is likely to fall back to the older
+        syslog method.
+      </p>
+
+      <p>
+        So what happens next? Observe the 103 syscall number
+        <a
+          href="https://github.com/google/gvisor/blob/master/pkg/sentry/syscalls/linux/linux64.go#L148"
+        >
+          in gVisor's linux64.go</a
+        >.
+      </p>
+      <pre><code style="font-size: 14px;" class="language-go">103: syscalls.PartiallySupported("syslog", Syslog, "Outputs a dummy message for security reasons.", nil),</code></pre>
+      <p>
+        This is Sentry's syscall table that maps gVisor's syscall API to Linux's
+        corresponding syscall numbers. The
+        <a
+          href="https://chromium.googlesource.com/chromiumos/docs/+/master/constants/syscalls.md"
+          >103 syscall on Linux is syslog</a
+        >, which is getting wired to gVisor's Syslog handler. The code for the
+        handler
+        <a
+          href="https://github.com/google/gvisor/blob/master/pkg/sentry/syscalls/linux/sys_syslog.go#L34"
+        >
+          is at sys_syslog.go</a
+        >, which in turn invokes
+        <a
+          href="https://github.com/google/gvisor/blob/master/pkg/sentry/kernel/syslog.go#L51"
+          >syslog.go's Log() function</a
+        >, which returns a dummy copy of the syslog.
+      </p>
+
+      <p>
+        Next, let us focus on its execution environment and the 56 LP claim. If
+        I ask it to run <code>nproc</code> and report the output of the command,
+        I get 56. Furthermore, a <code>cat /proc/cpuinfo</code> returns the
+        following:
+      </p>
+
+      <pre><code style="font-size: 14px;" class="language-markup">processor       : 0
+vendor_id       : GenuineIntel
+cpu family      : 6
+model           : 79
+model name      : unknown
+stepping        : unknown
+cpu MHz         : 2294.687
+cache size      : 8192 KB
+physical id     : 0
+siblings        : 56
+core id         : 0
+cpu cores       : 56
+apicid          : 0
+initial apicid  : 0
+fpu             : yes
+fpu_exception   : yes
+cpuid level     : 13
+wp              : yes
+flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 
+clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm pni pclmulqdq vmx ssse3 fma 
+cx16 pcid sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand hypervisor lahf_lm abm 
+3dnowprefetch fsgsbase bmi1 hle avx2 smep bmi2 erms invpcid rtm rdseed adx smap xsaveopt md_clear
+bogomips        : 2294.69
+clflush size    : 64
+cache_alignment : 64
+address sizes   : 46 bits physical, 48 bits virtual
+power management:
+</code></pre>
+
+      <p>
+        I am only showing the first processor's info. There are 55 processor
+        infos that come after this. However, they all differ only in the
+        <code>processor</code>, <code>core id</code>, <code>apicid</code>, and
+        <code>initial apicid</code> fields. For the next processor output, these
+        4 fields would have the value of 1, and the subsequent processor would
+        have it as 2, and so forth.
+      </p>
+
+      <p>
+        The gVisor code corresponding to this seems to originate from
+        <a
+          href="https://github.com/google/gvisor/blob/master/pkg/cpuid/cpuid_amd64.go#L312"
+          >pkg/cpuid/cpuid_amd64.go</a
+        >, particularly the <code>WriteCPUInfoTo</code> call:
+      </p>
+      <pre><code style="font-size: 14px;" class="language-go">// WriteCPUInfoTo is to generate a section of one cpu in /proc/cpuinfo. This is
+// a minimal /proc/cpuinfo, it is missing some fields like "microcode" that are
+// not always printed in Linux. Several fields are simply made up.
+</code></pre>
+
+      <p>
+        From the code, the <code>model name</code> and <code>stepping</code> are
+        hardcoded to "unknown". Furthermore, gVisor pretends that all CPUs are
+        in the same socket and the <code>physical id</code> is always set to 0.
+        The presence of <code>fpu</code>, <code>fpu_exception</code>, and
+        <code>wp</code> (write protect) is also hardcoded to return "yes".
+        Address sizes are not read from hardware either; they are predetermined
+        to be 46 bits physical, 48 bits virtual. Perhaps the most interesting
+        one is <code>cache size</code>, which is completely made up at 8192 KB
+        with the comment:
+      </p>
+
+      <pre><code style="font-size: 14px;" class="language-go">// Pretend the CPU has 8192 KB of cache. Note that real /proc/cpuinfo exposes total L3 cache
+// size on Intel and per-core L2 cache size on AMD (as of Linux 6.1.0), so the value of this
+// field is not really important in practice. Any value that is chosen here will be wrong
+// by an order of magnitude on a significant chunk of x86 machines.
+// 8192 KB is selected because it is a reasonable size that will be effectively usable on
+// lightly loaded machines - most machines have 1-4MB of L3 cache per core.
+</code></pre>
+
+      <p>
+        But some fields contain real CPUID data. The <code>vendor id</code>,
+        <code>cpu family</code>, <code>model</code>, and <code>flags</code> are
+        all parsed using <code>CPUID</code>.
+        <a href="https://en.wikipedia.org/wiki/CPUID">CPUID</a> is an
+        instruction that is used to query processor details. Intel concisely
+        describes this in their
+        <a
+          href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
+          >Architecture Software Developer Manuals</a
+        >:
+      </p>
+
+      <blockquote>
+        This instruction returns the family, model, and (for some processors) a
+        brand string for the processor that executes the instruction. It also
+        indicates the features that are present in the processor and gives
+        information about the processor's caches and TLB. .....<br />
+        To obtain processor identification information, a source operand value
+        is placed in the EAX register to select the type of information to be
+        returned. When the CPUID instruction is executed, selected information
+        is returned in the EAX, EBX, ECX, and EDX registers.
+      </blockquote>
+
+      <p>
+        To fetch information from <code>CPUID</code>, WriteCPUInfoTo
+        <a
+          href="https://github.com/google/gvisor/blob/cfb7c0629521099eb14d7bd86e9fbfa47287a640/pkg/cpuid/cpuid_amd64.go#L315"
+        >
+          invokes the following call</a
+        >:
+      </p>
+      <pre><code style="font-size: 14px;" class="language-go">ax, _, _, _ := fs.query(featureInfo)</code></pre>
+
+      <p>
+        Inside <code>native_amd64.go</code>,
+        <a
+          href="https://github.com/google/gvisor/blob/cfb7c0629521099eb14d7bd86e9fbfa47287a640/pkg/cpuid/native_amd64.go#L46"
+          >the featureInfo constant</a
+        >
+        is defined as:
+      </p>
+      <pre><code style="font-size: 14px;" class="language-go">featureInfo                   cpuidFunction = 0x1               // Returns basic feature bits and processor signature.</code></pre>
+
+      <p>
+        <code>fs.query()</code> is a thin wrapper that
+        <a
+          href="https://github.com/google/gvisor/blob/cfb7c0629521099eb14d7bd86e9fbfa47287a640/pkg/cpuid/native_amd64.go#L147"
+          >forwards the call to Native.Query()</a
+        >:
+      </p>
+      <pre><code style="font-size: 14px;" class="language-go">// Query executes CPUID natively.
+//
+// This implements Function.
+//
+//go:nosplit
+func (*Native) Query(in In) Out {
+	if int(in.Eax) < len(allowedBasicFunctions) && allowedBasicFunctions[in.Eax] {
+		return native(in)
+	} else if in.Eax >= uint32(extendedStart) {
+		if l := int(in.Eax - uint32(extendedStart)); l < len(allowedExtendedFunctions) && allowedExtendedFunctions[l] {
+			return native(in)
+		}
+	}
+	return Out{} // All zeros.
+}</code></pre>
+
+      <p>
+        In the above code, <code>Native.Query()</code> checks whether the
+        requested <code>CPUID</code> is in an allowlist. If allowed, it calls
+        <code>native()</code>, whose implementation
+        <a
+          href="https://github.com/google/gvisor/blob/cfb7c0629521099eb14d7bd86e9fbfa47287a640/pkg/cpuid/native_amd64.s#L17"
+        >
+          lives in the assembly file native_amd64.s</a
+        >. In this scenario, the source operand value <code>0x1</code> is put
+        into the <code>EAX</code> register, and when the
+        <code>CPUID</code> instruction is executed, the selected information is
+        returned in the <code>EAX</code>, <code>EBX</code>, <code>ECX</code>,
+        and <code>EDX</code> registers.
+      </p>
+
+      <pre><code style="font-size: 14px;" class="language-markup">TEXT ·native(SB),NOSPLIT|NOFRAME,$0-24
+	MOVL arg_Eax+0(FP), AX
+	MOVL arg_Ecx+4(FP), CX
+	CPUID
+	MOVL AX, ret_Eax+8(FP)
+	MOVL BX, ret_Ebx+12(FP)
+	MOVL CX, ret_Ecx+16(FP)
+	MOVL DX, ret_Edx+20(FP)
+	RET</code></pre>
+
+      <p>
+        The important thing to note here is that gVisor is not fabricating this
+        data, unlike the others. It is running the real
+        <code>CPUID</code> instruction. As for its runtime environment, a
+        hypothesis can be made that OpenAI's gVisor is running inside a
+        containerized environment managed by a hypervisor on a cloud
+        infrastructure. Notice how the <code>hypervisor</code> flag is set in
+        <code>/proc/cpuinfo</code>. Microsoft describes
+        <a
+          href="https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/feature-discovery"
+        >
+          this approach to hypervisor discovery
+        </a>
+        in its docs:
+      </p>
+
+      <blockquote>
+        Before using any hypervisor interfaces, software should first determine
+        whether it's running within a virtualized environment. On x64 platforms
+        that conform to this specification, this is done by executing the CPUID
+        instruction with an input (EAX) value of 1. Upon execution, code should
+        check bit 31 of register ECX (the “hypervisor present bit”). If this bit
+        is set, a hypervisor is present. In a non-virtualized environment, the
+        bit will be clear.
+      </blockquote>
+
+      <p>
+        In such a scenario, the hypervisor would intercept
+        <code>CPUID</code> and modify its results. Hypervisors "can" present a
+        fake CPU model - Chips and Cheese
+        <a href="https://chipsandcheese.com/p/why-you-cant-trust-cpuid"
+          >wrote a blog post describing this</a
+        >
+        back in 2022. Therefore, it is hard to say whether the underlying
+        hardware of the host might be Intel-based or not. The CPU family 6 and
+        model 79 themselves seem to correspond to the
+        <a href="https://openbenchmarking.org/s/Intel+Xeon+E5-2683+v4"
+          >Broadwell CPU family</a
+        >. It is rather old, being the
+        <a href="https://en.wikipedia.org/wiki/Broadwell_(microarchitecture)"
+          >fifth generation</a
+        >
+        of the Intel Core processor from 2014. A handy way to find out the
+        architecture correlated with a CPU family is by peeking at the constants
+        in Linux's source code at
+        <a
+          href="https://github.com/torvalds/linux/blob/master/arch/x86/include/asm/intel-family.h"
+          >linux/arch/x86/include/asm/intel-family.h</a
+        >
+        - "<code>#define INTEL_BROADWELL_X IFM(6, 0x4F)</code>"
+      </p>
+
+      <p>
+        There is another twist to this tale! When I asked it to run
+        <code>/proc/cpuinfo</code> - only a few hours apart -
+        <i>
+          I managed to get a completely different set of model numbers and
+          flags</i
+        >:
+      </p>
+
+      <pre><code style="font-size: 14px;" class="language-markup">.....
+vendor_id   : GenuineIntel
+cpu family  : 6
+model       : 106
+.....
+siblings    : 56
+cpu cores   : 56
+.....
+flags       : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov 
+pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm pni 
+pclmulqdq vmx ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt 
+tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm 
+3dnowprefetch fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid 
+rtm avx512f avx512dq rdseed adx smap clwb avx512cd sha_ni avx512bw avx512vl 
+xsaveopt xsavec xgetbv1 xsaves avx512vbmi umip avx512_vbmi2 gfni vaes 
+vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq la57 rdpid fsrm 
+arch_capabilities
+.....
+</code></pre>
+
+      <p>
+        This CPU model is relatively newer, and is based on the
+        <a href="https://en.wikipedia.org/wiki/Ice_Lake_(microprocessor)"
+          >Ice Lake</a
+        >
+        (Sunny Cove) family from 2019. This indicates that there are multiple
+        SKUs in the environment being mapped on a need-to basis. There is
+        something fascinating we can do here. <code>CPUID</code> is an
+        unprivileged instruction, not a syscall, and it executes in ring 3
+        without trapping the kernel. Therefore, we can create and execute a
+        small C program that invokes the <code>CPUID</code> instruction and
+        parses various processor details out of it.
+      </p>
+
+      <p>
+        Here is the program that I created with the help of Claude - the
+        underlying comments and explanations are my own.
+      </p>
+
+      <pre
+        style="height: 800px; overflow-y: scroll"
+      ><code style="font-size: 14px;" class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+
+static inline void cpuid_count(uint32_t leaf, uint32_t subleaf,
+                               uint32_t *eax, uint32_t *ebx,
+                               uint32_t *ecx, uint32_t *edx) {
+   /* 
+       Helper to execute a CPUID instruction.
+      
+       See https://wiki.osdev.org/Inline_Assembly for details on __asm__
+       This is inspired by https://wiki.osdev.org/CPUID#Using_CPUID_from_GCC
+
+       In the below code, a, b, c, d are termed as "constraints" and they tell where the C variable
+       should be mapped - in this case, to the registers eax, ebx, ecx, and edx.
+       For a complete list, see https://gcc.gnu.org/onlinedocs/gcc/Machine-Constraints.html
+      
+       As mentioned earlier in the blog, CPUID takes no parameters.
+       Instead, source operand value is placed in the EAX register - the "leaf".
+       Sometimes, the ECX register is also used to specify a "subleaf" for more detailed queries.
+   */
+   __asm__ __volatile__ (
+       "cpuid"
+       : "=a"(*eax), "=b"(*ebx), "=c"(*ecx), "=d"(*edx)
+       : "a"(leaf), "c"(subleaf)
+   );
+}
+
+int main(void) {
+   uint32_t eax, ebx, ecx, edx;
+
+   /* Wiki page is a great reference for CPUID information
+       https://en.wikipedia.org/wiki/CPUID
+   */
+
+   /* Max leaf number that the processor supports is in EAX */
+   cpuid_count(0x0, 0, &eax, &ebx, &ecx, &edx);
+   uint32_t max_leaf = eax;
+   printf("Max basic CPUID leaf: 0x%x\n", max_leaf);
+
+   /* CPU's manufacturer ID string (12 char ASCII) lives in EBX, EDX, ECX (in that order). */
+   char vendor[13];
+   *(uint32_t*)(vendor + 0) = ebx;
+   *(uint32_t*)(vendor + 4) = edx;
+   *(uint32_t*)(vendor + 8) = ecx;
+   vendor[12] = '\0';
+   printf("Vendor: %s\n", vendor);
+
+   /* Leaf 0x1:
+       Claude's intention behind drafting the below function was not fully accurate!
+
+       Here's why - Wikipedia tells me:
+           1. EBX[23:16]:
+               "Maximum number of addressable IDs for logical processors in this physical package"
+               What this means is - every LP needs a unique number so that system can address it.
+               This number is its APIC ID. By "addressable", it means a way to reach the LP by this ID number.
+               So, the Wiki sentence probably equates to the biggest number of APIC IDs the chip has set aside.
+
+               However, the bits for APIC ID seem to be allocated in powers of 2.
+               So, if the chip has 6 LPs, it would need to allocate 8 APIC IDs (0-7) to be able to address them.
+               So, the value in EBX[23:16] would be 8, not 6. The two reserved APIC IDs would just go unused.
+               Therefore, we can estimate an upper bound on the number of LPs, not the exact number.
+          
+           2. EDX[28]: HTT flag
+               This bit used to be about Hyper-Threading.
+               See this blog: https://www.os2museum.com/wp/htt-means-hyper-threading-right/
+               It says that: "As of October 2017, Intel now says: HTT:
+               Max APIC IDs reserved field is Valid. A value of 0 for HTT indicates
+               there is only a single logical processor in the package and software
+               should assume only a single APIC ID is reserved. A value of 1 for HTT
+               indicates the value in CPUID.1.EBX[23:16] (the Maximum number of addressable
+               IDs for logical processors in this package) is valid for the package."
+   */
+   cpuid_count(0x1, 0, &eax, &ebx, &ecx, &edx);
+   uint32_t logical_per_pkg = (ebx >> 16) & 0xFF;
+   int has_htt = (edx >> 28) & 1;
+   printf("\nLeaf 0x1:\n");
+   printf("  Max logical processors per package: %u\n", logical_per_pkg);
+   printf("  HTT flag: %d\n", has_htt);
+
+   /* Leaf 0x4: Deterministic Cache Parameters */
+   printf("\nLeaf 0x4 (Cache Topology):\n");
+   for (int i = 0; i < 16; i++) {
+       cpuid_count(0x4, i, &eax, &ebx, &ecx, &edx);
+       /* 5 bits for cache type
+           0 is no more caches, 1 is data cache, 2 is instruction cache,
+           3 is unified cache, 4-31 are reserved.
+       */
+       int cache_type = eax & 0x1F;
+       if (cache_type == 0) break;  /* no more caches */
+       int cache_level = (eax >> 5) & 0x7; /* 3 bits for cache level (1,2,3) */
+       /* Same as the APIC ID explanation from above
+           Wiki says: "Maximum number of addressable IDs for logical processors sharing this cache, minus 1"
+           So, after +1, this is the maximum number of addressable APIC IDs that tells us
+           the upper bound on the number of LPs sharing this one cache instance.
+           This is not a guarantee on the exact count either.
+       */
+       int max_threads_sharing = ((eax >> 14) & 0xFFF) + 1;
+       /*
+           Wiki says: "Maximum number of addressable IDs for processor cores in physical package, minus 1"
+           So, after +1, this is the maximum number of addressable APIC IDs that tells us
+           the upper bound on the count of "physical cores" in the package reported by this cache.
+       */
+       int max_cores_in_pkg = ((eax >> 26) & 0x3F) + 1;
+       int line_size = (ebx & 0xFFF) + 1;
+       /* Hierarchically cache is like: 
+           Cache contains "sets" - groups of cache lines.
+           Each "set" contains "ways" - the number of lines that can be stored in that set.
+           Each "way" contains a cache line of "line_size" bytes.
+           Partitions seem to be usually set to 1 - I do not fully understand them!
+           So, total cache size = ways * line_size * sets * partitions.
+       */
+       int partitions = ((ebx >> 12) & 0x3FF) + 1;
+       int ways = ((ebx >> 22) & 0x3FF) + 1;
+       int sets = ecx + 1;
+       int cache_size = ways * partitions * line_size * sets;
+       const char *types[] = {"Null","Data","Instruction","Unified"};
+       printf("  L%d %s: %d KB, %d-way, shared by %d threads, "
+              "max cores in pkg: %d\n",
+              cache_level,
+              cache_type < 4 ? types[cache_type] : "???",
+              cache_size / 1024, ways,
+              max_threads_sharing, max_cores_in_pkg);
+   }
+
+   /* Leaf 0xB: Extended Topology Enumeration */
+   printf("\nLeaf 0xB (Extended Topology):\n");
+   if (max_leaf >= 0xB) {
+       for (int level = 0; level < 8; level++) {
+           cpuid_count(0xB, level, &eax, &ebx, &ecx, &edx);
+           int level_type = (ecx >> 8) & 0xFF; /* 1 is SMT, 2 is Core */
+           if (level_type == 0) break;  /* 0 is invalid level */
+           /* It helps decode an x2APIC ID into (thread, core, package) coordinates
+           for the LP running the CPUID instruction.
+          
+           NOTE:
+           For a full proof solution - we have to enumerate the whole machine:
+           we can pin to each CPU (using say taskset) - then run CPUID on each to collect its
+           x2APIC ID - then use these shifts to slice the IDs and count distinct
+           cores/packages. I could not fully pull this off during my experimentation.
+           */
+           int shift = eax & 0x1F;
+           /* From Wiki - "the number of logical processors at the level queried is returned in EBX"
+               For example, at SMT level, threads per core might be 2,
+               at core level, LPs per package might be 16.
+           */
+           int num_logical = ebx & 0xFFFF;
+           /* x2apic_id is giving x2APIC ID of whichever LP is running the code rn
+               Wiki - "leaf Bh will return different values in EDX depending on which
+               logical processor the CPUID instruction runs; the value returned in
+               EDX is actually the x2APIC id of the logical processor."
+           */
+           uint32_t x2apic_id = edx;
+           const char *level_names[] = {"Invalid","SMT","Core"};
+           printf("  Level %d: type=%s(%d), logical_processors=%d, "
+                  "bit_shift=%d, x2APIC_ID=%u\n",
+                  level,
+                  level_type < 3 ? level_names[level_type] : "Unknown",
+                  level_type, num_logical, shift, x2apic_id);
+       }
+   } else {
+       printf("  Not supported (max leaf < 0xB)\n");
+   }
+
+   /* Leaf 0x1F: V2 Extended Topology (newer Intel)
+       Not much useful info for this blog
+   */
+   printf("\nLeaf 0x1F (V2 Extended Topology):\n");
+   if (max_leaf >= 0x1F) {
+       for (int level = 0; level < 8; level++) {
+           cpuid_count(0x1F, level, &eax, &ebx, &ecx, &edx);
+           int level_type = (ecx >> 8) & 0xFF;
+           if (level_type == 0) break;
+           int shift = eax & 0x1F;
+           int num_logical = ebx & 0xFFFF;
+           printf("  Level %d: type=%d, logical_processors=%d, "
+                  "bit_shift=%d\n",
+                  level, level_type, num_logical, shift);
+       }
+   } else {
+       printf("  Not supported (max leaf < 0x1F)\n");
+   }
+
+   /* Leaf 0x40000000: Hypervisor Detection
+       From Wiki:
+       "When the CPUID instruction is executed under Intel VT-x or AMD-v virtualization,
+       it will be intercepted by the hypervisor, enabling the hypervisor to return CPUID feature
+       flags that differ from those of the underlying hardware.
+       .....
+       For leaf 40000000h, the hypervisor is expected to return the index of the highest supported
+       hypervisor CPUID leaf in EAX, and a 12-character hypervisor ID string in EBX,ECX,EDX (in that order).
+       "
+   */
+   printf("\nLeaf 0x40000000 (Hypervisor ID):\n");
+   cpuid_count(0x40000000, 0, &eax, &ebx, &ecx, &edx);
+   if (eax != 0 || ebx != 0 || ecx != 0 || edx != 0) {
+       char hv_id[13];
+       *(uint32_t*)(hv_id+0) = ebx;
+       *(uint32_t*)(hv_id+4) = ecx;
+       *(uint32_t*)(hv_id+8) = edx;
+       hv_id[12] = '\0';
+       printf("  Hypervisor ID: %s\n", hv_id);
+       printf("  Max hypervisor leaf: 0x%x\n", eax);
+   } else {
+       printf("  All zeros (blocked by gVisor allowlist or "
+              "no hypervisor leaf)\n");
+   }
+
+   return 0;
+}
+</code></pre>
+
+      <p>
+        On executing this once in the presence of CPU family 6 and model 106,
+        the ChatGPT container provided the following output:
+      </p>
+
+      <pre><code style="font-size: 14px;" class="language-markup">Max basic CPUID leaf: 0x1b
+Vendor: GenuineIntel
+
+Leaf 0x1:
+  Max logical processors per package: 32
+  HTT flag: 1
+
+Leaf 0x4 (Cache Topology):
+  L1 Data: 48 KB, 12-way, shared by 2 threads, max cores in pkg: 16
+  L1 Instruction: 32 KB, 8-way, shared by 2 threads, max cores in pkg: 16
+  L2 Unified: 1280 KB, 20-way, shared by 2 threads, max cores in pkg: 16
+  L3 Unified: 49152 KB, 12-way, shared by 32 threads, max cores in pkg: 16
+
+Leaf 0xB (Extended Topology):
+  Level 0: type=SMT(1), logical_processors=2, bit_shift=1, x2APIC_ID=38
+  Level 1: type=Core(2), logical_processors=32, bit_shift=5, x2APIC_ID=38
+
+Leaf 0x1F (V2 Extended Topology):
+  Not supported (max leaf < 0x1F)
+
+Leaf 0x40000000 (Hypervisor ID):
+  Hypervisor ID: Microsoft Hv
+  Max hypervisor leaf: 0x4000000b</code></pre>
+
+      <p>
+        <i>There is a tremendous amount of information to unpack here!</i>
+        "<code>Microsoft Hv</code>" is the Hyper-V signature. This strongly
+        indicates that OpenAI is running their container environment on Azure.
+        Based on
+        <a
+          href="https://spec.org/cpu2017/results/res2021q2/cpu2017-20210608-26983.html"
+        >
+          this SPEC CPU result</a
+        >, the cache geometry itself seems to match the Ice Lake (Sunny Cove)
+        family - <i>Intel Xeon Gold 6338</i>. The above
+        <code>CPUID</code> output shows us 32 LPs and 2 threads per core, which
+        means 16 physical cores per package. It is important to stress that this
+        <code>CPUID</code> program only ran on one LP; therefore, it only
+        reported the topology of its own package (32 LPs). We cannot directly
+        tell the total number of LPs in the host, or tell how many packages
+        exist from the above output.
+      </p>
+
+      <p>
+        One might also wonder, for this cache geometry, Intel Xeon Gold 6338 is
+        supposed to have 32 cores per socket / 64 threads, so why are we only
+        seeing 32 LPs? I believe the answer possibly lies with the container
+        host allocation. The container host was handed 32 of those threads (16
+        cores worth). Therefore, it is not getting a whole socket, but a slice,
+        because that is the quota the hypervisor carved out for the VM. In this
+        case, the hypervisor does not seem to resize the cache geometry (I am
+        not sure what the industry practice is) - which is why we see the real
+        chip's 48 MB L3, 1.25 MB L2, and 48 KB L1d.
+      </p>
+
+      <p>
+        Note that the gVisor codepath to determine the number of cores for
+        <code>/proc/cpuinfo</code>
+        <a
+          href="https://github.com/google/gvisor/blob/cfb7c0629521099eb14d7bd86e9fbfa47287a640/pkg/sentry/fsimpl/proc/tasks.go#L284"
+          >comes from tasks.go</a
+        >:
+      </p>
+
+      <pre><code style="font-size: 14px;" class="language-go">func cpuInfoData(k *kernel.Kernel) string {
+	features := k.FeatureSet()
+	var buf bytes.Buffer
+	for i, max := uint(0), k.ApplicationCores(); i < max; i++ {
+		features.WriteCPUInfoTo(i, max, &buf)
+	}
+	return buf.String()
+}</code></pre>
+
+      <p>
+        This in turn seems to
+        <a
+          href="https://github.com/google/gvisor/blob/cfb7c0629521099eb14d7bd86e9fbfa47287a640/runsc/boot/loader.go#L157"
+          >rely on loader.go's</a
+        >
+        <code>ApplicationCores</code> initialization:
+      </p>
+
+      <pre><code style="font-size: 14px;" class="language-go">	// applicationCores is the number of CPU cores gVisor reports to user
+	// applications.
+	applicationCores int
+....
+	l.root = containerInfo{
+		cid:                args.ID,
+		containerName:      containerName,
+		conf:               args.Conf,
+		spec:               args.Spec,
+		goferMountConfs:    args.GoferMountConfs,
+		nvidiaHostSettings: args.NvidiaHostSettings,
+		applicationCores:   args.NumCPU,
+	}</code></pre>
+
+      <p>
+        The NumCPU itself
+        <a
+          href="https://github.com/google/gvisor/blob/cfb7c0629521099eb14d7bd86e9fbfa47287a640/runsc/boot/loader.go#L529"
+          >is initialized as</a
+        >:
+      </p>
+      <pre><code style="font-size: 14px;" class="language-go">	if args.NumCPU == 0 {
+		args.NumCPU = runtime.NumCPU()
+	}</code></pre>
+
+      <p>
+        Given all that we have seen so far, there are two plausible explanations
+        for the original 56 LP finding:
+      </p>
+      <ol>
+        <li>
+          OpenAI passes an explicit NumCPU argument (see
+          <code>loader.go</code> above) to the gVisor sandbox.
+        </li>
+        <li>
+          OpenAI does not pass anything explicit and falls back on
+          <code>runtime.NumCPU()</code> - which would show
+          <code>nproc=56</code> when gVisor is running inside a container host
+          that has 56 LPs in its cpuset, for instance, with two NUMA nodes. And
+          given that the CPUID program only ran on one LP, it only reported the
+          topology of its own package; the topology could consist of a package
+          that contributes 32 LPs and another that contributes 24 LPs.
+        </li>
+      </ol>
+
+      <p>
+        Across multiple re-runs of the above C code, I have not stumbled upon a
+        24 LP package - so I cannot say that it appears to be the case. To
+        quantify how many actual cores of compute are available, we can ask
+        ChatGPT to run a simple CPU parallelism benchmark as follows:
+      </p>
+
+      <pre
+        style="height: 800px; overflow-y: scroll"
+      ><code style="font-size: 14px;" class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;pthread.h&gt;
+#include &lt;time.h&gt;
+#include &lt;unistd.h&gt;
+
+#define ITERATIONS 500000000L
+
+static void *burn(void *arg) {
+   (void)arg;
+   volatile long x = 0;
+   for (long i = 0; i < ITERATIONS; i++) {
+       x += i;
+   }
+   return NULL;
+}
+
+static double now(void) {
+   struct timespec ts;
+   clock_gettime(CLOCK_MONOTONIC, &ts);
+   return ts.tv_sec + ts.tv_nsec * 1e-9;
+}
+
+int main(void) {
+   /*
+       Reads from /sys/devices/system/cpu/online
+       See: https://github.com/bminor/glibc/blob/master/sysdeps/unix/sysv/linux/getsysstats.c#L214
+       Falls back to /proc/stat and sched_getaffinity
+   */
+   int max_cores = sysconf(_SC_NPROCESSORS_ONLN);
+
+   /* Single-threaded busy loop for baseline time */
+   double t0 = now();
+   burn(NULL);
+   double single = now() - t0;
+   printf("Cores reported: %d\n", max_cores);
+   printf("Single-thread:  %.2fs\n\n", single);
+
+   /* Spawn across 1, 2, 4, ..., max_cores */
+   int counts[32];
+   int n = 0;
+   for (int c = 1; c <= max_cores; c *= 2)
+       counts[n++] = c;
+   if (counts[n-1] != max_cores)
+       counts[n++] = max_cores;
+
+   for (int t = 0; t < n; t++) {
+       int nthreads = counts[t];
+       pthread_t *tids = malloc(nthreads * sizeof(pthread_t));
+
+       double t0 = now();
+       for (int i = 0; i < nthreads; i++)
+           pthread_create(&tids[i], NULL, burn, NULL);
+       for (int i = 0; i < nthreads; i++)
+           pthread_join(tids[i], NULL);
+       double wall = now() - t0;
+
+       /*
+       Calculates the speedup -
+       if N threads each doing the same amount of work finished in the same time as single thread,
+       then the parallelism is N. If it is much less than N, then we can say that we have much less
+       real concurrncy than what the OS is reporting.
+       */
+       double effective = (single * nthreads) / wall;
+       printf("%2d threads: wall=%7.2fs  effective_parallelism=%.1f\n",
+              nthreads, wall, effective);
+
+       free(tids);
+   }
+
+   return 0;
+}</code></pre>
+
+      <p>
+        In the above code, we start by running a single-threaded busy loop (with
+        500M iterations) to establish a baseline time. Next, we spawn the same
+        busy loop workload across 1, 2, 4, 8, … up to max threads. If N threads
+        are each doing the same amount of work and finish in the same time as a
+        single thread, then the parallelism is N. If it is much less than N,
+        then we can say that we have less real concurrency than what the OS is
+        reporting.
+      </p>
+
+      <p>
+        ChatGPT compiled the code as
+        <code>cc -O2 -pthread /tmp/cpu_burn.c -o /tmp/cpu_burn</code> and
+        produced the following output:
+      </p>
+
+      <pre><code style="font-size: 14px;" class="language-markup">Cores reported: 56
+Single-thread: 0.92s
+
+1 threads: wall= 0.92s effective_parallelism=1.0
+2 threads: wall= 0.92s effective_parallelism=2.0
+4 threads: wall= 0.94s effective_parallelism=3.9
+8 threads: wall= 2.02s effective_parallelism=3.6
+16 threads: wall= 3.85s effective_parallelism=3.8
+32 threads: wall= 8.25s effective_parallelism=3.6
+56 threads: wall= 14.82s effective_parallelism=3.5
+</code></pre>
+
+      <p>
+        Note that I ran the above code across multiple days and observed similar
+        results. From the output attached above, the pattern is clear. For up to
+        4 threads, the wall time stays flat at around 0.92-0.94 seconds,
+        indicative of true parallel execution. However, at 8 threads and beyond,
+        the wall time jumps to 2.02+ seconds. This suggests that the system only
+        has about ~4 actual cores available, and beyond that point, the system
+        is contending for resources. This seems to suggest that there might be a
+        hard CPU quota in place. As a point of comparison, here is the output
+        from my MacBook Pro running an
+        <a href="https://en.wikipedia.org/wiki/Apple_M2">M2 Pro chip</a>:
+      </p>
+
+      <pre><code style="font-size: 14px;" class="language-markup">[8:16:39][hello-world] cc -O2 -pthread testing2.c  -o testing2
+[8:17:06][hello-world] ./testing2
+Cores reported: 12
+Single-thread:  0.17s
+
+ 1 threads: wall=   0.15s  effective_parallelism=1.1
+ 2 threads: wall=   0.15s  effective_parallelism=2.2
+ 4 threads: wall=   0.17s  effective_parallelism=4.0
+ 8 threads: wall=   0.18s  effective_parallelism=7.4
+12 threads: wall=   0.26s  effective_parallelism=7.7
+[8:17:10][hello-world]</code></pre>
+
+      <p>
+        The 12-core M2 Pro CPU has 8 performance cores and 4 efficiency cores.
+        Therefore, up to 8 threads, the scaling is nearly perfect, which
+        indicates that all the threads land on the fast performance cores. Then
+        at 12 threads, the wall time jumps to 0.26 seconds and the speedup
+        remains at 7.7 < 8 - indicating that the efficiency cores become highly
+        active at that point.
+      </p>
+
+      <p>
+        <i>Let us now shift our focus to the 4 GB RAM argument.</i> To answer
+        this, we start by probing its environment. Asking ChatGPT to execute
+        <code>free -h</code> gets us the following output:
+      </p>
+
+      <pre><code style="font-size: 14px;" class="language-markup">total used free shared buff/cache available
+Mem: 4.0Gi 703Mi 3.3Gi 0B 255Mi 3.3Gi
+Swap: 0B 0B 0B
+</code></pre>
+
+      <p>Moreover, <code>cat /proc/meminfo</code> shows the following:</p>
+      <pre><code style="font-size: 14px;" class="language-markup">MemTotal: 4194304 kB
+MemFree: 3475112 kB
+MemAvailable: 3475112 kB
+Buffers: 0 kB
+Cached: 260188 kB
+SwapCache: 0 kB
+Active: 589084 kB
+Inactive: 130096 kB
+Active(anon): 458992 kB
+Inactive(anon): 0 kB
+Active(file): 130092 kB
+Inactive(file): 130096 kB
+Unevictable: 0 kB
+Mlocked: 0 kB
+SwapTotal: 0 kB
+SwapFree: 0 kB
+Dirty: 0 kB
+Writeback: 0 kB
+AnonPages: 458992 kB
+Mapped: 260188 kB
+Shmem: 0 kB
+</code></pre>
+
+      <p>
+        The headline is that the memory limit is exactly 4 GiB
+        (4194304/1024/1024)! To understand gVisor's memory model better, I found
+        <a href="https://gvisor.dev/docs/architecture_guide/resources/"
+          >their Resource Model guide</a
+        >
+        to be a good start:
+      </p>
+
+      <blockquote>
+        The host is able to manage physical memory using regular means (e.g.
+        tracking working sets, reclaiming and swapping under pressure). The
+        Sentry lazily populates host mappings for applications, and allow the
+        host to demand-page those regions, which is critical for the functioning
+        of those mechanisms. <br />
+        The Sentry implements its own memory management, including demand-paging
+        and a Sentry internal page cache for files that cannot be used natively.
+        A single memfd backs all application memory. .....<br />
+        Therefore, memory usage statistics within the sandbox (e.g. via proc)
+        are approximations. The Sentry maintains an internal breakdown of memory
+        usage, and can collect accurate information but only through a
+        relatively expensive API call. .....
+      </blockquote>
+
+      <p>
+        Sentry's memory management documentation describes the working in
+        greater detail. It has this to say as to
+        <a
+          href="https://github.com/google/gvisor/blob/master/pkg/sentry/mm/README.md"
+        >
+          why gVisor needs memfd at all</a
+        >:
+      </p>
+
+      <blockquote>
+        When the application first incurs a page fault on ..... address, the
+        host kernel delivers information about the page fault to the sentry in a
+        platform-dependent manner, and the sentry handles the fault ..... The
+        sentry allocates memory to store the contents of the required part of
+        the file, and copies file contents to the allocated memory. However,
+        since the sentry is implemented atop a host kernel, it does not
+        configure mappings to physical memory directly. Instead, mappable
+        "memory" in the sentry is represented by a host file descriptor and
+        offset, since ..... this is the memory mapping primitive provided by the
+        host kernel. In general, memory is allocated from a temporary host file
+        using the pgalloc package.
+      </blockquote>
+
+      <p>
+        Intuitively, say an application wants to read a mapped file for the
+        first time. To do this, it may need to get the file's contents from
+        disk. However, disk IO can be slow, and many processes might be mapping
+        the same file. For this, the Linux kernel maintains a filemap (also
+        known as a
+        <a
+          href="https://bjohnson.lmu.build/cmsi387web/week07.html"
+          >page cache</a
+        >), which stores physical pages in memory holding disk contents. Now, if
+        a new process wants to map a file that is already mapped, it can reuse
+        the same physical pages. To do this, the kernel creates a
+        <a href="https://docs.kernel.org/mm/page_tables.html">
+          Page Table Entry
+        </a>
+        (PTE) in the new process' page tables pointing to the already mapped
+        page frame. Unfortunately, gVisor cannot configure mappings to physical
+        memory directly because it is not a kernel; it is a mere regular program
+        running in userspace.
+      </p>
+
+      <p>
+        To mitigate this limitation, Sentry creates and manages a memory mapped
+        file (<code>memfd</code>). This ties back to what the Resource Model
+        guide mentioned - "A single memfd backs all application memory". When an
+        application running in a gVisor environment needs memory, the Sentry
+        allocates an offset from this <code>memfd</code> and asks the host to
+        map it into the application's address space using <code>mmap</code>. The
+        host then handles allocating physical memory and installing page table
+        entries.
+      </p>
+
+      <p>
+        So how does this connect to the 4 GiB memory number? My understanding is
+        that the container runtime sets the memory limit - something like "<code
+          >docker run</code
+        >" with
+        <a
+          href="https://docs.docker.com/engine/containers/resource_constraints/"
+          ><code>--memory=4g</code></a
+        >. During sandbox creation, gVisor's <code>runsc</code> reads this limit
+        and passes it as a
+        <code>--total-memory</code>
+        argument
+        <a href="https://github.com/google/gvisor/issues/5191"
+          >during boot time</a
+        >.
+        <a
+          href="https://github.com/google/gvisor/blob/cfb7c0629521099eb14d7bd86e9fbfa47287a640/runsc/cmd/boot.go#L251"
+          >From runsc/cmd/boot.go</a
+        >:
+      </p>
+
+      <pre><code style="font-size: 14px;" class="language-go">	f.Uint64Var(&b.totalMem, "total-memory", 0, "sets the initial amount of total memory to report back to the container")
+</code></pre>
+
+      <p>
+        This value then flows into
+        <a
+          href="https://github.com/google/gvisor/blob/cfb7c0629521099eb14d7bd86e9fbfa47287a640/runsc/boot/loader.go#L665"
+          >runsc/boot/loader.go</a
+        >, where both the minimum and maximum memory are pinned to the same
+        number:
+      </p>
+
+      <pre><code style="font-size: 14px;" class="language-go">if args.TotalMem > 0 {
+		// Adjust the total memory returned by the Sentry so that applications that
+		// use /proc/meminfo can make allocations based on this limit.
+		usage.MinimumTotalMemoryBytes = args.TotalMem
+		usage.MaximumTotalMemoryBytes = args.TotalMem
+		log.Infof("Setting total memory to %.2f GB", float64(args.TotalMem)/(1<<30))
+	}
+</code></pre>
+
+      <p>
+        This is the ceiling. Before allocating from <code>memfd</code>, gVisor's
+        memory allocator checks against this limit to deal with potential memory
+        pressure. The entire <code>/proc/meminfo</code> output itself is
+        constructed by a <code>Generate()</code> call in
+        <a
+          href="https://github.com/google/gvisor/blob/cfb7c0629521099eb14d7bd86e9fbfa47287a640/pkg/sentry/fsimpl/proc/tasks_files.go#L272"
+          >pkg/sentry/fsimpl/proc/tasks_files.go</a
+        >:
+      </p>
+
+      <pre><code style="font-size: 14px;" class="language-go">func (*meminfoData) Generate(ctx context.Context, buf *bytes.Buffer) error {
+	mf := kernel.KernelFromContext(ctx).MemoryFile()
+....
+	snapshot, totalUsage := usage.MemoryAccounting.Copy()
+	totalSize := usage.TotalMemory(mf.TotalSize(), totalUsage)
+	anon := snapshot.Anonymous + snapshot.Tmpfs
+	file := snapshot.PageCache + snapshot.Mapped
+	// We don't actually have active/inactive LRUs, so just make up numbers.
+	activeFile := (file / 2) &^ (hostarch.PageSize - 1)
+	inactiveFile := file - activeFile
+
+	fmt.Fprintf(buf, "MemTotal:       %8d kB\n", totalSize/1024)
+	memFree := totalSize - totalUsage
+	if memFree > totalSize {
+		// Underflow.
+		memFree = 0
+	}
+	dirty, writeback := usage.DirtyMemoryAccounting.Copy()
+	// We use MemFree as MemAvailable because we don't swap.
+	// TODO(rahat): When reclaim is implemented the value of MemAvailable
+	// should change.
+	fmt.Fprintf(buf, "MemFree:        %8d kB\n", memFree/1024)
+	fmt.Fprintf(buf, "MemAvailable:   %8d kB\n", memFree/1024)
+	fmt.Fprintf(buf, "Buffers:               0 kB\n") // memory usage by block devices
+	fmt.Fprintf(buf, "Cached:         %8d kB\n", (file+snapshot.Tmpfs)/1024)
+	// Emulate a system with no swap, which disables inactivation of anon pages.
+	fmt.Fprintf(buf, "SwapCache:             0 kB\n")
+....
+</code></pre>
+
+      <p>
+        Notice the <code>TotalMemory()</code> call used to fetch the
+        <code>totalSize</code>! Since <code>loader.go</code> pinned both
+        <code>MinimumTotalMemoryBytes</code> and
+        <code>MaximumTotalMemoryBytes</code> to the same value, the
+        <code>TotalMemory()</code> call returns exactly that value.
+      </p>
+
+      <p>
+        <i>So, can we push the ChatGPT container to its memory limit?</i> Yes,
+        we certainly can! Here is a simple benchmarking program I worked on with
+        Claude for this:
+      </p>
+
+      <pre><code style="font-size: 14px;" class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+#define CHUNK_SIZE (64 * 1024 * 1024)
+
+int main(void) {
+    size_t total = 0;
+    int chunk_num = 0;
+
+    while (1) {
+        void *p = malloc(CHUNK_SIZE);
+        if (!p) {
+            printf("malloc failed after %zu MB\n", total / (1024 * 1024));
+            break;
+        }
+        memset(p, 0xAA, CHUNK_SIZE);
+        total += CHUNK_SIZE;
+        chunk_num++;
+        printf("Allocated chunk %d: %zu MB total\n", chunk_num, total / (1024 * 1024));
+    }
+
+    return 0;
+}</code></pre>
+
+      <p>
+        In the above code, we keep requesting a chunk of 64 MiB memory in an
+        infinite loop. Then, we invoke <code>memset</code>, filling every byte
+        of the chunk with <code>0xAA</code>. This forces the pages to be
+        faulted, which triggers demand paging, and real physical memory gets
+        committed to it. When we ask ChatGPT to compile and run this code in
+        their container environment, we see:
+      </p>
+
+      <pre><code style="font-size: 14px;" class="language-markup">gcc /mnt/data/stress_mem.c -o /mnt/data/stress_mem
+
+Allocated chunk 1: 64 MB total
+Allocated chunk 2: 128 MB total
+Allocated chunk 3: 192 MB total
+Allocated chunk 4: 256 MB total
+.....
+Allocated chunk 54: 3456 MB total
+Allocated chunk 55: 3520 MB total
+waiting on pid 2115: waiting on PID 2115 in sandbox "15106c3c82eff48f6b3632901190e00fbfdf20999be8c65c06fba1a74007f5de": 
+urpc method "containerManager.WaitPID" failed: EOF
+.....
+failed with status 128.</code></pre>
+
+      <p>
+        <i>The process died at 3520 MB!</i> What's fascinating is that the
+        sandbox environment crashed and the entire file system was wiped too,
+        <a href="https://www.digitalocean.com/community/questions/getting-the-following-error-waiting-on-pid-xxx-in-sandbox-xxxxx-sandbox-urpc-method-containermanager-waitpid-failed-eof">likely due to an OOM kill</a>. ChatGPT validates this in its thinking
+        messages:
+      </p>
+
+      <blockquote>
+        <i>
+          bash -lc echo alive; ls -l /mnt/data/stress_mem.runlog
+          /mnt/data/stress_mem 2>&1 || true; tail -n 10
+          /mnt/data/stress_mem.runlog 2>/dev/null | cat -vet <br />
+          <hr />
+
+          alive<br />
+          ls: cannot access '/mnt/data/stress_mem.runlog': No such file or
+          directory <br />
+          ls: cannot access '/mnt/data/stress_mem': No such file or directory </i
+        ><br />
+        <hr />
+        Investigating potential container crash and command failure: The tool
+        failed with an EOF error, possibly due to the container crashing or
+        restarting. I'll check if the file exists and inspect the error status
+        (128). The stress process might've caused the container to be killed. I
+        need to determine whether the container survived and try some commands
+        to investigate further. <br />
+        Investigating container reset and process failure: It seems the
+        container reset, causing file loss. The process output was captured
+        until an EOF occurred after chunk 55 .....
+      </blockquote>
+
+      <p>
+        It was funny to see ChatGPT's own reasoning get confused about this; it
+        performed a re-run only to see this exact issue pop up again. This
+        concretely validates that the 4 GB limit is real and enforceable.
+      </p>
+
+      <p>
+        So, in summary, ChatGPT containers have a pretty nifty compute capacity
+        for a $20 price point - ~4 effective LPs and 4 GB total RAM (~3.5 GB
+        available after sandbox overhead). One could make a strawman argument
+        here saying that a 2 LP and 4 GB RAM VPS
+        <a
+          href="https://www.akamai.com/cloud/pricing#tabs-270b40e919-item-8532f0ffbe-tab"
+          >on Linode costs $0.07/hr</a
+        >. However, an important point to note is that their container
+        environment design philosophy seems to mimic a "<i>bursty-traffic</i>"
+        pattern. They expect a significant delay between two successive
+        container runs per user per session - as it is likely that the user will
+        pause and evaluate the previous runtime response. This can be seconds or
+        even a few minutes. It helps them reallocate their compute capacity
+        elsewhere, reducing the stress on their system. Not to mention the fact
+        that according to their own report "<a
+          href="https://cdn.openai.com/pdf/a253471f-8260-40c6-a2cc-aa93fe9f142e/economic-research-chatgpt-usage-paper.pdf"
+          >How People Use ChatGPT</a
+        >" from September 2025 - only 5-8% of their users use ChatGPT for
+        technical help (3% mathematical calculation, 0.4% data analysis, and
+        4.2% programming). This includes people who use it for common use cases
+        such as code writing, technical information, and getting debugging
+        steps. OpenAI's free non-login account does not have a container
+        environment; however, Simon Willison did mention that
+        <a href="https://news.ycombinator.com/item?id=46772159">
+          their free sign-in account
+        </a>
+        briefly showed the container instance working.
+      </p>
+
+      <p>
+        Purely out of fun, I performed some napkin math to calculate the compute
+        required to support their "paid" users - however, I would strongly take
+        these numbers with a grain of salt.
+        <i>Wild wild west territory ahead</i>!
+      </p>
+
+      <p>
+        <i>
+          As of June 6, 2026, ChatGPT has
+          <a
+            href="https://www.reuters.com/business/openai-plans-chatgpt-superapp-overhaul-ahead-listing-ft-reports-2026-06-07/"
+            >around 50 million paid subscribers</a
+          >. OpenAI's paper reports that ChatGPT saw 18B messages/week from 700M
+          weekly users in July 2025. That would be 18B/700M/7days or 3.67
+          messages per weekly active user per day. With around 50 million paying
+          users, a technical help share of 5-8%, and assuming that 20% of those
+          technical help messages require a fresh container start, the math for
+          container starts per day would be 3.67 * (5 to 8)/100 * 50 * 20/100 or
+          1.84M to 2.93M container starts per day. Assuming a 5-minute average
+          container lifetime, that implies about (1.84M to 2.93M)/86400 * 5 * 60
+          or 6,388 to 10,173 concurrent container environments. Even if the
+          technical users are 2x as active, the estimate rises to about ~20k
+          concurrent container environments.
+        </i>
+      </p>
+
+      <p>
+        The advent of local tool-calling and agentic CLI tools like Claude Code
+        might have prevented the use of web-based containers from exploding too.
+      </p>
+
+      <p>
+        And that's it folks! Truth be told, the source material I have used for
+        this blog is only about half of what I wanted to cover. There's a lot
+        more - particularly on ChatGPT's internal container process architecture
+        itself and its comparison with Claude. Maybe that's something for a
+        future blog post! Nevertheless, I would like to end this blog with a
+        little treat - I ran some miscellaneous performance benchmarks on the
+        ChatGPT container (CPU family 6 and model 106).
+      </p>
+
+      <h2>Appendix: Performance Benchmarks</h2>
+
+      <p><i>openssl speed -evp aes-256-gcm</i></p>
+
+      <pre><code style="font-size: 14px;" class="language-markup">Doing AES-256-GCM ops for 3s on 16 size blocks: 7850484 AES-256-GCM ops in 2.76s
+Doing AES-256-GCM ops for 3s on 64 size blocks: 7425164 AES-256-GCM ops in 2.76s
+Doing AES-256-GCM ops for 3s on 256 size blocks: 6474438 AES-256-GCM ops in 2.74s
+Doing AES-256-GCM ops for 3s on 1024 size blocks: 4320136 AES-256-GCM ops in 2.77s
+Doing AES-256-GCM ops for 3s on 8192 size blocks: 1105169 AES-256-GCM ops in 2.78s
+Doing AES-256-GCM ops for 3s on 16384 size blocks: 621248 AES-256-GCM ops in 2.79s
+version: 3.5.5
+built on: Fri Apr  3 10:05:32 2026 UTC
+options: bn(64,64)
+compiler: gcc -fPIC -pthread -m64 -Wa,--noexecstack -Wall -fzero-call-used-regs=used-gpr -Wa,--noexecstack -g -O2 -Werror=implicit-function-declaration -ffile-prefix-map=/build/reproducible-path/openssl-3.5.5=. -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -DOPENSSL_USE_NODELETE -DL_ENDIAN -DOPENSSL_PIC -DOPENSSL_BUILDING_OPENSSL -DZLIB -DZSTD -DNDEBUG -Wdate-time -D_FORTIFY_SOURCE=2
+CPUINFO: OPENSSL_ia32cap=0xfeda32235f8bffff:0x00000000d09f2fb9:0x0000000000000400:0x0000000000000000:0x0000000000000000
+The 'numbers' are in 1000s of bytes per second processed.
+type             16 bytes     64 bytes    256 bytes   1024 bytes   8192 bytes  16384 bytes
+AES-256-GCM      45510.05k   172177.72k   604911.00k  1597046.67k  3256670.66k  3648217.65k
+</code></pre>
+
+      <p><i>openssl speed -evp sha256</i></p>
+
+      <pre><code style="font-size: 14px;" class="language-markup">Doing sha256 ops for 3s on 16 size blocks: 6709147 sha256 ops in 2.78s
+Doing sha256 ops for 3s on 64 size blocks: 4220561 sha256 ops in 2.78s
+Doing sha256 ops for 3s on 256 size blocks: 2170586 sha256 ops in 2.78s
+Doing sha256 ops for 3s on 1024 size blocks: 753920 sha256 ops in 2.78s
+Doing sha256 ops for 3s on 8192 size blocks: 106457 sha256 ops in 2.78s
+Doing sha256 ops for 3s on 16384 size blocks: 54091 sha256 ops in 2.78s
+version: 3.5.5
+built on: Fri Apr  3 10:05:32 2026 UTC
+options: bn(64,64)
+compiler: gcc -fPIC -pthread -m64 -Wa,--noexecstack -Wall -fzero-call-used-regs=used-gpr -Wa,--noexecstack -g -O2 -Werror=implicit-function-declaration -ffile-prefix-map=/build/reproducible-path/openssl-3.5.5=. -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -DOPENSSL_USE_NODELETE -DL_ENDIAN -DOPENSSL_PIC -DOPENSSL_BUILDING_OPENSSL -DZLIB -DZSTD -DNDEBUG -Wdate-time -D_FORTIFY_SOURCE=2
+CPUINFO: OPENSSL_ia32cap=0xfeda32235f8bffff:0x00000000d09f2fb9:0x0000000000000400:0x0000000000000000:0x0000000000000000
+The 'numbers' are in 1000s of bytes per second processed.
+type             16 bytes     64 bytes    256 bytes   1024 bytes   8192 bytes  16384 bytes
+sha256           38613.80k    97163.99k   199881.30k   277702.91k   313703.51k   318786.67k
+</code></pre>
+
+      <p>
+        <i>openssl speed rsa2048</i> - this one kept timing out! ChatGPT
+        optimized the timeout duration and got the following output:
+      </p>
+      <pre><code style="font-size: 14px;" class="language-markup">Doing 2048 bits private rsa sign ops for 10s: 10786 2048 bits private RSA sign ops in 9.25s
+Doing 2048 bits public rsa verify ops for 10s: 369602 2048 bits public RSA verify ops in 9.24s
+Doing 2048 bits public rsa encrypt ops for 10s: 192752 2048 bits public RSA encrypt ops in 9.25s
+Doing 2048 bits private rsa decrypt ops for 10s: 10452 2048 bits private RSA decrypt ops in 9.24s
+Doing rsa2048 keygen ops for 10s: 130 rsa2048 KEM keygen ops in 9.33s
+Doing rsa2048 encaps ops for 10s: 196362 rsa2048 KEM encaps ops in 9.41s
+Doing rsa2048 decaps ops for 10s: 10547 rsa2048 KEM decaps ops in 9.24s
+Doing rsa2048 keygen ops for 10s: 121 rsa2048 signature keygen ops in 9.43s
+Doing rsa2048 signs ops for 10s: 10879 rsa2048 signature sign ops in 9.25s
+Doing rsa2048 verify ops for 10s: 374018 rsa2048 signature verify ops in 9.26s
+version: 3.5.5
+built on: Fri Apr  3 10:05:32 2026 UTC
+options: bn(64,64)
+compiler: gcc -fPIC -pthread -m64 -Wa,--noexecstack -Wall -fzero-call-used-regs=used-gpr -Wa,--noexecstack -g -O2 -Werror=implicit-function-declaration -ffile-prefix-map=/build/reproducible-path/openssl-3.5.5=. -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -DOPENSSL_USE_NODELETE -DL_ENDIAN -DOPENSSL_PIC -DOPENSSL_BUILDING_OPENSSL -DZLIB -DZSTD -DNDEBUG -Wdate-time -D_FORTIFY_SOURCE=2
+CPUINFO: OPENSSL_ia32cap=0xfeda32235f8bffff:0x00000000d09f2fb9:0x0000000000000400:0x0000000000000000:0x0000000000000000
+                   sign    verify    encrypt   decrypt   sign/s verify/s  encr./s  decr./s
+rsa  2048 bits 0.000858s 0.000025s 0.000048s 0.000884s   1166.1  40000.2  20838.1   1131.2
+                               keygen    encaps    decaps keygens/s  encaps/s  decaps/s
+                    rsa2048 0.071769s 0.000048s 0.000876s      13.9   20867.4    1141.5
+                               keygen     signs    verify keygens/s    sign/s  verify/s
+                    rsa2048 0.077934s 0.000850s 0.000025s      12.8    1176.1   40390.7
+</code></pre>
+
+      <p>
+        <i
+          >dd if=/dev/zero of=/mnt/data/ddtest bs=1024k count=1024
+          conv=fdatasync</i
+        >
+        - See -
+        <a
+          href="https://stackoverflow.com/questions/68150702/what-does-the-conv-fdatasync-do-in-dd-command-in-linux"
+          >What does the conv-fdatasync do in dd command in linux?</a
+        >
+      </p>
+
+      <pre><code style="font-size: 14px;" class="language-markup">1024+0 records in
+1024+0 records out
+1073741824 bytes (1.1 GB, 1.0 GiB) copied, 3.01803 s, 356 MB/s
+</code></pre>
+
+      <p><i>dd if=/mnt/data/ddtest of=/dev/null bs=1024k count=1024</i></p>
+
+      <pre><code style="font-size: 14px;" class="language-markup">1024+0 records in
+1024+0 records out
+1073741824 bytes (1.1 GB, 1.0 GiB) copied, 0.331456 s, 3.2 GB/s
+</code></pre>
+
+      <a id="back-link" href="../blog.html">&#x2190;</a>
+    </div>
+    <footer>
+      <hr />
+      <div>© 2026 Parth Parikh.</div>
+    </footer>
+  </body>
+</html>

@@ -5,6 +5,11 @@
         <link>https://pncnmnp.github.io/blog.html</link>
         <description>Explore the exciting world of Computer Science with me! From the depths of Data Structures and Algorithms to the cutting-edge advancements in NLP and Databases, my blog delves into a wide range of topics to keep you informed and inspired.</description>
         <item>
+            <title>Tearing into ChatGPT's container environment</title>
+            <link>https://pncnmnp.github.io/blogs/chatgpt-containers.html</link>
+            <description>In this blog post, we will tear into ChatGPT's code execution sandbox. We will decipher and benchmark the real compute and memory limits behind the claims of 56 cores and 4 GB of RAM.</description>
+            <pubDate>Mon, 8 Aug 2026</pubDate>
+        <item>
             <title>Timing Wheels</title>
             <link>https://pncnmnp.github.io/blogs/timing-wheels.html</link>
             <description>In this blog-post, we will start by discussing the evolution of timekeeping, leading all the way to its use in computers. We will then introduce software timer modules, and explain timing wheels as a fast and memory efficient way to manage timers. Finally, we will discuss both the classic Linux timer wheel implementation and its modern variant.</description>
@@ -27,12 +32,6 @@
             <link>https://pncnmnp.github.io/blogs/national-postal-museum.html</link>
             <description>In this blog post, we will explore art, USPS postal technology, philately, and generative art — all inspired by my trip to D.C. last month.</description>
             <pubDate>Fri, 13 Dec 2024</pubDate>
-        </item>
-        <item>
-            <title>We'll buy back your Typewriter ... for Uncle Sam!</title>
-            <link>https://pncnmnp.github.io/blogs/typewriter-uncle-sam.html</link>
-            <description>In this blog post, we will explore another poster I recently bought, which highlights Smith-Corona's campaign to buy back typewriters for the U.S. government due to wartime shortages during World War II.</description>
-            <pubDate>Wed, 2 Oct 2024</pubDate>
         </item>
     </channel>
 </rss>
