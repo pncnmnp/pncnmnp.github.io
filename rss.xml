@@ -9,6 +9,7 @@
             <link>https://pncnmnp.github.io/blogs/chatgpt-containers.html</link>
             <description>In this blog post, we will tear into ChatGPT's code execution sandbox. We will decipher and benchmark the real compute and memory limits behind the claims of 56 cores and 4 GB of RAM.</description>
             <pubDate>Mon, 8 Aug 2026</pubDate>
+        </item>
         <item>
             <title>Timing Wheels</title>
             <link>https://pncnmnp.github.io/blogs/timing-wheels.html</link>
