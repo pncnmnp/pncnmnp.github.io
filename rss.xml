@@ -5,6 +5,12 @@
         <link>https://pncnmnp.github.io/blog.html</link>
         <description>Explore the exciting world of Computer Science with me! From the depths of Data Structures and Algorithms to the cutting-edge advancements in NLP and Databases, my blog delves into a wide range of topics to keep you informed and inspired.</description>
         <item>
+            <title>How RCA Victor sold Sound Service to classrooms in 1939</title>
+            <link>https://pncnmnp.github.io/blogs/rca-victor-education.html</link>
+            <description>In this blog post, we will explore a new poster from my collection - describing RCA Victor's Sound Service for Schools in 1939. We will look into the history of RCA Victor, its merger with the Victor Talking Machine Company, and the impact that Great Depression had on the company. And see how their sound service was used to teach students about music and sound.</description>
+            <pubDate>Sun, 5 July 2026</pubDate>
+        </item>
+        <item>
             <title>Tearing into ChatGPT's container environment</title>
             <link>https://pncnmnp.github.io/blogs/chatgpt-containers.html</link>
             <description>In this blog post, we will tear into ChatGPT's code execution sandbox. We will decipher and benchmark the real compute and memory limits behind the claims of 56 cores and 4 GB of RAM.</description>
@@ -27,12 +33,6 @@
             <link>https://pncnmnp.github.io/blogs/afternoon-smt-trim-smart.html</link>
             <description>In this blog post, we will be diving into the world of SSDs, covering SMT, TRIM, and SMART, plus I'll be geeking out over my MacBook upgrade.</description>
             <pubDate>Sun, 23 Feb 2025</pubDate>
-        </item>
-        <item>
-            <title>Tinker Postman Collector Scribe</title>
-            <link>https://pncnmnp.github.io/blogs/national-postal-museum.html</link>
-            <description>In this blog post, we will explore art, USPS postal technology, philately, and generative art — all inspired by my trip to D.C. last month.</description>
-            <pubDate>Fri, 13 Dec 2024</pubDate>
         </item>
     </channel>
 </rss>
