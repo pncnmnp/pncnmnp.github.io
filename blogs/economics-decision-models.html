@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="author" content="parth_parikh" />
+    <meta name="description" content="This blogpost explores the economics of decision models like Jev, and discusses the formalization of decision hierarchies using Chow's reject rule." />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Make or Buy: The Economics of Decision Models</title>
+    <link href="./style/prism.css" rel="stylesheet" />
+    <script src="./js/prism.js"></script>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="./style/common_styles.css"
+      id="light"
+    />
+    <script
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+    <link rel="stylesheet" type="text/css" href="../style.css" />
+    <link rel="shortcut icon" type="image/png" href="../favicon.png" />
+  </head>
+
+  <body>
+    <div class="blog-text">
+      <a id="rss-feed" href="../rss.xml"
+        >If you like this blog post, do subscribe to my RSS feed</a
+      ><br />
+      <h1>To Make, or to Buy: The Economics of Decision Models</h1>
+      <h2>First Published: 18/10/26</h2>
+
+      <blockquote>
+        <i
+          >It is the maxim of every prudent master of a family, never to attempt
+          to make at home what it will cost him more to make than to buy. The
+          tailor does not attempt to make his own shoes, but buys them of the
+          shoemaker. The shoemaker does not attempt to make his own clothes, but
+          employs a tailor. The farmer attempts to make neither the one nor the
+          other, but employs those different artificers. All of them find it for
+          their interest to employ their whole industry in a way in which they
+          have some advantage over their neighbours, and to purchase with a part
+          of its produce, or, what is the same thing, with the price of a part
+          of it, whatever else they have occasion for.</i
+        >
+        <br />
+        - Adam Smith in <a href="https://www.gutenberg.org/files/3300/3300-h/3300-h.htm#chap27">The Wealth of Nations</a> (1776)
+      </blockquote>
+
+      <p>
+        In the past few weeks,
+        <a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev"
+          >Jev</a
+        >
+        and decision models in particular have been the talk of the town. As
+        things are cooling down a bit, I thought it would be fun to
+        systematically explore and forecast where all of this leads to.
+      </p>
+      <p>
+        The magic, as we all would agree, seems to be in the output, of which
+        there can be three kinds: <i>choice, score and noul</i>. With
+        <i>choice</i>, we provide a fixed list of options and the output is a
+        probability for each option, summing to 1. The <i>score</i> is for
+        rating something against an ordered list of levels, using a
+        probability-weighted average of those levels. And finally, the
+        <i>noul</i>,
+        <a href="https://news.ycombinator.com/item?id=49891495">
+          which some say is named after the Bernoulli trial</a
+        >, returns a number between 0 and 1: the probability that a given
+        statement is true.
+      </p>
+      <p>
+        Here is an example using
+        <a href="https://openrouter.ai/typesafe/jev-1.13"
+          >Jev 1.13 from OpenRouter</a
+        >:
+      </p>
+      <pre style="font-size: 0.85em"><code class="language-json">REQUEST: {
+  "model": "typesafe/jev-1.13",
+  "state": "Some damn good curly fries - seasoning was something.",
+  "questions": {"answer": {"type": "score", "instructions": "How enthusiastic is the reviewer?",
+    "criteria": ["Lukewarm", "Happy", "Thrilled"]
+}}}
+RESPONSE: {
+  "model": "typesafe/jev-1.13-20260917",
+  "answers": {"answer": {"type": "score", "score": 1.48, "legend": {"0": "Lukewarm", "1": "Happy", "2": "Thrilled"},
+    "probabilities": {"0": 0, "1": 0.51, "2": 0.49},
+    "confidence": 0.27}},
+  .....
+}</code></pre>
+      <p>
+        There are a couple of interesting consequences as a result of this
+        model. First, it's a <b>well-defined output</b>! We state the possible
+        answers before asking the question, and the model has to pick among
+        them. Second, <b>every answer carries odds</b>. As we will see later, we
+        can leverage this to do some interesting arithmetic on them. Third, as
+        the expense is in reading the state and consuming the input tokens,
+        <b> the output tokens are essentially free</b>. Case in point: I did
+        some napkin math on the above example. Assuming that a regular LLM would
+        require 250 input tokens and 50 output tokens to produce this response,
+        and that we have 400,000 such queries to process, the resulting 100M
+        input tokens and 20M output tokens would cost $13 on GPT-5 nano ($8.5
+        with cached tokens) vs. $4.2 via Jev. And finally, <b>it is fast</b>!
+      </p>
+      <p>
+        Perhaps the most exciting revelation I had, is that this gives rise to a
+        new form of memory hierarchy, which I have labeled as
+        <b>decision hierarchy</b>.
+      </p>
+      <p>
+        As a refresher, pick your favorite textbook and flip to its memory
+        management page. Here is what Tanenbaum has to say about memory
+        hierarchies in his
+        <a href="https://en.wikipedia.org/wiki/Modern_Operating_Systems"
+          >Modern Operating Systems book</a
+        >:
+      </p>
+      <blockquote>
+        Over the years, people discovered the concept of a memory hierarchy, in
+        which computers have a few megabytes of very fast, expensive, volatile
+        cache memory, a few gigabytes of medium-speed, medium-priced, volatile
+        main memory, and a few terabytes of slow, cheap, nonvolatile magnetic or
+        solid-state disk storage, not to mention removable storage, such as DVDs
+        and USB sticks. It is the job of the operating system to abstract this
+        hierarchy into a useful model and then manage the abstraction.
+      </blockquote>
+      <p>
+        <i>These learnings can be applied in the realm of LLMs too.</i> Assume
+        that you have an L-cache consisting of a mixture of hand-written rules,
+        and exact/semantic matching of past answers to the same question and its
+        state. If so, Jev and Decision models can be imagined as the RAM, LLM as
+        disk, and magnetic tapes as human beings. Each level handles what its
+        confident about and passes the misses down to the level below.
+      </p>
+      <figure>
+        <img src="./pics/decision-hierarchy.png" />
+        <figcaption>
+          Figure 1: Memory hierarchy v. decision hierarchy.
+        </figcaption>
+      </figure>
+      <p>
+        <i>But how do we decide on a confidence factor and pick a threshold?</i>
+        This is where
+        <a href="https://ieeexplore.ieee.org/document/1054406"
+          >Chow's rule from 1970</a
+        >
+        comes in. Let us motivate the idea first. Imagine a classifier \(C\)
+        with \(n\) classes. For each input, the classifier generates a
+        probability for each of the \(n\) classes. When the largest class has a
+        probability close to 1, the model is sure about its decision, and
+        mistakes are rare. However, when all the classes have equal probability,
+        say \(1/n\), any answer is close to a guess. So, the errors come from
+        the uncertain inputs. And to mitigate it, we need a higher form of
+        intelligence - from decision models, to LLMs, and in the worst case
+        humans. As I like to put it, the more “<a
+          href="https://www.scottaaronson.com/papers/philos.pdf"
+          >philosophically-NP</a
+        >” (not in a formal sense) a question is, the higher form of
+        intelligence it needs to make a non-ambiguous judgement call.
+      </p>
+      <p>
+        <i>
+          But how do we decide whether we should give a response at a particular
+          level or abstain from doing so?
+        </i>
+        A simple way would be using threshold \(T\). For each input, we look at
+        the top probability, say \(p_{max}\). If \(p_{max} \leq T\), we reject
+        and hand the input on to the next level. If \(p_{max} \gt T\), we answer
+        with the top probability outcome. With this approach, we get a dial that
+        moves from \(T = 1/n\) to \(T = 1\). The higher the dial, the more
+        rejects we get and fewer errors on what we keep.
+      </p>
+      <p>
+        However, this simple threshold approach does not take into consideration
+        the <b>price of the outcome</b>. Particularly,
+        <i>
+          what is the cost of us answering a question wrong at a level, and the
+          cost of declining to answer at a level</i
+        >. Say, a wrong answer costs 1, rejecting costs a fraction \(F\), and a
+        right answer costs 0. If we answer with class \(k\), we are wrong with
+        probability of \(1 - p_k\). The probability of being wrong would be at
+        its smallest for the top class, \(1 - p_{max}\). Therefore, a second
+        approach would be to answer only if we beat the price of rejecting. In
+        other words, answer when \(1 - p_{max} \lt F\).
+      </p>
+      <p>
+        Take an example where \(F=0.2\) and \(p_{max}=0.6\). As answering costs
+        \(1 - p_{max} = 0.4\) on average and rejecting costs 0.2, we reject.
+      </p>
+      <p>
+        Next, we need to evaluate what rejection (\(F\)) really costs. When we
+        are sending a decision to the next level, we need to take into
+        consideration the cost of an error in that level (\(NX_{errcost}\)), the
+        cost we pay to evaluate any input in that level (\(NX_{price}\)), and
+        finally the error rate on the next level itself (\(NX_{err}\)).
+      </p>
+      <p>
+        Consider this - say we have 100 software tickets to evaluate and make
+        decisions upon. And we are working at the Jev and LLM layers. Imagine
+        that for all our tickets, Jev is 60% sure about its decision (\(p_{max}
+        = 0.6\)). A wrong routing costs $2. The LLM charges $0.01 per ticket
+        (\(NX_{price}\)) and is wrong 5% of the time (\(NX_{err}\)). The
+        LLM-level also incurs a $2 cost (\(NX_{errcost}\)) when an error is
+        produced at its level. What is the cost incurred in each extreme
+        scenario?
+      </p>
+      <ul>
+        <li>
+          Jev answers all 100 tickets: Jev is wrong on 40 of them. 40 x $2 =
+          $80.
+        </li>
+        <li>
+          Send all 100 tickets to LLM: LLM is wrong on 5 tickets. The cost of
+          LLM evaluation is 100 x $0.01 = $1 in fees. On the 5 wrong tickets,
+          the total cost incurred is 5 x $2 = $10. All in all, $11.
+        </li>
+      </ul>
+      <p>
+        Per ticket, that's $0.80 for answering versus $0.11 for handing on to
+        the next level, so we hand on. Notice that we did not take Jev's fees
+        into account. This is because it's paid in both options, so it can't
+        change which one is cheaper.
+      </p>
+      <p>
+        Now let us derive \(F\) so that we can apply this in a more general
+        scenario.
+        <b>
+          Remember that handing on to the next level charges us twice: we pay
+          the fee and absorb the LLM's mistakes.
+        </b>
+      </p>
+      <ul>
+        <li>
+          <i>Error rate on the next level</i> (\(NX_{err}\)): 5 wrong answers
+          per 100 tickets = 0.05 wrong answers per ticket.
+        </li>
+        <li>
+          <i>How many wrong answers is a fee worth in the next level</i>: $0.01
+          per ticket / $2 cost for a wrong answer = 0.005 wrong answers. Or
+          \(NX_{price} / NX_{errcost}\).
+        </li>
+      </ul>
+      <p>
+        Therefore, \(F = NX_{err} + NX_{price} / NX_{errcost}\).
+        <br />
+        Substituting it in the original equation, <b>we get Chow's rule</b>: \[1
+        - p_{max} \lt NX_{err} + NX_{price} / NX_{errcost}\]
+      </p>
+      <p>
+        For the above example, \(1 - p_{max} = 1 - 0.6 = 0.4\). And \(NX_{err} +
+        NX_{price} / NX_{errcost} = 0.05 + 0.005 = 0.055\). As \(0.4 \gt
+        0.055\), we hand on to the next level, which is the same decision as
+        $0.80 versus $0.11.
+      </p>
+      <p>
+        <i
+          >Notice that when errors are expensive, LLM's price barely matters.</i
+        >
+        The only question is <i>who's more accurate on this input</i>. This is
+        because \(NX_{price} / NX_{errcost}\) shrinks toward zero, so \(F \sim
+        NX_{err}\). In other words, when errors are expensive, a cheaper LLM
+        barely helps, but a more accurate one helps a lot.
+      </p>
+      <p>
+        However, when errors are cheap, \(NX_{price} / NX_{errcost} \gt
+        NX_{err}\). Re-arranging it gives us - \(NX_{errcost} \lt NX_{price} /
+        NX_{err}\). In other words, LLM's fee only matters more than its
+        mistakes when a wrong answer costs under a certain amount. For our above
+        example, that's $0.01 / 0.05 or 20 cents. Our tickets cost $2 per wrong
+        answer, well above that, so accuracy decides.
+      </p>
+      <p>
+        To paraphrase Adam Smith, act only when what we gain from it is more
+        than what we pay in return.
+        <b>
+          In our decision hierarchy, the LLM is selling one product - fewer
+          mistakes. Each level is a supplier with 3 numbers: a price, an error
+          rate, and the cost of each error it makes. The threshold we discussed
+          above is a break-even point - the point where what the next level
+          saves equals what it charges you.
+        </b>
+      </p>
+      <p>
+        So far, we have assumed that the decisions made at every level are
+        noiseless. Chow's rule only escalates the inputs that a level is unsure
+        about. However, in the real world, any level is capable of making
+        confident mistakes. This is especially true when two levels share a
+        similar training. One way to mitigate this is by using a
+        <b>random audit</b>. Imagine a small random slice, say 1% of Jev's
+        confident decisions, being sent to the next level anyway. This will help
+        calculate a better estimate of the error rate, and tune the costs.
+      </p>
+      <p>
+        Chow's rule also assumes that every mistake costs the same. This does
+        not hold up in the real world either. Say, a ticket that needed to be
+        sent to the legal team got routed to the tech team instead. Depending on
+        the circumstances, that can cost a lot more than a ticket that was
+        supposed to be sent to the tech team, but got routed to data analytics
+        instead.
+      </p>
+      <p>
+        Before we manipulate Chow's rule to mitigate this issue, notice how both
+        \(NX_{price}\) and \(NX_{err}\) don't depend on any output category. As
+        per \(NX_{price}\), the LLM charges the same fee for every ticket.
+        Similarly, as long as we assume that LLM is equally accurate on every
+        category, \(NX_{err}\) doesn't change. So, we only need \(NX_{errcost}\)
+        to reflect the output category overhead. Given this, here is the update
+        to Chow's rule:
+      </p>
+      <ol>
+        <li>\(1 - p_{max} \lt NX_{err} + NX_{price} / NX_{errcost}\)</li>
+        <li>
+          \((1 - p_{max}) \times NX_{errcost} \lt NX_{err} \times NX_{errcost} +
+          NX_{price}\) (multiply by \(NX_{errcost}\) on both sides)
+        </li>
+        <li>
+          Consider \(1 - p_{max} = \sum_{c \neq max} p_c\) and \(1 = \sum_c
+          p_c\) (where \(c\) represents a category)
+        </li>
+        <li>
+          \(\sum_{c \neq max} p_c \times NX_{errcost} \lt NX_{err} \times \sum_c
+          p_c \times NX_{errcost} + NX_{price}\)
+        </li>
+        <li>\(NX_{errcost} \Rightarrow NX_{errcost}(c)\)</li>
+        <li>
+          \(\sum_{c \neq max} p_c \times NX_{errcost}(c) \lt NX_{err} \times
+          \sum_c p_c \times NX_{errcost}(c) + NX_{price}\)
+        </li>
+        <li>\(C' = \sum_c p_c \times NX_{errcost}(c)\)</li>
+        <li>
+          \(\sum_{c \neq max} p_c \times NX_{errcost}(c) = C' - p_{max} \times
+          NX_{errcost}(max)\)
+        </li>
+        <li>
+          \(C' - p_{max} \times NX_{errcost}(max) \lt NX_{err} \times C' +
+          NX_{price}\) (divide by \(C'\) to put the rule back in the shape of
+          the original formula)
+        </li>
+        <li>
+          \(1 - p_{max} \times NX_{errcost}(max) / C' \lt NX_{err} + NX_{price}
+          / C'\)
+        </li>
+      </ol>
+      <p>
+        Notice how if every category has the same \(NX_{errcost}\), then \(C' =
+        NX_{errcost}\). In which case, we get back our original Chow's rule of
+        \(1 - p_{max} \lt NX_{err} + NX_{price} / NX_{errcost}\).
+      </p>
+      <figure>
+        <div id="chow-plot"></div>
+        <script src="./js/chow-plot.js"></script>
+        <figcaption>
+          Figure 2: Interactive plot of the modified Chow's rule \(1 - p_{max} \times NX_{errcost}(max) / C' \lt NX_{err} + NX_{price}
+          / C'\). In generic terms, <a href="https://www.desmos.com/calculator/altqzwksk9">the curve is a hyperbola</a> with the equation \(y = 1 - a - b/x\), where x is \(C'\), y is the threshold from the right of the equation, and \(a\) and \(b\) are the constants \(NX_{err}\) and \(NX_{price}\) respectively. The hyperbola is clamped to prevent negative values. <b>Note</b> that the figure is AI generated using Claude's Opus 5.5 Extra model. In accordance with <a href="https://www.anthropic.com/legal/commercial-terms">Anthropic's commercial terms</a>, I own the output, and responsible for its factual correctness, and any copyright issues.
+        </figcaption>
+      </figure>
+      <p>
+        To illustrate the new derivation, let us focus on 3 categories: tech,
+        analytics, and legal. Assume that the LLM still charges us $0.01
+        (\(NX_{price}\)), is wrong 5% of the time (\(NX_{err}\)), and the output
+        probability on an input is tech 0.6, analytics 0.25, and legal 0.15
+        respectively. Also assume that if the ticket really is tech,
+        \(NX_{errcost}\) will cost us say $2 (same as before). Similarly, if the
+        ticket really is analytics or legal, \(NX_{errcost}\) will cost us $2
+        and $100 respectively.
+        <a href="https://quoteinvestigator.com/2023/05/23/lawsuit/"
+          >As they say</a
+        >
+        - “<i
+          >I was never ruined but twice - once when I lost a lawsuit, once when
+          I won one.</i
+        >”
+      </p>
+      <p>
+        \(C'\) would be \(\sum_c p_c \times NX_{errcost}(c)\), or (0.6 × $2 +
+        0.25 × $2 + 0.15 × $100), or $16.70. The max category is tech, so
+        answering in tech costs us \(C' - p_{max} \times NX_{errcost}(Tech)\) =
+        $16.7 - $1.2 = $15.5. Furthermore, handing on to the next level costs
+        us, \(NX_{err} \times C' + NX_{price}\) = 0.05 × $16.70 + $0.01 = $0.835
+        + $0.01 = $0.845.
+      </p>
+      <p>
+        As $15.50 &gt; $0.845, we hand on to the next level. This is the same
+        conclusion that we previously made; however, the 15% chance of a legal
+        ticket makes answering nearly 20 times more expensive (15.5/0.8) than
+        before.
+      </p>
+      <p>
+        Nonetheless, there is a catch with the new derivation. Till now, our
+        decision at every level was based on - should the level answer with its
+        top class or hand on? But
+        <b
+          >with the introduction of a cost table, the top class is not always
+          the cheapest answer</b
+        >. We can have scenarios where the new rule would hand on to the next
+        level, when answering with a different category would be considered
+        cheaper.
+      </p>
+      <p>
+        To see this, assume that we have the same cost table as before ($2, $2,
+        $100), but the probability distribution has changed to tech 0.5,
+        analytics 0.05, and legal 0.45. \(C'\) would be (0.5 × $2 + 0.05 × $2 +
+        0.45 × $100), or $46.10. Handing on would cost $0.01 + 0.05 x $46.10 =
+        $2.32. Answering with the max costs 0.05 × $2 + 0.45 × $100, or $45.10.
+        Answering with legal costs $1.10. As $1.10 &lt; $2.32, the best decision
+        would be to route to legal. However, with max only - we would have
+        decided to simply hand on to the next level.
+      </p>
+      <p>
+        One way to deal with this is by letting the math work out as intended -
+        that is, we route to legal, when it's cheaper to do so. But the dilemma
+        is that if we route too much, their queue grows, and it ends up turning
+        into a dumping ground for tickets. This would certainly occur if the
+        training of models at any level is subpar. One way to mitigate such
+        issues is by relying on our <i>audit trick</i>. If legal is bouncing
+        back lots of tickets or its queue is growing, we raise the price.
+        However, if real issues are slipping past them, we lower the price.
+      </p>
+      <p>
+        <i>
+          All of the above analysis does present a threat to Jev and independent
+          decision model-like businesses.
+        </i>
+        Particularly, Jev's advantages are its cheapness, speed, probability
+        distribution, and closed outputs. But those advantages are a direct
+        result of its interface, and interfaces can be copied. If a really cheap
+        LLM (say
+        <a href="https://www.llm-prices.com/">GPT-5 nano or Gemini Flash Lite</a
+        >) ends up being more accurate than Jev, then a winning move for vendors
+        would be to call such LLMs in decision mode. Which is exactly what
+        OpenAI is doing with their
+        <a href="https://developers.openai.com/api/docs/guides/decisions"
+          >Decisions API</a
+        >! The customers get to keep the good stuff: stop paying for the output
+        tokens, improved latency, post-training from a strong base model, and
+        actual probabilities over the options.
+        <b>What an interface can't copy is honest probabilities</b> - which is
+        where Jev's specialized training may hold some edge. As is already the
+        case though, I expect that we should see a great deal of competitors
+        commoditizing Jev's market share and big LLM providers cannibalizing
+        their own output-token revenue in the coming months to cater to the
+        market for this interface.
+      </p>
+      <p>
+        In the future, decisions sold with <i>some form of warranty</i> do not seem
+        far-fetched either. We already have something similar with <a href="https://en.wikipedia.org/wiki/Riskified">Riskified</a>
+        today. As discussed before, when \(NX_{price} / C'\) goes to zero -
+        accuracy alone decides the level at which we answer. At that point, the
+        economic moat solely falls upon the “honest probabilities” and
+        “specialized training”. This in itself does not sound appealing.
+        However, if the independent decision model vendors calibrate per-domain
+        and provide a certain guarantee in their contracts, then the needle can
+        possibly tilt somewhat in their favor. Imagine the cost being tuned to
+        account for a premium and a deductible, like \(NX_{price} + premium +
+        NX_{err} \times deductible\).
+      </p>
+      <p>
+        One topic I have yet to discuss is <b>latency</b> and its addition to Chow's
+        modified rule. One way to do this would be by introducing two variables:
+        the next level's response time in seconds (\(NX_{latency}\)) and the
+        cost per second of wait (\(wait\_cost\)). With this, the cost of the
+        answer remains the same as before, \((1 - p_{max}) \times
+        NX_{errcost}\). However, the cost of handing on to the next level
+        becomes \(NX_{price} + NX_{err} \times NX_{errcost} + wait\_cost \times
+        NX_{latency}\). This leads to \[(1 - p_{max}) \times NX_{errcost} \lt
+        NX_{price} + NX_{err} \times NX_{errcost} + wait\_cost \times
+        NX_{latency}\] And dividing by \(NX_{errcost}\), we get \[1 - p_{max}
+        \lt NX_{err} + (NX_{price} + wait\_cost \times NX_{latency}) /
+        NX_{errcost}\] Just like before, this can similarly be modeled towards
+        different output categories too.
+      </p>
+      <p>
+        As I am writing this, it is fascinating to imagine the possibilities
+        this discussion is leading up to. As I look towards the future, there
+        are many questions and opportunities. For instance, how would
+        multimodality interact in the decision model realm? Will we be able to
+        split the image into grid cells and ask a model to pick a cell given an
+        instruction? Like, which of my cells contains a can of Cherry coke? Or
+        will we be able to count in bins the occurrence of an item - how many
+        cars are at the intersection? What about audio? Will we be able to chop
+        a time window and narrow down to when Jeff Geerling talks about the
+        price of his mini PC? It has been clear for a while now that once such
+        models cheaply read images, audio, and sensors in real-time, we will be
+        able to leverage them inside robots, factory settings, and many
+        on-device form factors.
+      </p>
+      <p><i>The future is exciting and exciting is the future.</i></p>
+      <br />
+      <a id="back-link" href="../blog.html">&#x2190;</a>
+    </div>
+    <footer>
+      <hr />
+      <div>© 2026 Parth Parikh.</div>
+    </footer>
+  </body>
+</html>

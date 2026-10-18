@@ -5,6 +5,12 @@
         <link>https://pncnmnp.github.io/blog.html</link>
         <description>Explore the exciting world of Computer Science with me! From the depths of Data Structures and Algorithms to the cutting-edge advancements in NLP and Databases, my blog delves into a wide range of topics to keep you informed and inspired.</description>
         <item>
+            <title>To Make, or to Buy: The Economics of Decision Models</title>
+            <link>https://pncnmnp.github.io/blogs/economics-decision-models.html</link>
+            <description>In this blog post, we will explore the economics of decision models like Jev, and discusses the formalization of decision hierarchies using Chow's reject rule.</description>
+            <pubDate>Sun, 18 Oct 2026</pubDate>
+        </item>
+        <item>
             <title>No Country for Old Games</title>
             <link>https://pncnmnp.github.io/blogs/games.html</link>
             <description>In this blog post, I will take you down a memory-trip of my favorite video games growing up.</description>
@@ -27,12 +33,6 @@
             <link>https://pncnmnp.github.io/blogs/timing-wheels.html</link>
             <description>In this blog-post, we will start by discussing the evolution of timekeeping, leading all the way to its use in computers. We will then introduce software timer modules, and explain timing wheels as a fast and memory efficient way to manage timers. Finally, we will discuss both the classic Linux timer wheel implementation and its modern variant.</description>
             <pubDate>Sun, 26 Oct 2025</pubDate>
-        </item>
-        <item>
-            <title>What if companies were governed as republics?</title>
-            <link>https://pncnmnp.github.io/blogs/corporate-republic.html</link>
-            <description>In this blog post, we will explore a whitepaper for technology startups, describing a 'mini-republic' corporate charter inspired by some historical constitutional documents and the Roman Republic.</description>
-            <pubDate>Tue, 26 May 2025</pubDate>
         </item>
     </channel>
 </rss>
