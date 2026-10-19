@@ -165,8 +165,8 @@ RESPONSE: {
           level or abstain from doing so?
         </i>
         A simple way would be using threshold \(T\). For each input, we look at
-        the top probability, say \(p_{max}\). If \(p_{max} \leq T\), we reject
-        and hand the input on to the next level. If \(p_{max} \gt T\), we answer
+        the top probability, say \(p_{\text{max}}\). If \(p_{\text{max}} \leq T\), we reject
+        and hand the input on to the next level. If \(p_{\text{max}} \gt T\), we answer
         with the top probability outcome. With this approach, we get a dial that
         moves from \(T = 1/n\) to \(T = 1\). The higher the dial, the more
         rejects we get and fewer errors on what we keep.
@@ -180,28 +180,28 @@ RESPONSE: {
         >. Say, a wrong answer costs 1, rejecting costs a fraction \(F\), and a
         right answer costs 0. If we answer with class \(k\), we are wrong with
         probability of \(1 - p_k\). The probability of being wrong would be at
-        its smallest for the top class, \(1 - p_{max}\). Therefore, a second
+        its smallest for the top class, \(1 - p_{\text{max}}\). Therefore, a second
         approach would be to answer only if we beat the price of rejecting. In
-        other words, answer when \(1 - p_{max} \lt F\).
+        other words, answer when \(1 - p_{\text{max}} \lt F\).
       </p>
       <p>
-        Take an example where \(F=0.2\) and \(p_{max}=0.6\). As answering costs
-        \(1 - p_{max} = 0.4\) on average and rejecting costs 0.2, we reject.
+        Take an example where \(F=0.2\) and \(p_{\text{max}}=0.6\). As answering costs
+        \(1 - p_{\text{max}} = 0.4\) on average and rejecting costs 0.2, we reject.
       </p>
       <p>
         Next, we need to evaluate what rejection (\(F\)) really costs. When we
         are sending a decision to the next level, we need to take into
-        consideration the cost of an error in that level (\(NX_{errcost}\)), the
-        cost we pay to evaluate any input in that level (\(NX_{price}\)), and
-        finally the error rate on the next level itself (\(NX_{err}\)).
+        consideration the cost of an error in that level (\(\text{NX}_{\text{errcost}}\)), the
+        cost we pay to evaluate any input in that level (\(\text{NX}_{\text{price}}\)), and
+        finally the error rate on the next level itself (\(\text{NX}_{\text{err}}\)).
       </p>
       <p>
         Consider this - say we have 100 software tickets to evaluate and make
         decisions upon. And we are working at the Jev and LLM layers. Imagine
-        that for all our tickets, Jev is 60% sure about its decision (\(p_{max}
+        that for all our tickets, Jev is 60% sure about its decision (\(p_{\text{max}}
         = 0.6\)). A wrong routing costs $2. The LLM charges $0.01 per ticket
-        (\(NX_{price}\)) and is wrong 5% of the time (\(NX_{err}\)). The
-        LLM-level also incurs a $2 cost (\(NX_{errcost}\)) when an error is
+        (\(\text{NX}_{\text{price}}\)) and is wrong 5% of the time (\(\text{NX}_{\text{err}}\)). The
+        LLM-level also incurs a $2 cost (\(\text{NX}_{\text{errcost}}\)) when an error is
         produced at its level. What is the cost incurred in each extreme
         scenario?
       </p>
@@ -232,24 +232,24 @@ RESPONSE: {
       </p>
       <ul>
         <li>
-          <i>Error rate on the next level</i> (\(NX_{err}\)): 5 wrong answers
+          <i>Error rate on the next level</i> (\(\text{NX}_{\text{err}}\)): 5 wrong answers
           per 100 tickets = 0.05 wrong answers per ticket.
         </li>
         <li>
           <i>How many wrong answers is a fee worth in the next level</i>: $0.01
           per ticket / $2 cost for a wrong answer = 0.005 wrong answers. Or
-          \(NX_{price} / NX_{errcost}\).
+          \(\text{NX}_{\text{price}} / \text{NX}_{\text{errcost}}\).
         </li>
       </ul>
       <p>
-        Therefore, \(F = NX_{err} + NX_{price} / NX_{errcost}\).
+        Therefore, \(F = \text{NX}_{\text{err}} + \text{NX}_{\text{price}} / \text{NX}_{\text{errcost}}\).
         <br />
         Substituting it in the original equation, <b>we get Chow's rule</b>: \[1
-        - p_{max} \lt NX_{err} + NX_{price} / NX_{errcost}\]
+        - p_{\text{max}} \lt \text{NX}_{\text{err}} + \text{NX}_{\text{price}} / \text{NX}_{\text{errcost}}\]
       </p>
       <p>
-        For the above example, \(1 - p_{max} = 1 - 0.6 = 0.4\). And \(NX_{err} +
-        NX_{price} / NX_{errcost} = 0.05 + 0.005 = 0.055\). As \(0.4 \gt
+        For the above example, \(1 - p_{\text{max}} = 1 - 0.6 = 0.4\). And \(\text{NX}_{\text{err}} +
+        \text{NX}_{\text{price}} / \text{NX}_{\text{errcost}} = 0.05 + 0.005 = 0.055\). As \(0.4 \gt
         0.055\), we hand on to the next level, which is the same decision as
         $0.80 versus $0.11.
       </p>
@@ -258,14 +258,14 @@ RESPONSE: {
           >Notice that when errors are expensive, LLM's price barely matters.</i
         >
         The only question is <i>who's more accurate on this input</i>. This is
-        because \(NX_{price} / NX_{errcost}\) shrinks toward zero, so \(F \sim
-        NX_{err}\). In other words, when errors are expensive, a cheaper LLM
+        because \(\text{NX}_{\text{price}} / \text{NX}_{\text{errcost}}\) shrinks toward zero, so \(F \sim
+        \text{NX}_{\text{err}}\). In other words, when errors are expensive, a cheaper LLM
         barely helps, but a more accurate one helps a lot.
       </p>
       <p>
-        However, when errors are cheap, \(NX_{price} / NX_{errcost} \gt
-        NX_{err}\). Re-arranging it gives us - \(NX_{errcost} \lt NX_{price} /
-        NX_{err}\). In other words, LLM's fee only matters more than its
+        However, when errors are cheap, \(\text{NX}_{\text{price}} / \text{NX}_{\text{errcost}} \gt
+        \text{NX}_{\text{err}}\). Re-arranging it gives us - \(\text{NX}_{\text{errcost}} \lt \text{NX}_{\text{price}} /
+        \text{NX}_{\text{err}}\). In other words, LLM's fee only matters more than its
         mistakes when a wrong answer costs under a certain amount. For our above
         example, that's $0.01 / 0.05 or 20 cents. Our tickets cost $2 per wrong
         answer, well above that, so accuracy decides.
@@ -301,68 +301,68 @@ RESPONSE: {
       </p>
       <p>
         Before we manipulate Chow's rule to mitigate this issue, notice how both
-        \(NX_{price}\) and \(NX_{err}\) don't depend on any output category. As
-        per \(NX_{price}\), the LLM charges the same fee for every ticket.
+        \(\text{NX}_{\text{price}}\) and \(\text{NX}_{\text{err}}\) don't depend on any output category. As
+        per \(\text{NX}_{\text{price}}\), the LLM charges the same fee for every ticket.
         Similarly, as long as we assume that LLM is equally accurate on every
-        category, \(NX_{err}\) doesn't change. So, we only need \(NX_{errcost}\)
+        category, \(\text{NX}_{\text{err}}\) doesn't change. So, we only need \(\text{NX}_{\text{errcost}}\)
         to reflect the output category overhead. Given this, here is the update
         to Chow's rule:
       </p>
       <ol>
-        <li>\(1 - p_{max} \lt NX_{err} + NX_{price} / NX_{errcost}\)</li>
+        <li>\(1 - p_{\text{max}} \lt \text{NX}_{\text{err}} + \text{NX}_{\text{price}} / \text{NX}_{\text{errcost}}\)</li>
         <li>
-          \((1 - p_{max}) \times NX_{errcost} \lt NX_{err} \times NX_{errcost} +
-          NX_{price}\) (multiply by \(NX_{errcost}\) on both sides)
+          \((1 - p_{\text{max}}) \times \text{NX}_{\text{errcost}} \lt \text{NX}_{\text{err}} \times \text{NX}_{\text{errcost}} +
+          \text{NX}_{\text{price}}\) (multiply by \(\text{NX}_{\text{errcost}}\) on both sides)
         </li>
         <li>
-          Consider \(1 - p_{max} = \sum_{c \neq max} p_c\) and \(1 = \sum_c
+          Consider \(1 - p_{\text{max}} = \sum_{c \neq \text{max}} p_c\) and \(1 = \sum_c
           p_c\) (where \(c\) represents a category)
         </li>
         <li>
-          \(\sum_{c \neq max} p_c \times NX_{errcost} \lt NX_{err} \times \sum_c
-          p_c \times NX_{errcost} + NX_{price}\)
+          \(\sum_{c \neq \text{max}} p_c \times \text{NX}_{\text{errcost}} \lt \text{NX}_{\text{err}} \times \sum_c
+          p_c \times \text{NX}_{\text{errcost}} + \text{NX}_{\text{price}}\)
         </li>
-        <li>\(NX_{errcost} \Rightarrow NX_{errcost}(c)\)</li>
+        <li>\(\text{NX}_{\text{errcost}} \Rightarrow \text{NX}_{\text{errcost}}(c)\)</li>
         <li>
-          \(\sum_{c \neq max} p_c \times NX_{errcost}(c) \lt NX_{err} \times
-          \sum_c p_c \times NX_{errcost}(c) + NX_{price}\)
+          \(\sum_{c \neq \text{max}} p_c \times \text{NX}_{\text{errcost}}(c) \lt \text{NX}_{\text{err}} \times
+          \sum_c p_c \times \text{NX}_{\text{errcost}}(c) + \text{NX}_{\text{price}}\)
         </li>
-        <li>\(C' = \sum_c p_c \times NX_{errcost}(c)\)</li>
+        <li>\(C' = \sum_c p_c \times \text{NX}_{\text{errcost}}(c)\)</li>
         <li>
-          \(\sum_{c \neq max} p_c \times NX_{errcost}(c) = C' - p_{max} \times
-          NX_{errcost}(max)\)
+          \(\sum_{c \neq \text{max}} p_c \times \text{NX}_{\text{errcost}}(c) = C' - p_{\text{max}} \times
+          \text{NX}_{\text{errcost}}(\text{max})\)
         </li>
         <li>
-          \(C' - p_{max} \times NX_{errcost}(max) \lt NX_{err} \times C' +
-          NX_{price}\) (divide by \(C'\) to put the rule back in the shape of
+          \(C' - p_{\text{max}} \times \text{NX}_{\text{errcost}}(\text{max}) \lt \text{NX}_{\text{err}} \times C' +
+          \text{NX}_{\text{price}}\) (divide by \(C'\) to put the rule back in the shape of
           the original formula)
         </li>
         <li>
-          \(1 - p_{max} \times NX_{errcost}(max) / C' \lt NX_{err} + NX_{price}
+          \(1 - p_{\text{max}} \times \text{NX}_{\text{errcost}}(\text{max}) / C' \lt \text{NX}_{\text{err}} + \text{NX}_{\text{price}}
           / C'\)
         </li>
       </ol>
       <p>
-        Notice how if every category has the same \(NX_{errcost}\), then \(C' =
-        NX_{errcost}\). In which case, we get back our original Chow's rule of
-        \(1 - p_{max} \lt NX_{err} + NX_{price} / NX_{errcost}\).
+        Notice how if every category has the same \(\text{NX}_{\text{errcost}}\), then \(C' =
+        \text{NX}_{\text{errcost}}\). In which case, we get back our original Chow's rule of
+        \(1 - p_{\text{max}} \lt \text{NX}_{\text{err}} + \text{NX}_{\text{price}} / \text{NX}_{\text{errcost}}\).
       </p>
       <figure>
         <div id="chow-plot"></div>
         <script src="./js/chow-plot.js"></script>
         <figcaption>
-          Figure 2: Interactive plot of the modified Chow's rule \(1 - p_{max} \times NX_{errcost}(max) / C' \lt NX_{err} + NX_{price}
-          / C'\). In generic terms, <a href="https://www.desmos.com/calculator/altqzwksk9">the curve is a hyperbola</a> with the equation \(y = 1 - a - b/x\), where x is \(C'\), y is the threshold from the right of the equation, and \(a\) and \(b\) are the constants \(NX_{err}\) and \(NX_{price}\) respectively. The hyperbola is clamped to prevent negative values. <b>Note</b> that the figure is AI generated using Claude's Opus 5.5 Extra model. In accordance with <a href="https://www.anthropic.com/legal/commercial-terms">Anthropic's commercial terms</a>, I own the output, and responsible for its factual correctness, and any copyright issues.
+          Figure 2: Interactive plot of the modified Chow's rule \(1 - p_{\text{max}} \times \text{NX}_{\text{errcost}}(\text{max}) / C' \lt \text{NX}_{\text{err}} + \text{NX}_{\text{price}}
+          / C'\). In generic terms, <a href="https://www.desmos.com/calculator/altqzwksk9">the curve is a hyperbola</a> with the equation \(y = 1 - a - b/x\), where x is \(C'\), y is the threshold from the right of the equation, and \(a\) and \(b\) are the constants \(\text{NX}_{\text{err}}\) and \(\text{NX}_{\text{price}}\) respectively. The hyperbola is clamped to prevent negative values. <b>Note</b> that the figure is AI generated using Claude's Opus 5.5 Extra model. In accordance with <a href="https://www.anthropic.com/legal/commercial-terms">Anthropic's commercial terms</a>, I own the output, and responsible for its factual correctness, and any copyright issues.
         </figcaption>
       </figure>
       <p>
         To illustrate the new derivation, let us focus on 3 categories: tech,
         analytics, and legal. Assume that the LLM still charges us $0.01
-        (\(NX_{price}\)), is wrong 5% of the time (\(NX_{err}\)), and the output
+        (\(\text{NX}_{\text{price}}\)), is wrong 5% of the time (\(\text{NX}_{\text{err}}\)), and the output
         probability on an input is tech 0.6, analytics 0.25, and legal 0.15
         respectively. Also assume that if the ticket really is tech,
-        \(NX_{errcost}\) will cost us say $2 (same as before). Similarly, if the
-        ticket really is analytics or legal, \(NX_{errcost}\) will cost us $2
+        \(\text{NX}_{\text{errcost}}\) will cost us say $2 (same as before). Similarly, if the
+        ticket really is analytics or legal, \(\text{NX}_{\text{errcost}}\) will cost us $2
         and $100 respectively.
         <a href="https://quoteinvestigator.com/2023/05/23/lawsuit/"
           >As they say</a
@@ -373,11 +373,11 @@ RESPONSE: {
         >”
       </p>
       <p>
-        \(C'\) would be \(\sum_c p_c \times NX_{errcost}(c)\), or (0.6 × $2 +
+        \(C'\) would be \(\sum_c p_c \times \text{NX}_{\text{errcost}}(c)\), or (0.6 × $2 +
         0.25 × $2 + 0.15 × $100), or $16.70. The max category is tech, so
-        answering in tech costs us \(C' - p_{max} \times NX_{errcost}(Tech)\) =
+        answering in tech costs us \(C' - p_{\text{max}} \times \text{NX}_{\text{errcost}}(\text{Tech})\) =
         $16.7 - $1.2 = $15.5. Furthermore, handing on to the next level costs
-        us, \(NX_{err} \times C' + NX_{price}\) = 0.05 × $16.70 + $0.01 = $0.835
+        us, \(\text{NX}_{\text{err}} \times C' + \text{NX}_{\text{price}}\) = 0.05 × $16.70 + $0.01 = $0.835
         + $0.01 = $0.845.
       </p>
       <p>
@@ -445,29 +445,29 @@ RESPONSE: {
       <p>
         In the future, decisions sold with <i>some form of warranty</i> do not seem
         far-fetched either. We already have something similar with <a href="https://en.wikipedia.org/wiki/Riskified">Riskified</a>
-        today. As discussed before, when \(NX_{price} / C'\) goes to zero -
+        today. As discussed before, when \(\text{NX}_{\text{price}} / C'\) goes to zero -
         accuracy alone decides the level at which we answer. At that point, the
         economic moat solely falls upon the “honest probabilities” and
         “specialized training”. This in itself does not sound appealing.
         However, if the independent decision model vendors calibrate per-domain
         and provide a certain guarantee in their contracts, then the needle can
         possibly tilt somewhat in their favor. Imagine the cost being tuned to
-        account for a premium and a deductible, like \(NX_{price} + premium +
-        NX_{err} \times deductible\).
+        account for a premium and a deductible, like \(\text{NX}_{\text{price}} + \text{premium} +
+        \text{NX}_{\text{err}} \times \text{deductible}\).
       </p>
       <p>
         One topic I have yet to discuss is <b>latency</b> and its addition to Chow's
         modified rule. One way to do this would be by introducing two variables:
-        the next level's response time in seconds (\(NX_{latency}\)) and the
-        cost per second of wait (\(wait\_cost\)). With this, the cost of the
-        answer remains the same as before, \((1 - p_{max}) \times
-        NX_{errcost}\). However, the cost of handing on to the next level
-        becomes \(NX_{price} + NX_{err} \times NX_{errcost} + wait\_cost \times
-        NX_{latency}\). This leads to \[(1 - p_{max}) \times NX_{errcost} \lt
-        NX_{price} + NX_{err} \times NX_{errcost} + wait\_cost \times
-        NX_{latency}\] And dividing by \(NX_{errcost}\), we get \[1 - p_{max}
-        \lt NX_{err} + (NX_{price} + wait\_cost \times NX_{latency}) /
-        NX_{errcost}\] Just like before, this can similarly be modeled towards
+        the next level's response time in seconds (\(\text{NX}_{\text{latency}}\)) and the
+        cost per second of wait (\(\text{wait_cost}\)). With this, the cost of the
+        answer remains the same as before, \((1 - p_{\text{max}}) \times
+        \text{NX}_{\text{errcost}}\). However, the cost of handing on to the next level
+        becomes \(\text{NX}_{\text{price}} + \text{NX}_{\text{err}} \times \text{NX}_{\text{errcost}} + \text{wait_cost} \times
+        \text{NX}_{\text{latency}}\). This leads to \[(1 - p_{\text{max}}) \times \text{NX}_{\text{errcost}} \lt
+        \text{NX}_{\text{price}} + \text{NX}_{\text{err}} \times \text{NX}_{\text{errcost}} + \text{wait_cost} \times
+        \text{NX}_{\text{latency}}\] And dividing by \(\text{NX}_{\text{errcost}}\), we get \[1 - p_{\text{max}}
+        \lt \text{NX}_{\text{err}} + (\text{NX}_{\text{price}} + \text{wait_cost} \times \text{NX}_{\text{latency}}) /
+        \text{NX}_{\text{errcost}}\] Just like before, this can similarly be modeled towards
         different output categories too.
       </p>
       <p>
