@@ -14,6 +14,16 @@
       href="./style/common_styles.css"
       id="light"
     />
+    <script>
+      // Typeset only after Crimson Pro loads, so MathJax matches its x-height
+      // instead of the fallback font's on a cold cache.
+      window.MathJax = {
+        startup: {
+          pageReady: () =>
+            document.fonts.ready.then(() => MathJax.startup.defaultPageReady()),
+        },
+      };
+    </script>
     <script
       id="MathJax-script"
       async
