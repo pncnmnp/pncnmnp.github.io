@@ -113,6 +113,7 @@ RESPONSE: {
         input tokens and 20M output tokens would cost $13 on GPT-5 nano ($8.5
         with cached tokens) vs. $4.2 via Jev. And finally, <b>it is fast</b>!
       </p>
+      <h2>The decision hierarchy</h2>
       <p>
         Perhaps the most exciting revelation I had, is that this gives rise to a
         new form of memory hierarchy, which I have labeled as
@@ -169,6 +170,7 @@ RESPONSE: {
         >” (not in a formal sense) a question is, the higher form of
         intelligence it needs to make a non-ambiguous judgement call.
       </p>
+      <h2>Answer v. Abstain</h2>
       <p>
         <i>
           But how do we decide whether we should give a response at a particular
@@ -205,6 +207,7 @@ RESPONSE: {
         cost we pay to evaluate any input in that level (\(\text{NX}_{\text{price}}\)), and
         finally the error rate on the next level itself (\(\text{NX}_{\text{err}}\)).
       </p>
+      <h2>Deriving Chow's rule</h2>
       <p>
         Consider this - say we have 100 software tickets to evaluate and make
         decisions upon. And we are working at the Jev and LLM layers. Imagine
@@ -263,6 +266,7 @@ RESPONSE: {
         0.055\), we hand on to the next level, which is the same decision as
         $0.80 versus $0.11.
       </p>
+      <h2>What is it telling us?</h2>
       <p>
         <i
           >Notice that when errors are expensive, LLM's price barely matters.</i
@@ -291,6 +295,7 @@ RESPONSE: {
           saves equals what it charges you.
         </b>
       </p>
+      <h2>Confident mistakes and when errors don't cost the same</h2>
       <p>
         So far, we have assumed that the decisions made at every level are
         noiseless. Chow's rule only escalates the inputs that a level is unsure
@@ -396,6 +401,7 @@ RESPONSE: {
         ticket makes answering nearly 20 times more expensive (15.5/0.8) than
         before.
       </p>
+      <h2>Top class is not always the cheapest</h2>
       <p>
         Nonetheless, there is a catch with the new derivation. Till now, our
         decision at every level was based on - should the level answer with its
@@ -427,6 +433,7 @@ RESPONSE: {
         back lots of tickets or its queue is growing, we raise the price.
         However, if real issues are slipping past them, we lower the price.
       </p>
+      <h2>Bringing out my crystal ball</h2>
       <p>
         <i>
           All of the above analysis does present a threat to Jev and independent
